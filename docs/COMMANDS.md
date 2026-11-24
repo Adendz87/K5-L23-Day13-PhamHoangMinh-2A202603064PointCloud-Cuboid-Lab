@@ -89,7 +89,7 @@ Start-Process msedge "http://localhost:8080/tasks"
 open "http://localhost:8080/tasks"
 ```
 
-Nếu task đã có, chạy lại `task` chỉ in lại đường dẫn cũ, không tạo task mới. Thêm `--replace` vào lệnh `task` thì lệnh **xóa task cùng mọi cuboid** rồi tạo lại, không hỏi lại: chỉ dùng khi chưa vẽ gì hoặc khi coach bảo.
+Chạy lại `task` sẽ in đường dẫn cũ nếu task đã có job và đúng bộ 10 frame. Nếu task chưa có job hoặc sai frame, xem [COMMON_ERRORS.md](COMMON_ERRORS.md) mục 3. `task --replace` **xóa task cùng mọi cuboid** rồi tạo lại. Chỉ dùng khi chưa vẽ gì hoặc khi coach yêu cầu.
 
 ## 3. Bước 3 và 5 · Bảng A, xem trước, tự kiểm
 

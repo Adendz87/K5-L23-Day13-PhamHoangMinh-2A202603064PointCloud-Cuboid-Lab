@@ -30,7 +30,7 @@ Ngồi ghép đôi, người B (dùng CVAT trên máy bạn kia): chưa chạy d
 - `task --code HC485087` tạo task chung `D13-HC485087` cho vòng hiệu chuẩn (Bước 3) và để xem frame gợi ý ở Bước 4. Mã chung mặc định là `HC485087`; nếu coach phát mã khác thì dùng mã của coach ở mọi lệnh có `--code`. Task chung không phải bài của bạn và không được chấm.
 
 Mở `http://localhost:8080/tasks` bằng Chrome hoặc Edge, bấm **Open** ở task `D13-<MÃ SỐ>`, rồi bấm **Job #…** ở mục Jobs. Bạn phải thấy point cloud và ảnh camera.
-Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). Nếu task đã có, chạy lại `task` chỉ in lại đường dẫn cũ, không tạo task mới. Lệnh `task` lỗi mà trình duyệt vẫn mở được CVAT thì tạo task bằng tay ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 7).
+Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). Chạy lại `task` sẽ in link nếu task đã có job và đúng bộ 10 frame. Nếu task chưa có job hoặc sai frame, xem [docs/COMMON_ERRORS.md](docs/COMMON_ERRORS.md) mục 3. Nếu lỗi xảy ra khi tải dữ liệu qua script và CVAT vẫn mở được, xem cách tạo task bằng tay trong [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 7.
 
 > **Không dùng `--replace` nếu đã vẽ gì**: `python scripts/lab.py task --replace` xóa task cùng mọi cuboid rồi tạo lại.
 
