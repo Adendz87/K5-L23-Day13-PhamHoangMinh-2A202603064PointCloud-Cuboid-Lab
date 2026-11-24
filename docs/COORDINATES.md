@@ -36,4 +36,6 @@ Hệ này khác KITTI và ROS (x tiến, y trái). Nếu bạn đã quen hệ kh
 
 LiDAR phủ 360°, mỗi camera chỉ phủ một hình quạt, và giữa các hình quạt có góc mù. **Vật phía sau và hai bên không có trong ảnh cam01**: tìm chúng khi xoay khung 3D nhìn từ trên xuống, rồi đối chiếu camera nhìn về hướng đó.
 
-Bảng trên là **hướng nhìn** (trục quang), tính từ `calib.json`. Sơ đồ chính thức của bộ VF vẽ **vị trí gắn** camera trên thân xe, và hai thứ này không trùng nhau: ví dụ cam08 gắn ở phía trước bên phải nhưng nhìn về phía sau bên phải, cam07 gắn phía sau bên phải nhưng nhìn về phía trước bên phải. Khi tìm vật, dùng bảng hướng nhìn ở trên.
+Bảng trên là **hướng nhìn** (trục quang), tính từ `calib.json` của cả 5 sequence và đã đối chiếu trên ảnh camera. Đừng suy hướng nhìn từ sơ đồ camera của bộ VF: camera hai bên được lắp chéo, ví dụ cam07 gắn ở phía sau bên phải nhưng nhìn về phía trước bên phải, cam08 gắn ở phía trước bên phải nhưng nhìn về phía sau bên phải. Sơ đồ đặt CAM_8 ở trước-phải và CAM_7 ở sau-phải, nên đọc sơ đồ như hướng nhìn thì sẽ nhầm hai camera này. Khi tìm vật, dùng bảng hướng nhìn ở trên.
+
+Tự kiểm trên một frame bất kỳ: một xe ở phía trước bên phải trên ảnh nhìn từ trên xuống, cách xe thu dữ liệu vài mét trở lên, thì hiện trong ảnh cam07; xe ở phía sau bên phải thì hiện trong ảnh cam08.
