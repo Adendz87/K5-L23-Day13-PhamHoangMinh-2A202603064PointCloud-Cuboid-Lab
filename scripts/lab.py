@@ -234,10 +234,15 @@ def run(argv=None) -> int:
     warn_tracks(vf_cvat)
     if args.code:  # report của vòng hiệu chuẩn: để riêng trong work/, không lẫn vào bài nộp
         folder = ROOT / "work" / "hieuchuan"
-        code = run_cvat(vf_cvat, ["report", "d13", *base, *server_args(cfg), "--out", str(folder)], cfg)
         produced, final = folder / f"{name}-bangA.csv", folder / f"{name}-{student}-bangA.csv"
+        ensure_writable([produced, final])
+        code = run_cvat(vf_cvat, ["report", "d13", *base, *server_args(cfg), "--out", str(folder)], cfg)
         if code == 0 and produced.exists():
-            produced.replace(final)
+            try:
+                produced.replace(final)
+            except PermissionError:
+                produced.unlink(missing_ok=True)  # không để lại bảng tạm mang mã chung
+                raise SystemExit(locked(final)) from None
             print(f"Gửi file này cho coach (vòng hiệu chuẩn, không chấm điểm): {final}")
         return code
 

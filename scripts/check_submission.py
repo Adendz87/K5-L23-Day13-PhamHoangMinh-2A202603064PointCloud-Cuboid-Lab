@@ -294,7 +294,7 @@ if student and images:
             with zipfile.ZipFile(bundle) as archive:
                 zipped = {i.filename: i.CRC for i in archive.infolist()
                           if i.filename.startswith("images/") and not i.is_dir()}
-        except (OSError, zipfile.BadZipFile):
+        except Exception:  # zip hỏng kiểu nào (cắt dở, sai mục lục, tên lỗi mã hoá) cũng chỉ cần pack lại
             broken = True
     if broken:
         warns.append(f"work/{bundle.name} bị hỏng: chạy lại `python scripts/lab.py pack` và nộp lại file zip lên LMS")

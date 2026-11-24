@@ -51,7 +51,7 @@ Ví dụ: `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid`.
 
 Sửa cuboid sau khi nộp (trước deadline):
 - Đóng bảng A, phiếu tự kiểm nếu đang mở trong Excel (Excel giữ file thì lệnh không ghi được), Save trong CVAT, rồi `python scripts/lab.py sync`.
-- Cuboid đã dẫn trong báo cáo (§3, §5) mà bị sửa, hoặc trong frame có cuboid bị xoá, vẽ lại (`idx` của các cuboid sau nó đổi theo), thì sửa số và `idx` trong báo cáo theo bảng A mới.
+- Sửa số trong báo cáo theo bảng A và phiếu tự kiểm mới: §1 (tổng số cuboid, số bị cờ) đổi mỗi khi vẽ thêm hay xoá; §3, §5 đổi khi cuboid đã dẫn bị sửa, hoặc khi trong frame của nó có cuboid bị xoá, vẽ lại (`idx` của các cuboid sau đó đổi theo).
 - `python scripts/check_submission.py`, rồi commit và push lại. Thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Cấu trúc

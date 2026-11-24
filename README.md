@@ -32,7 +32,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 
 ## Bắt đầu nhanh (5 bước, ~4 giờ)
 
-0. **Trước buổi học**: mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab → **Use this template** → repo **public** của bạn (tên: xem [SUBMISSION.md](SUBMISSION.md)), `git clone`, cài môi trường, cài CVAT và tải dữ liệu ([docs/SETUP.md](docs/SETUP.md), [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md)). Điền `configs/lab.ini`, rồi `python scripts/lab.py dry` in ra **10 frame, mỗi frame `camera=7`**.
+0. **Trước buổi học**: mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab → **Use this template** → repo **public** của bạn (tên: xem [SUBMISSION.md](SUBMISSION.md)), `git clone`, cài môi trường, cài CVAT và tải dữ liệu ([docs/SETUP.md](docs/SETUP.md), [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md)). Điền `configs/lab.ini`, rồi `python scripts/lab.py dry` in ra **10 frame, mỗi frame `camera=7`**. Push thử lên GitHub ([docs/SETUP.md](docs/SETUP.md) mục 7).
 1. **Chuẩn bị**: `python scripts/lab.py task` tạo task `D13-<MÃ SỐ>`; `python scripts/lab.py task --code <MÃ CHUNG>` tạo task chung cho vòng hiệu chuẩn ([GUIDE.md](GUIDE.md)).
 2. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ.
 3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).

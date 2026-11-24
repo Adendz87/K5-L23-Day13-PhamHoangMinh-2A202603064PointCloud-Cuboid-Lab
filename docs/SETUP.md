@@ -214,27 +214,35 @@ Kiểm ba điều: có đủ 10 dòng frame, mỗi dòng `camera=7`, và dòng c
 
 ## 6. Cài CVAT
 
-Làm theo [CVAT_SETUP.md](CVAT_SETUP.md), rồi điền `cvat_user` trong `configs/lab.ini`. Lớp không có máy chủ CVAT chung: mỗi người chạy CVAT trên máy mình.
+Làm theo [CVAT_SETUP.md](CVAT_SETUP.md). Lớp không có máy chủ CVAT chung: mỗi người chạy CVAT trên máy mình.
 
-## 7. Push thử lên GitHub
-
-Ở mốc CP7 (19:30) bạn push bảng A lên GitHub lần đầu. Thử push ngay bây giờ để lỗi đăng nhập hay cấu hình lộ ra trước buổi học.
-
-Trước hết quay về thư mục repo của bạn: sau mục 6, terminal đang đứng trong thư mục `cvat` của CVAT.
+Cài xong, terminal đang đứng trong thư mục `cvat` của CVAT. Quay về thư mục repo của bạn rồi mở `configs/lab.ini`, điền `cvat_user` (tài khoản CVAT vừa tạo):
 
 **Windows (PowerShell)**
 
 ```powershell
 cd $HOME\lab\K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
+notepad configs\lab.ini
 ```
 
 **macOS (Terminal)**
 
 ```bash
 cd ~/lab/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
+open -e configs/lab.ini
 ```
 
-Lần đầu dùng git trên máy này thì khai báo tên và email cho commit (thay chỗ `<...>`). Repo của bạn là public nên ai cũng xem được email này. Nên dùng địa chỉ dạng `…@users.noreply.github.com` ở GitHub → **Settings → Emails** (bật **Keep my email addresses private**).
+## 7. Push thử lên GitHub
+
+Ở mốc CP7 (19:30) bạn push bảng A lên GitHub lần đầu. Thử push ngay bây giờ để lỗi đăng nhập hay cấu hình lộ ra trước buổi học. Các lệnh dưới chạy trong thư mục repo (mục 6).
+
+Xem git đã có email của bạn chưa:
+
+```bash
+git config user.email
+```
+
+Không in gì thì khai báo tên và email cho commit (thay chỗ `<...>`). macOS không báo lỗi khi thiếu bước này mà tự lấy tên tài khoản máy và `<tên>@<tên-máy>.local` đưa lên repo. Repo của bạn là public nên ai cũng xem được email này: nên dùng địa chỉ dạng `…@users.noreply.github.com` ở GitHub → **Settings → Emails** (bật **Keep my email addresses private**).
 
 ```bash
 git config --global user.name "<Họ và tên>"
@@ -243,6 +251,8 @@ git config --global user.name "<Họ và tên>"
 ```bash
 git config --global user.email "<email-noreply-GitHub>"
 ```
+
+Nếu lệnh in ra một email bạn không muốn công khai, chạy hai lệnh trên nhưng bỏ `--global`: chỉ đổi cho repo này.
 
 Xem git sẽ commit gì:
 
@@ -267,7 +277,7 @@ brew install gh
 gh auth login
 ```
 
-Chọn **GitHub.com → HTTPS → Yes → Login with a web browser**, rồi chạy lại `git push`. Mở repo của bạn trên GitHub: thấy commit `Day 13: cau hinh` là được. Lỗi khác xem [COMMON_ERRORS.md](COMMON_ERRORS.md) mục 5.
+Trả lời các câu hỏi bằng **GitHub.com**, **HTTPS**, **Yes** (dùng tài khoản GitHub cho git) và **Login with a web browser**; thứ tự câu hỏi có thể khác tuỳ bản `gh`. Chép mã một lần mà terminal in ra, bấm Enter để mở trình duyệt, dán mã và cho phép. Rồi chạy lại `git push`. Mở repo của bạn trên GitHub: thấy commit `Day 13: cau hinh` là được. Lỗi khác xem [COMMON_ERRORS.md](COMMON_ERRORS.md) mục 5.
 
 ## Bảng kiểm trước buổi học
 
