@@ -135,9 +135,9 @@ open submission
 open work/xem
 ```
 
-Mở file `.csv` bằng bảng tính **chỉ để đọc**. Đừng lưu đè: Excel có thể đổi số, đổi dấu thập phân, thêm BOM. `check_submission.py` báo LỖI khi bảng A không còn giống bản `report` sinh ra; lỡ lưu đè thì chạy lại `python scripts/lab.py sync`.
+Mở file `.csv` bằng bảng tính **chỉ để đọc**. Đừng lưu đè: Excel có thể đổi số, đổi dấu thập phân, thêm BOM. `check_submission.py` báo LỖI khi bảng A không còn giống bản `report` sinh ra; lỡ lưu đè thì chạy lại `python scripts/lab.py sync`. Đóng file trước khi chạy lại `report`, `selfcheck` hay `sync`: trên Windows, Excel đang mở file thì lệnh không ghi được.
 
-## 4. Bước 5 · Nén bài nộp, kiểm, đẩy lên GitHub
+## 4. Bước 5 · Nén ảnh, kiểm, đẩy lên GitHub
 
 ```bash
 python scripts/lab.py pack

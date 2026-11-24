@@ -4,7 +4,7 @@
     python scripts/lab.py dry         xem 10 frame của bạn và kiểm dữ liệu, không nối CVAT
     python scripts/lab.py task        tạo task D13-<MÃ SỐ> trên CVAT
     python scripts/lab.py bundle      đóng gói 10 frame -> work/D13-<MÃ SỐ>.zip để tạo task bằng tay
-    python scripts/lab.py report      xuất bảng A -> submission/D13-<MÃ SỐ>-bangA.csv
+    python scripts/lab.py report      xuất bảng A -> submission/D13-<MÃ SỐ>-bangA.csv (bảng A đổi thì xoá phiếu tự kiểm cũ)
     python scripts/lab.py preview     vẽ cuboid lên ảnh camera -> work/xem/
     python scripts/lab.py selfcheck   soát cuboid bằng point cloud -> submission/D13-<MÃ SỐ>-tukiem.csv
     python scripts/lab.py sync        report + preview + selfcheck
@@ -145,6 +145,22 @@ def warn_tracks(vf_cvat) -> None:
     vf_cvat.task_boxes = task_boxes
 
 
+def locked(path) -> str:
+    return (f"Không ghi hoặc đọc được {path}: file đang mở trong Excel hay chương trình khác, hoặc không có quyền. "
+            "Đóng file rồi chạy lại lệnh (docs/COMMON_ERRORS.md mục 5).")
+
+
+def ensure_writable(paths) -> None:
+    """Windows: file CSV đang mở trong Excel thì không ghi, không xoá được. Báo trước khi hỏi mật khẩu CVAT."""
+    for path in sorted(paths):
+        if path.exists():
+            try:
+                with path.open("r+b"):
+                    pass
+            except PermissionError:
+                raise SystemExit(locked(path)) from None
+
+
 def pack(student: str) -> int:
     """Nén ảnh chụp của báo cáo để nộp lên LMS. Ảnh có dữ liệu camera thật nên không đưa lên repo public."""
     folder = ROOT / "submission" / "images"
@@ -167,6 +183,13 @@ def main(argv=None) -> int:
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8", errors="replace")
+    try:
+        return run(argv)
+    except PermissionError as exc:
+        raise SystemExit(locked(exc.filename or "file")) from None
+
+
+def run(argv=None) -> int:
     if sys.version_info < MIN_PYTHON:
         print(f"CẢNH BÁO: đang chạy Python {sys.version.split()[0]}; bài lab cần Python 3.11 trở lên. "
               "Tạo lại .venv theo docs/COMMON_ERRORS.md mục 1.", file=sys.stderr)
@@ -218,9 +241,17 @@ def main(argv=None) -> int:
         return code
 
     steps = ["report", "preview", "selfcheck"] if args.command == "sync" else [args.command]
+    writes = {"report": [table, selfcheck], "selfcheck": [selfcheck]}
+    ensure_writable({path for step in steps for path in writes.get(step, [])})
     for step in steps:
         if step == "report":
+            before = table.read_bytes() if table.exists() else None
             code = run_cvat(vf_cvat, ["report", "d13", *base, *server_args(cfg), "--out", str(table.parent)], cfg)
+            if code == 0 and selfcheck.exists() and table.exists() and table.read_bytes() != before:
+                selfcheck.unlink()  # phiếu tự kiểm của bảng A cũ: để lại thì dễ nộp nhầm số cũ
+                if args.command == "report":
+                    print(f"Bảng A đã đổi nên phiếu tự kiểm cũ ({selfcheck.name}) đã được xoá. "
+                          "Chạy `python scripts/lab.py selfcheck` (hoặc `sync`) trước khi nộp.")
         elif not table.exists():
             raise SystemExit(f"Chưa có submission/{table.name}: chạy `python scripts/lab.py report` (hoặc `sync`) trước.")
         elif step == "preview":

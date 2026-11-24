@@ -1,6 +1,6 @@
 # Cài đặt môi trường (làm trước buổi học)
 
-Mục tiêu: trước 16:00 Ngày 13, máy bạn chạy được `python scripts/lab.py dry` ở mục 5 và mở được CVAT. Tổng thời gian khoảng 30–60 phút, phần lớn là chờ tải. Nếu kẹt, báo coach **trước buổi học**.
+Mục tiêu: trước 16:00 Ngày 13, máy bạn chạy được `python scripts/lab.py dry` ở mục 5, mở được CVAT và push được lên repo của bạn (mục 7). Tổng thời gian khoảng 30–60 phút, phần lớn là chờ tải. Nếu kẹt, báo coach **trước buổi học**.
 
 Mỗi bước có hai khối lệnh. Chọn đúng khối của máy bạn:
 
@@ -216,10 +216,42 @@ Kiểm ba điều: có đủ 10 dòng frame, mỗi dòng `camera=7`, và dòng c
 
 Làm theo [CVAT_SETUP.md](CVAT_SETUP.md), rồi điền `cvat_user` trong `configs/lab.ini`. Lớp không có máy chủ CVAT chung: mỗi người chạy CVAT trên máy mình.
 
+## 7. Push thử lên GitHub
+
+Lúc nộp bài (19:30) bạn phải push được bảng A lên GitHub. Thử ngay bây giờ để lỗi đăng nhập hay cấu hình lộ ra trước buổi học.
+
+Lần đầu dùng git trên máy này thì khai báo tên và email cho commit (thay chỗ `<...>`). Repo của bạn là public nên ai cũng xem được email này. Nên dùng địa chỉ dạng `…@users.noreply.github.com` ở GitHub → **Settings → Emails** (bật **Keep my email addresses private**).
+
+```bash
+git config --global user.name "<Họ và tên>"
+```
+
+```bash
+git config --global user.email "<email-noreply-GitHub>"
+```
+
+Rồi commit cấu hình và push, mỗi lệnh một dòng (Windows và macOS như nhau):
+
+```bash
+git add -A
+git commit -m "Day 13: cau hinh"
+git push
+```
+
+Lần push đầu trên Windows, một cửa sổ hiện ra để đăng nhập GitHub: đăng nhập là xong. Trên macOS, nếu `git push` hỏi Username/Password hoặc báo lỗi đăng nhập, cài GitHub CLI rồi đăng nhập một lần:
+
+```bash
+brew install gh
+gh auth login
+```
+
+Chọn **GitHub.com → HTTPS → Yes → Login with a web browser**, rồi chạy lại `git push`. Mở repo của bạn trên GitHub: thấy commit `Day 13: cau hinh` là được. Lỗi khác xem [COMMON_ERRORS.md](COMMON_ERRORS.md) mục 5.
+
 ## Bảng kiểm trước buổi học
 
 - [ ] `python --version` (đã kích hoạt `.venv`) in 3.11 trở lên; `python -m pip show cvat-sdk` in `Version: 2.83.0` (hoặc 2.82.x).
 - [ ] Repo và dữ liệu nằm trong `lab`, không nằm trong thư mục tự đồng bộ lên mây.
 - [ ] `python scripts/lab.py dry` in đủ 10 frame, mỗi frame 7 camera, không có cảnh báo thiếu file.
 - [ ] Mở được CVAT và đăng nhập được.
+- [ ] Đã push thử lên repo của bạn (mục 7).
 - [ ] Đã đọc [COORDINATES.md](COORDINATES.md), [GUIDELINE.md](GUIDELINE.md) và [../RULES.md](../RULES.md).

@@ -4,7 +4,7 @@ Bài cá nhân, buổi thực hành **16:00–20:00**. Mốc giờ là điểm *
 
 | Mốc | Mục tiêu | Tự kiểm tra |
 |---|---|---|
-| 16:25 | **CP1** Chuẩn bị | `python scripts/lab.py dry` in đủ 10 frame, mỗi frame `camera=7`; task `D13-<MÃ SỐ>` và task chung mở được, thấy point cloud và ảnh camera |
+| 16:25 | **CP1** Chuẩn bị | `python scripts/lab.py dry` in đủ 10 frame, mỗi frame `camera=7`; task `D13-<MÃ SỐ>` và task chung mở được, thấy point cloud và ảnh camera; đã push thử lên GitHub ([docs/SETUP.md](docs/SETUP.md) mục 7) |
 | 16:50 | **CP2** Đọc frame | Trên ảnh nhìn từ trên xuống của frame đầu, chỉ đúng phía trước (−y) và +x; đã kể được một vật phía sau hoặc hai bên; `REPORT.md` §2 có 2 frame đọc kỹ |
 | 17:25 | **CP3** Frame 1 | `python scripts/lab.py report`: frame 1 có ≥ 8 cuboid; xe con có `length` > `width`; xe cùng chiều `yaw_deg` gần 270°; `z_bottom` quanh −1,7 m (lệch không quá 0,3 m) |
 | 17:55 | **CP4** Frame 2–6 | Mỗi frame ≥ 5 cuboid; đã **Save** trước giờ nghỉ |
@@ -12,7 +12,7 @@ Bài cá nhân, buổi thực hành **16:00–20:00**. Mốc giờ là điểm *
 | 19:00 | **CP6** Bốn hiện tượng | 4 ảnh và 4 dòng trong `REPORT.md` §4; nguyên nhân ghi là giả thuyết |
 | 19:30 | **CP7** Tự kiểm + nộp lần đầu | `python scripts/lab.py sync` đã chạy sau lần Save cuối; đã sửa ≥ 2 cuboid; `REPORT.md` xong, đã đổi kiểm hai con số với bạn bên cạnh; đã `pack`; `python scripts/check_submission.py` hết LỖI; đã commit, push (bảng A, phiếu tự kiểm, `REPORT.md` có trên GitHub) và nộp link repo + file zip ảnh lên LMS |
 
-Sau CP7: coach chữa chung hai ca khó (19:30–19:35), exit ticket cuối buổi (19:35–19:40), rồi 20' dự phòng (19:40–20:00) để bắt kịp, vẽ thêm hoặc sửa cuboid kém. Sửa xong thì Save, `python scripts/lab.py sync`, `python scripts/check_submission.py`, commit và push lại (đổi ảnh thì `pack` và nộp lại file zip): bản cuối trước **20:00** được chấm ([SUBMISSION.md](SUBMISSION.md)).
+Sau CP7: coach chữa chung hai ca khó (19:30–19:35), exit ticket cuối buổi (19:35–19:40), rồi 20' dự phòng (19:40–20:00) để bắt kịp, vẽ thêm hoặc sửa cuboid kém. Sửa xong thì Save, `python scripts/lab.py sync`, sửa số trong `REPORT.md` nếu cuboid đã dẫn bị đổi, `python scripts/check_submission.py`, commit và push lại (đổi ảnh thì `pack` và nộp lại file zip): bản đã push trước **20:00** được chấm ([SUBMISSION.md](SUBMISSION.md)).
 
 ## Cần hiểu ở mỗi mốc
 

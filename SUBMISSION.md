@@ -9,7 +9,7 @@ Bạn nộp **hai thứ** lên LMS **https://aithucchien.vinuni.edu.vn** (hoặc
 Một người **một repo public**. Tên repo: `K5-L23-DAY13-<MSHV>-PointCloudCuboid` (không dấu, nối bằng `-`). Theo hướng dẫn lớp nếu giảng viên đặt quy ước khác.
 
 ## Hạn
-Nộp lần đầu lúc **19:30** (mốc CP7). Trong 20' dự phòng (19:40–20:00) bạn được sửa cuboid và nộp lại; **hạn cuối 20:00**: commit cuối trên GitHub và file zip cuối trên LMS trước giờ đó được chấm. Coach có thể thông báo hạn khác trên LMS.
+Nộp lần đầu lúc **19:30** (mốc CP7). Trong 20' dự phòng (19:40–20:00) bạn được sửa cuboid và nộp lại; **hạn cuối 20:00**: bản đã push lên GitHub và file zip cuối trên LMS trước giờ đó được chấm. Push sau 20:00 không được tính, dù giờ ghi trong commit là bao nhiêu. Coach có thể thông báo hạn khác trên LMS.
 
 ## Trước khi nộp
 1. Bấm **Save** trong CVAT, rồi `python scripts/lab.py sync` để bảng A và phiếu tự kiểm khớp task.
@@ -23,10 +23,13 @@ Nộp lần đầu lúc **19:30** (mốc CP7). Trong 20' dự phòng (19:40–20
    git commit -m "Day 13: bang A, phieu tu kiem, bao cao"
    git push
    ```
-7. Mở repo trên GitHub, kiểm có đủ `submission/REPORT.md`, `submission/D13-<MSHV>-bangA.csv`, `submission/D13-<MSHV>-tukiem.csv`, và **không** có ảnh.
+7. Mở repo trên GitHub, kiểm có đủ `submission/REPORT.md`, `submission/D13-<MSHV>-bangA.csv`, `submission/D13-<MSHV>-tukiem.csv`, chỉ có bảng A và phiếu tự kiểm của đúng MSHV bạn, và **không** có ảnh. Push bị từ chối: [docs/COMMON_ERRORS.md](docs/COMMON_ERRORS.md) mục 5.
 8. Nộp lên LMS: **link repo** và **file zip ảnh** ở bước 4.
 
-Sửa cuboid sau khi nộp (trước 20:00): Save, `python scripts/lab.py sync`, `python scripts/check_submission.py`, rồi commit và push lại. Thêm hay đổi ảnh thì chạy lại `pack` và nộp lại file zip.
+Sửa cuboid sau khi nộp (trước 20:00):
+- Đóng bảng A, phiếu tự kiểm nếu đang mở trong Excel (Excel giữ file thì lệnh không ghi được), Save trong CVAT, rồi `python scripts/lab.py sync`.
+- Cuboid đã dẫn trong `REPORT.md` (§3, §5) mà bị sửa, hoặc trong frame có cuboid bị xoá, vẽ lại (`idx` của các cuboid sau nó đổi theo), thì sửa số và `idx` trong `REPORT.md` theo bảng A mới.
+- `python scripts/check_submission.py`, rồi commit và push lại. Thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Cấu trúc
 ```text

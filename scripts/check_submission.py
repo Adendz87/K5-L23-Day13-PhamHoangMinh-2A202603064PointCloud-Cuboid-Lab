@@ -15,6 +15,7 @@ import re
 import subprocess
 import sys
 import zipfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -37,7 +38,7 @@ SECRET_KEY = re.compile(r"pass|pwd|mat_?khau|mật|token|secret", re.IGNORECASE)
 # Riêng bảng A và phiếu tự kiểm của bạn (submission/D13-<MÃ SỐ>-bangA.csv, -tukiem.csv) phải được commit.
 LEAK_SUFFIXES = {".bin", ".pcd", ".ply", ".zip", ".7z", ".rar", ".tar", ".gz", ".tgz", ".jpg", ".jpeg", ".png",
                  ".webp", ".heic", ".gif", ".bmp", ".tif", ".tiff", ".mp4", ".mov", ".pdf", ".docx", ".pptx", ".csv"}
-LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|hoso|.*-hoso\.md", re.IGNORECASE)
+LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|.*hoso.*", re.IGNORECASE)
 ALLOWED = {"docs/assets/hero.png", "docs/assets/coordinates.png", "docs/assets/workflow.png",
            "docs/3D_Cuboid_Annotation_Guideline.docx"}
 SUBMITTED_CSV = re.compile(r"submission/D13-([^/]+)-(?:bangA|tukiem)\.csv")
@@ -256,15 +257,21 @@ if len(images) < N_IMAGES:
     warns.append(f"submission/images có {len(images)}/{N_IMAGES} ảnh chụp (Bước 2: 4, Bước 3: 3, Bước 4: 4)")
 if student and images:
     bundle = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
-    try:
-        with zipfile.ZipFile(bundle) as archive:
-            zipped = {n for n in archive.namelist() if n.startswith("images/") and not n.endswith("/")}
-    except (OSError, zipfile.BadZipFile):
-        zipped = None
-    if zipped is None:
+    zipped, broken = None, False
+    if bundle.is_file():
+        try:
+            with zipfile.ZipFile(bundle) as archive:
+                zipped = {i.filename: i.CRC for i in archive.infolist()
+                          if i.filename.startswith("images/") and not i.is_dir()}
+        except (OSError, zipfile.BadZipFile):
+            broken = True
+    if broken:
+        warns.append(f"work/{bundle.name} bị hỏng: chạy lại `python scripts/lab.py pack` và nộp lại file zip lên LMS")
+    elif zipped is None:
         warns.append(f"chưa có work/{bundle.name} (ảnh nộp LMS): chạy `python scripts/lab.py pack`")
-    elif zipped != {f"images/{p.name}" for p in images}:
-        warns.append(f"work/{bundle.name} khác ảnh trong submission/images: chạy lại `python scripts/lab.py pack`")
+    elif zipped != {f"images/{p.name}": zlib.crc32(p.read_bytes()) for p in images}:
+        warns.append(f"work/{bundle.name} khác ảnh trong submission/images (thêm, xoá, đổi tên hoặc chụp lại ảnh sau khi "
+                     "pack): chạy lại `python scripts/lab.py pack` và nộp lại file zip lên LMS")
 
 # 8. repo public: không commit dữ liệu, ảnh; bảng A, phiếu tự kiểm, báo cáo đã commit và push chưa
 listing = git("ls-files", "-z")
@@ -273,13 +280,22 @@ if listing is None:
                  "Hãy `git clone` repo của bạn và nộp bằng git")
 else:
     tracked = [f for f in listing.split("\0") if f]
+    # file chưa track mà .gitignore không chặn: `git add -A` ở bước nộp sẽ đưa chúng lên repo
+    pending = [f for f in (git("ls-files", "-z", "--others", "--exclude-standard") or "").split("\0") if f]
     leaked = leaks(tracked)
     if leaked:
         errs.append(f"repo đang theo dõi {len(leaked)} file không được đưa lên repo public (dữ liệu, ảnh, file nén): "
                     f"{leaked[:5]}. Gỡ: `git rm --cached <file>` (docs/COMMON_ERRORS.md mục 5)")
-    others = sorted(f for f in tracked if (m := SUBMITTED_CSV.fullmatch(f)) and m.group(1).upper() != student)
+    leaked_next = leaks(pending)
+    if leaked_next:
+        errs.append(f"`git add -A` sẽ đưa lên repo public {len(leaked_next)} file không được public: {leaked_next[:5]}. "
+                    "Xoá chúng hoặc chuyển ra ngoài repo (hoặc vào work/) trước khi commit")
+    others = sorted(f for f in tracked + pending
+                    if (m := SUBMITTED_CSV.fullmatch(f)) and m.group(1).upper() != student)
     if student and others:
-        errs.append(f"repo có bảng A hoặc phiếu tự kiểm của mã số khác: {others[:4]}. Chỉ commit file của mã {student}")
+        errs.append(f"submission/ có bảng A hoặc phiếu tự kiểm của mã số khác: {others[:4]}. Chỉ để file của mã "
+                    f"{student}: xoá file kia hoặc chuyển ra ngoài repo; đã commit thì `git rm <file>` (không thêm "
+                    "`--cached`), rồi commit và push")
     history = git("log", "--all", "--format=", "--name-only", "--diff-filter=A", "-z") or ""
     old_leaks = sorted(set(leaks(f for f in history.split("\0") if f.strip())) - set(leaked))
     if old_leaks:
@@ -291,10 +307,11 @@ else:
     dirty = git("status", "--porcelain", "--untracked-files=all", "--", *paths)
     if dirty and dirty.strip():
         changed = sorted({line[3:].strip().strip('"') for line in dirty.splitlines() if len(line) > 3})
-        warns.append(f"chưa commit: {', '.join(changed)}. Coach chấm từ repo: chạy `git add -A`, `git commit`, `git push`")
+        warns.append(f"chưa commit: {', '.join(changed)}. Coach chấm từ repo: chạy lần lượt `git add -A`, "
+                     "`git commit -m \"Day 13: bang A, phieu tu kiem, bao cao\"`, `git push` (SUBMISSION.md bước 6)")
     ahead = git("rev-list", "--count", "@{u}..HEAD")
     if ahead and ahead.strip() not in ("", "0"):
-        warns.append(f"có {ahead.strip()} commit chưa push: chạy `git push`")
+        warns.append(f"có {ahead.strip()} commit chưa push: chạy `git push`; bị từ chối thì xem docs/COMMON_ERRORS.md mục 5")
 
 print()
 for w in warns:

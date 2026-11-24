@@ -33,7 +33,8 @@ calib.json
 !docs/assets/workflow.png
 !docs/3D_Cuboid_Annotation_Guideline.docx
 
-# submission/: chỉ commit REPORT.md, bảng A và phiếu tự kiểm của bạn.
+# submission/: chỉ commit REPORT.md, bảng A và phiếu tự kiểm. Các dòng ! dưới đây cho qua file D13-* của
+# mọi mã số, nên trong submission/ chỉ để file của mã bạn (check_submission.py báo LỖI nếu có mã khác).
 # Ảnh chụp màn hình nộp qua LMS (python scripts/lab.py pack), không đưa lên repo public.
 *.csv
 submission/*
@@ -43,8 +44,8 @@ submission/*
 !submission/images/
 submission/images/*
 !submission/images/.gitkeep
-*-hoso.md
-hoso/
+# Phiếu hồ sơ lỗi coach phát (kể cả bản tải lần hai "…-hoso (1).md"): chỉ dành cho bạn
+*hoso*
 
 # Thư mục làm việc: ảnh xem trước, file zip, bảng A của vòng hiệu chuẩn
 work/

@@ -192,7 +192,7 @@ def workflow():
              ("2", "Đọc frame", "5 bước, chưa vẽ", "~25′", PURPLE, "bảng đọc frame"),
              ("3", "Vẽ cuboid", "frame 1 có hướng dẫn, rồi 9 frame", "~90′", RED, "60–70 cuboid"),
              ("4", "Săn hiện tượng", "bóng che · thưa · phản xạ · điểm lạ", "~25′", ORANGE, "4 ảnh + 4 dòng"),
-             ("5", "Đọc số, tự kiểm, nộp", "bảng A · preview · selfcheck", "~30′", GREEN, "REPORT.md + zip LMS"))
+             ("5", "Đọc số, tự kiểm, nộp", "bảng A · preview · selfcheck", "~30′", GREEN, "repo: bảng A · LMS: zip ảnh"))
     bw, gap, y0 = 280, 28, 92
     for i, (num, title, sub, minutes, color, product) in enumerate(steps):
         x = 40 + i * (bw + gap)

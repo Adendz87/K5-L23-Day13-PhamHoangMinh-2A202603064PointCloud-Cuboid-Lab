@@ -125,7 +125,7 @@ python scripts/lab.py sync
 | `preview` | `work/xem/*.jpg` | Nhìn cuboid của bạn trên 7 ảnh camera và ảnh từ trên xuống |
 | `selfcheck` | `submission/D13-<MÃ SỐ>-tukiem.csv` | Số điểm trong cuboid, khoảng hở với mặt đường, cảnh báo |
 
-Mở ảnh trong `work/xem/` và danh sách cảnh báo ([docs/SELF_CHECK.md](docs/SELF_CHECK.md)). **Sửa ít nhất 2 cuboid** trên CVAT, Save, chạy lại `sync`.
+Mở ảnh trong `work/xem/` và danh sách cảnh báo ([docs/SELF_CHECK.md](docs/SELF_CHECK.md)). **Sửa ít nhất 2 cuboid** trên CVAT, Save, chạy lại `sync`. Trước khi chạy lại, đóng bảng A, phiếu tự kiểm nếu đang mở trong Excel: Excel giữ file thì lệnh không ghi được.
 Cảnh báo là **gợi ý để xem lại**, không phải lỗi chắc chắn và không tính điểm: cuboid đúng vẫn có thể bị cờ, cuboid sai có thể không bị cờ. Đừng chỉnh cho hết cờ mà không nhìn lại point cloud.
 
 Điền `REPORT.md` mục 5 từ bảng A:
@@ -146,7 +146,7 @@ python scripts/lab.py pack
 python scripts/check_submission.py
 ```
 
-`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, `REPORT.md` lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS. Sửa cuboid sau đó thì chạy lại `sync`, `check_submission.py`, commit và push lại; thêm hay đổi ảnh thì chạy lại `pack` và nộp lại file zip.
+`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, `REPORT.md` lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong `REPORT.md` nếu cuboid đã dẫn bị đổi (xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Lỗi hay gặp
 
