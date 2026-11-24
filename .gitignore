@@ -1,0 +1,30 @@
+# Dữ liệu VF chỉ ở trên máy bạn (RULES §2): không bao giờ commit dữ liệu hay ảnh
+data-VF/
+Data-VF/
+sequence_*/
+*.zip
+*.bin
+*.pcd
+*.jpg
+*.jpeg
+*.png
+
+# Kết quả sinh ra khi làm bài; nộp qua LMS, không qua Git
+nop/
+xem/
+K5-L23-DAY13-*/
+*-bangA.csv
+*-tukiem.csv
+*-hoso.md
+
+# Mật khẩu, môi trường
+.env
+.env*
+*.env
+
+# Python, hệ điều hành
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
