@@ -1,5 +1,6 @@
 # Lệnh tắt. Chạy từ thư mục gốc repo. Windows không có make: chạy trực tiếp các lệnh python bên dưới.
-PY ?= $(shell command -v python3 >/dev/null 2>&1 && echo python3 || echo python)
+# Chọn python chạy được thật (trên Windows, `python3` có thể chỉ là lối tắt mở Microsoft Store).
+PY ?= $(shell for p in python3 python; do $$p -c "import sys" >/dev/null 2>&1 && { echo $$p; break; }; done)
 export PYTHONUTF8=1
 
 dry:             ## xem 10 frame của bạn, không nối CVAT (kiểm cài đặt và dữ liệu)
@@ -23,7 +24,7 @@ selfcheck:       ## soát cuboid bằng point cloud -> submission/D13-<MÃ SỐ>
 sync:            ## report + preview + selfcheck (chạy sau mỗi lần Save lớn)
 	$(PY) scripts/lab.py sync
 
-pack:            ## nén ảnh chụp màn hình của báo cáo để nộp LMS -> work/
+pack:            ## nén bảng A, phiếu tự kiểm, ảnh chụp -> work/K5-L23-DAY13-<MÃ SỐ>-nop.zip (nộp LMS)
 	$(PY) scripts/lab.py pack
 
 check:           ## kiểm tra bài nộp: hết LỖI mới nộp

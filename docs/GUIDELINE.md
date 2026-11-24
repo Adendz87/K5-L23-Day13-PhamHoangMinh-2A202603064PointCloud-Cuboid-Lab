@@ -1,6 +1,6 @@
 # Tóm tắt guideline 3D Cuboid
 
-Bản đầy đủ có hình minh họa: [3D_Cuboid_Annotation_Guideline.docx](3D_Cuboid_Annotation_Guideline.docx). File này là bản rút gọn để tra nhanh trong buổi lab.
+Bản đầy đủ có hình minh họa: [3D_Cuboid_Annotation_Guideline.docx](3D_Cuboid_Annotation_Guideline.docx). File này là bản rút gọn để tra nhanh trong buổi lab. Chỗ nào bản đầy đủ khác với buổi lab hôm nay, làm theo mục 5 của file này.
 
 ## 1. Năm class, không thêm, không đổi tên
 
@@ -10,14 +10,14 @@ Bản đầy đủ có hình minh họa: [3D_Cuboid_Annotation_Guideline.docx](3
 | **Truck** | Xe chở hàng hoặc xe chuyên dụng cỡ lớn: **bán tải**, xe tải, xe ben, đầu kéo, van chở hàng, xe công trình. Rơ-moóc cũng là Truck, **vẽ cuboid riêng** tách khỏi đầu kéo | |
 | **Bus** | Xe buýt thường, xe buýt nối toa, xe khách lớn, minibus chở khách | |
 | **Pedestrian** | Người đi bộ ở mọi tư thế; **người dắt xe đạp, xe máy** | Người đang lái hoặc ngồi trên xe hai bánh (→ Cyclist), người trong xe, mannequin, tượng |
-| **Cyclist** | Xe đạp, xe đạp điện, xe máy, xe tay ga, xe ba bánh **có người lái**. Cuboid gồm cả xe và người | |
+| **Cyclist** | Xe đạp, xe đạp điện, xe máy, xe tay ga, xe ba bánh **có người lái**. Cuboid gồm cả xe và người | Xe hai bánh dựng bên đường, không có người (không vẽ) |
 
 ## 2. Quy tắc cuboid
 
-1. **Hình dạng:** mỗi vật một cuboid riêng, bao trọn các điểm LiDAR của vật, gồm phần chìa ra và phần bị che suy luận được. Không bao dư quá mức.
-2. **Hướng:** yaw theo hướng chuyển động, hoặc theo đầu xe nếu đứng yên. **Mũi tên đỏ chỉ đầu xe.**
+1. **Hình dạng:** mỗi vật một cuboid riêng, bao trọn các điểm LiDAR của vật, gồm phần chìa ra (gương, thùng) và phần bị che suy luận được. Không bao dư quá mức. Kiểm đủ 6 mặt hộp sát điểm của vật.
+2. **Hướng:** yaw theo hướng chuyển động, hoặc theo đầu xe nếu đứng yên. **Mũi tên đỏ chỉ đầu xe.** Đầu hay đuôi xe: xem ảnh camera (đèn pha, kính chắn gió, gương; đèn hậu ở đuôi). Người đi bộ: theo hướng đi, đứng yên thì theo hướng mặt.
 3. **Đáy:** chạm mặt đường, không lơ lửng, không chìm.
-4. **Kiểm:** đối chiếu trên Top, Side, Front.
+4. **Kiểm:** đối chiếu trên Top, Side, Front, rồi với ảnh camera.
 5. **Sai số cho phép** trên ba view: Car, Bus, Truck **±5%**; Pedestrian, Cyclist **±10%** so với kích thước đúng.
 6. **Vật thưa điểm:** thấy được khoảng 15–20% thể tích cuboid thì vẽ. Ít hơn thì chỉ vẽ khi có đủ cơ sở suy luận (ảnh camera rõ, hình dạng nhận ra được); không thì bỏ qua và ghi vào báo cáo.
 7. **Occluded:** bật khi vật bị vật khác che một phần. Cuboid vẫn bao trọn phần suy luận được.
@@ -46,7 +46,7 @@ Dùng để kiểm kích thước có hợp lý không, nhất là khi vật th�
 
 ## 4. Khi không chắc
 
-Không đoán cho xong. Ghi lại frame, vị trí đại khái và loại nghi vấn, rồi hỏi coach:
+Không đoán cho xong. Ghi lại frame, vị trí đại khái và loại nghi vấn vào `REPORT.md`, rồi hỏi coach:
 
 | Loại nghi vấn | Ví dụ |
 |---|---|
@@ -62,8 +62,9 @@ Guideline 3D Cuboid viết cho bài gán nhãn chính thức theo track. Hôm na
 | Guideline đầy đủ | Lab Ngày 13 |
 |---|---|
 | Phạm vi ≤ 100 m | ≤ 50 m, ưu tiên ≤ 30 m |
-| Cuboid dạng Track, nội suy, khóa kích thước theo track | Cuboid dạng **Shape** trên từng frame. Frame của bạn không liên tiếp nhau nên không có nội suy |
+| Cuboid dạng Track, nội suy, khóa kích thước theo track; thuộc tính Outside, loại nghi vấn UNCERTAIN_TRACK | Cuboid dạng **Shape** trên từng frame. Frame của bạn không liên tiếp nhau nên không có nội suy, không dùng Outside hay UNCERTAIN_TRACK |
 | Khoảng 60 frame liên tiếp | 10 frame rời, 2 frame mỗi sequence |
 | Tạo issue trên CVAT cho ca không chắc | Ghi frame và mô tả vào báo cáo, hỏi coach |
+| Bật chiếu box 3D lên ảnh camera bằng **biểu tượng màu vàng** | CVAT 2.82/2.83 của lớp **không có** nút này. Ảnh camera dùng để nhận loại vật và đầu, đuôi xe; kích thước đo ở Top, Side, Front; muốn thấy cuboid trên ảnh camera thì chạy `python scripts/lab.py preview` |
 
 Mọi quy tắc còn lại (class, hình dạng cuboid, hướng, đáy, sai số, vật thưa điểm) áp dụng nguyên.

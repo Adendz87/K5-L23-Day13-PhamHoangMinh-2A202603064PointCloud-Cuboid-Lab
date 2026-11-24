@@ -258,11 +258,7 @@ def cmd_check(args) -> int:
 
 
 def main(argv=None) -> int:
-    # Windows: khi output bị chuyển hướng (> file, |), Python dùng cp1252 và vỡ chữ tiếng Việt.
-    for stream in (sys.stdout, sys.stderr):
-        if hasattr(stream, "reconfigure"):
-            stream.reconfigure(encoding="utf-8", errors="replace")
-    parser =argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
 
     day = sub.add_parser("day13", help="tạo task CVAT D13-<ID> với 10 frame của bạn")

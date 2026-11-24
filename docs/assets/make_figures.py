@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import math
 import random
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -128,7 +129,7 @@ def hero():
                                       (-13, 5, 2.0, 0.8, 0, GREEN), (15, 17, 6.5, 2.3, 90, ORANGE),
                                       (-16, -11, 0.9, 0.9, 40, BLUE)):
         box_bev(d, cx - bx * s, cy + by * s, ln * s * 2.3, wd * s * 2.3, az, color)
-    text(d, (px + 18, py + 14), "Top view (hình vẽ minh hoạ)", 16, "#9fc4cc")
+    text(d, (px + 18, py + 14), "Nhìn từ trên xuống (hình vẽ minh hoạ)", 16, "#9fc4cc")
     text(d, (px + pw - 18, py + ph - 30), "mũi tên đỏ = đầu xe", 16, "#ff9aa0", anchor="ra")
     im.save(HERE / "hero.png")
 
@@ -137,7 +138,7 @@ def coordinates():
     w, h = 1400, 760
     im = Image.new("RGB", (w, h), "#f6f8fb")
     d = ImageDraw.Draw(im)
-    text(d, (40, 26), "Hệ tọa độ VF nhìn từ trên xuống (Top view)", 30, NAVY, True)
+    text(d, (40, 26), "Hệ tọa độ VF nhìn từ trên xuống", 30, NAVY, True)
     text(d, (40, 68), "Gốc ở tâm LiDAR trên nóc xe · đơn vị mét · bàn tay phải · z hướng lên, mặt đường z ≈ −1,7 m", 19, GRAY)
     cx, cy, s = 470, 430, 5.6
     for radius, color in ((50, "#c9d6e4"), (30, "#9fb6cc")):
@@ -164,7 +165,7 @@ def coordinates():
         text(d, (cx + side * 10 * s, cy - 13 * s - 44), label, 17, RED, True, anchor="mm")
 
     x0 = 960
-    rrect(d, (x0, 120, w - 40, 700), r=18, fill="white", outline="#d5deec")
+    rrect(d, (x0, 120, w - 40, 732), r=18, fill="white", outline="#d5deec")
     text(d, (x0 + 26, 142), "Đọc nhanh", 24, NAVY, True)
     rows = (("x", "sang TRÁI", RED), ("y", "ra SAU", GREEN), ("z", "LÊN", BLUE))
     for i, (axis, meaning, color) in enumerate(rows):
@@ -174,9 +175,9 @@ def coordinates():
         text(d, (x0 + 86, y + 17), f"dương = {meaning}", 21, NAVY, anchor="lm")
     notes = ("Yaw đo từ +x, ngược chiều kim đồng hồ", "khi nhìn từ trên xuống:",
              "  • xe cùng chiều phía trước: yaw ≈ 270°", "  • xe đi ngược chiều: yaw ≈ 90°", "",
-             "Ví dụ: điểm (+6; −20; −1,7) nằm trên", "mặt đường, 20 m phía trước, 6 m bên trái.", "",
-             "cam01 chỉ thấy phía trước. Vật phía sau", "và hai bên: tìm ở Top view, rồi đối chiếu",
-             "camera nhìn về hướng đó.")
+             "Ví dụ: điểm (−5; +15; −1,7) nằm trên", "mặt đường, 15 m phía sau, 5 m bên phải.", "",
+             "cam01 chỉ thấy phía trước. Vật phía sau", "và hai bên: xoay khung 3D nhìn từ trên",
+             "xuống, rồi đối chiếu camera nhìn về", "hướng đó.")
     for i, line in enumerate(notes):
         text(d, (x0 + 26, 350 + i * 30), line, 19, NAVY if line.startswith("  •") else "#33475b")
     im.save(HERE / "coordinates.png")
@@ -191,7 +192,7 @@ def workflow():
              ("2", "Đọc frame", "5 bước, chưa vẽ", "~25′", PURPLE, "bảng đọc frame"),
              ("3", "Vẽ cuboid", "frame 1 có hướng dẫn, rồi 9 frame", "~90′", RED, "60–70 cuboid"),
              ("4", "Săn hiện tượng", "bóng che · thưa · phản xạ · điểm lạ", "~25′", ORANGE, "4 ảnh + 4 dòng"),
-             ("5", "Đọc số, tự kiểm, nộp", "bảng A · preview · selfcheck", "~30′", GREEN, "REPORT.md"))
+             ("5", "Đọc số, tự kiểm, nộp", "bảng A · preview · selfcheck", "~30′", GREEN, "REPORT.md + zip LMS"))
     bw, gap, y0 = 280, 28, 92
     for i, (num, title, sub, minutes, color, product) in enumerate(steps):
         x = 40 + i * (bw + gap)
@@ -205,11 +206,13 @@ def workflow():
         text(d, (x + bw / 2, y0 + 181), product, 17, NAVY, True, anchor="mm")
         if i < len(steps) - 1:
             arrow(d, (x + bw + 4, y0 + 110), (x + bw + gap - 4, y0 + 110), GRAY, 3, 10)
-    text(d, (40, h - 34), "Lưu ý: Save trong CVAT sau mỗi frame. Sau mỗi lần sửa cuboid: Save → report → selfcheck.", 18, GRAY)
+    text(d, (40, h - 34), "Lưu ý: Save trong CVAT sau mỗi frame. Sau mỗi lần sửa cuboid: Save → python scripts/lab.py sync.", 18, GRAY)
     im.save(HERE / "workflow.png")
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     hero()
     coordinates()
     workflow()

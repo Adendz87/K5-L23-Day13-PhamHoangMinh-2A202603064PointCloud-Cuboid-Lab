@@ -7,10 +7,10 @@ Dữ liệu **không nằm trong repo**. Bạn tải riêng, giải nén vào th
 
 Bạn được cấp dữ liệu vì đã ký cam kết bảo mật. **GV gửi riêng** cho từng người link tải `Data-VF.zip` (khoảng 600 MB) và **mật khẩu giải nén**, qua LMS hoặc email. Link và mật khẩu không ghi trong repo này: không đăng lại, không dán vào nhóm chat hay vào repo của bạn. Tải **trước giờ học**.
 
-Giải nén vào `data/` sao cho có `data/data-VF/sequence_01 … sequence_05`. Lệnh cho Windows và macOS ở [../docs/SETUP.md](../docs/SETUP.md) mục 4.
+Giải nén vào `data/` sao cho có `data/data-VF/sequence_01 … sequence_05`. Lệnh giải nén sẽ hỏi mật khẩu; lệnh cho Windows và macOS ở [../docs/SETUP.md](../docs/SETUP.md) mục 4.
 
-Dùng **bản cập nhật 22/11/2026** (hệ trục x trái, y sau, z lên). Bản cũ vẫn chạy mà không báo lỗi gì, nhưng mọi cuboid sẽ lệch hệ trục; `python scripts/lab.py dry` tự phát hiện và dừng nếu gặp bản cũ.
-Để dữ liệu ở nơi khác (ổ D, USB) cũng được: ghi đường dẫn đầy đủ vào `data` trong [../configs/lab.ini](../configs/lab.ini).
+Dùng **bản cập nhật 22/11/2026** (hệ trục x trái, y sau, z lên). Bản cũ vẫn mở được trên CVAT mà không báo lỗi gì, nhưng mọi cuboid sẽ lệch hệ trục; `python scripts/lab.py dry` tự phát hiện bản cũ, file giải nén hỏng hoặc thiếu file, và dừng hoặc cảnh báo.
+Để dữ liệu ở nơi khác (ổ D, USB) cũng được: ghi đường dẫn đầy đủ vào `data` trong [../configs/lab.ini](../configs/lab.ini). Đừng để dữ liệu trong thư mục tự đồng bộ lên mây (OneDrive, iCloud Drive, Google Drive).
 
 ## Cấu trúc
 
@@ -32,11 +32,11 @@ data/data-VF/
 ## 10 frame của bạn
 
 Lệnh `python scripts/lab.py dry` chọn **10 frame cố định theo mã số**: mỗi sequence 2 frame, cách nhau ít nhất 15 frame (15 giây). Cùng mã số luôn ra cùng frame, trên mọi máy. Tên frame `s02f07` = sequence 02, frame chỉ số 7 (đếm từ 0). Các frame quá thưa vật không bao giờ được chọn.
-Chỉ 10 frame này được đóng gói (khoảng 23 MB) và tải lên task CVAT của bạn. **Nhãn chuẩn không phát cho học viên.**
+Chỉ 10 frame này được đóng gói (khoảng 23 MB) và tải lên task CVAT trên máy bạn. **Nhãn chuẩn không phát cho học viên.**
 
-## Giấy phép và phạm vi dùng
+## Phạm vi dùng
 
-- Dữ liệu **chỉ dùng trong lớp, trên máy của bạn và trong CVAT của lớp**. Không đăng lại, không chia sẻ ra ngoài.
+- Dữ liệu **chỉ dùng trong lớp, trên máy của bạn và trong CVAT trên máy bạn**. Không đăng lại, không chia sẻ ra ngoài.
 - Ảnh camera có người và biển số thật: **không** dán ảnh hay ảnh chụp màn hình lên dịch vụ AI bên ngoài, nhóm chat, mạng xã hội.
-- Repo của bạn là public: không commit bất cứ thứ gì trong `data/data-VF/`, `work/`, `submission/images/`.
-- Hết khóa, xóa `data/data-VF/` trên máy.
+- Repo của bạn là public: không commit bất cứ thứ gì trong `data/data-VF/`, `work/`, `submission/images/`, và cả bảng A, phiếu tự kiểm (nộp qua LMS).
+- Hết khóa, xóa `data/data-VF/` (hoặc thư mục bạn ghi ở dòng `data =` của `configs/lab.ini`), `work/`, và file `Data-VF.zip` đã tải.

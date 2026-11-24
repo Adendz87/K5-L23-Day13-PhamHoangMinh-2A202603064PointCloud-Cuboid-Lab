@@ -1,14 +1,16 @@
 # Báo cáo Day 13 — <Họ và tên>, <MSHV>
 
-> Xoá mọi `TODO(học viên)` và dòng gợi ý. Mỗi con số lấy từ **bảng A** hoặc **phiếu tự kiểm** trong `submission/`, kèm đơn vị (m, °). Ảnh để trong `submission/images/` (nộp LMS, không commit); trong báo cáo chỉ ghi **tên file ảnh**. Cả báo cáo ~2 trang.
+> Xoá mọi dấu TODO và dòng gợi ý (dòng bắt đầu bằng `>`). Mỗi con số lấy từ **bảng A** hoặc **phiếu tự kiểm** trong `submission/`, kèm đơn vị (m, °). Ảnh để trong `submission/images/` (nộp LMS trong file zip, không commit); trong báo cáo chỉ ghi **tên file ảnh**. Báo cáo này nằm trên repo public: không chép biển số, chữ trên biển hiệu hay biển chỉ đường, tên đường, địa danh; nhắc tới bạn khác thì ghi MSHV, không ghi họ tên. Cả báo cáo ~2 trang.
 
 ## 1. Kết luận trước
-TODO(học viên): mã số, task `D13-…`, 10 frame của bạn; hệ điều hành, trình duyệt, CVAT (local hay máy chủ lớp, phiên bản); bạn ngồi cạnh. Rồi 2–3 câu: tổng bao nhiêu cuboid, frame nào ít nhất và vì sao; `selfcheck` cờ bao nhiêu cuboid trên tổng số; bạn tin phần nào nhất và phần nào còn yếu nhất (hướng, đáy, kích thước, class, vật xa).
+TODO(học viên): mã số, task `D13-…`, 10 frame của bạn; hệ điều hành, trình duyệt, phiên bản CVAT (tên tài khoản → About); MSHV bạn ngồi cạnh. Rồi 2–3 câu: tổng bao nhiêu cuboid, frame nào ít nhất và vì sao; `selfcheck` cờ bao nhiêu cuboid trên tổng số; bạn tin phần nào nhất và phần nào còn yếu nhất (hướng, đáy, kích thước, class, vật xa).
+
+TODO(học viên): cách dùng CVAT, 3 dòng: đổi góc nhìn (nhìn từ trên xuống, xoay, dời); vẽ và chỉnh một cuboid (Shape, nháy đúp, Top/Side/Front); bật mũi tên hướng (Cuboid orientation) và xem cuboid trên ảnh camera (`preview`).
 
 ## 2. Đọc frame (Bước 2)
-Hai frame đọc kỹ. Ảnh: `t1-<frame>-3d`, `t1-<frame>-top` (trên ảnh Top có đánh dấu phía trước, +x, +y).
+Hai frame đọc kỹ. Ảnh: `t1-<frame>-3d`, `t1-<frame>-top` (ảnh nhìn từ trên xuống, có đánh dấu phía trước, +x, +y).
 
-| Frame | Phía trước xe ở cạnh nào của Top; +x, +y chỉ về đâu | Mặt đường (phẳng/dốc; thấp hơn LiDAR ~ m) | Vật xa nhất đọc được (~ m) | Loại vật thấy | Vật phía sau / hai bên | Cụm chưa đọc được |
+| Frame | Phía trước xe ở cạnh nào của ảnh nhìn từ trên xuống; +x, +y chỉ về đâu | Mặt đường (phẳng/dốc; thấp hơn LiDAR ~ m) | Vật xa nhất đọc được (~ m) | Loại vật thấy | Vật phía sau / hai bên | Cụm chưa đọc được |
 |---|---|---|---|---|---|---|
 | TODO(học viên) | | | | | | |
 | TODO(học viên) | | | | | | |
@@ -17,7 +19,7 @@ TODO(học viên): 3 điều **chỉ camera** cho biết và 3 điều **chỉ L
 
 Tám frame lướt:
 
-| Frame | Phía trước ở cạnh nào của Top | Điều lạ (nếu có) |
+| Frame | Phía trước ở cạnh nào của ảnh nhìn từ trên xuống | Điều lạ (nếu có) |
 |---|---|---|
 | TODO(học viên) | | |
 
@@ -33,9 +35,9 @@ Tám frame lướt:
 TODO(học viên): vòng hiệu chuẩn: cuboid của bạn lệch so với các bạn ở điểm nào, cả lớp chốt cách hiểu guideline nào? Và các vật bạn **bỏ qua vì không đủ cơ sở** (frame, vị trí, mô tả, loại nghi vấn như UNCERTAIN_CLASS / LOW_VISIBILITY), hoặc ghi "không có".
 
 ## 4. Bốn hiện tượng chất lượng (Bước 4)
-Nguyên nhân ghi là **giả thuyết**. Frame mượn của bạn khác thì ghi rõ mượn của ai.
+Nguyên nhân ghi là **giả thuyết**. Frame mượn thì ghi rõ nguồn: task chung, hoặc MSHV của bạn cho mượn.
 
-| Hiện tượng | Frame / tên ảnh | Nguyên nhân (giả thuyết) | Thấy gì trên point cloud | Hệ quả khi gán (theo guideline) |
+| Hiện tượng | Frame / tên ảnh / nguồn | Nguyên nhân (giả thuyết) | Thấy gì trên point cloud | Hệ quả khi gán (theo guideline) |
 |---|---|---|---|---|
 | 1. Bóng che | TODO(học viên) | | | |
 | 2. Thưa ở xa | TODO(học viên) | | | |
@@ -43,7 +45,7 @@ Nguyên nhân ghi là **giả thuyết**. Frame mượn của bạn khác thì g
 | 4. Điểm lạ | TODO(học viên) | | | |
 
 ## 5. Số từ cuboid của tôi (Bước 5)
-Lấy từ `submission/D13-<MÃ SỐ>-bangA.csv`; số điểm lấy từ cột `points_in` của `-tukiem.csv`.
+Lấy từ `submission/D13-<MÃ SỐ>-bangA.csv`; số điểm lấy từ cột `points_in` của `-tukiem.csv`. Mặt đường khoảng −1,7 m: z đáy lệch hơn 0,3 m là lơ lửng hoặc chìm.
 
 | Cuboid (frame, idx, class) | z | h | z đáy = z − h/2 | dist_m | r = √(x²+y²+z²) | yaw_deg | Nhận xét (lơ lửng / chìm / chạm đường) |
 |---|---|---|---|---|---|---|---|
@@ -59,7 +61,9 @@ Mật độ theo khoảng cách (4 cuboid ở các `dist_m` khác nhau):
 |---|---|---|
 | TODO(học viên) | | |
 
-TODO(học viên): một câu quy luật ("xa gấp … lần thì số điểm còn khoảng …") và so với số của bài giảng. Rồi phần tự kiểm: hai cuboid bạn **đã sửa** sau `preview` / `selfcheck` (frame, idx, sửa gì), và những cảnh báo bạn **giữ nguyên** kèm lý do.
+TODO(học viên): một câu quy luật ("xa gấp … lần thì số điểm còn khoảng …") và so với đường cong ở slide bài giảng (xe con: khoảng 1968 điểm ở 0–10 m, 718 ở 10–20 m, 214 ở 20–30 m, 72 ở 30–40 m, 19 ở 60–80 m). Rồi phần tự kiểm: hai cuboid bạn **đã sửa** sau `preview` / `selfcheck` (frame, idx, sửa gì), và những cảnh báo bạn **giữ nguyên** kèm lý do.
+
+TODO(học viên): đổi kiểm: MSHV người đã kiểm chéo với bạn, hai con số nào được đối chiếu với bảng A, khớp hay lệch (lệch thì đã sửa gì).
 
 ## 6. "… để làm gì?", ghi chú AI, điều còn chưa chắc
 TODO(học viên): (a) hai câu, nói từ phía model sẽ học trên nhãn này: vì sao nhãn 3D đo bằng mét chứ không phải pixel; vì sao vật thưa điểm cần quy tắc riêng. (b) Dùng AI? Ghi 3 dòng: công cụ, câu hỏi chính, bạn dùng kết quả thế nào. Không dùng: ghi "không dùng". (c) Điều còn chưa chắc, lỗi phát hiện sau hạn (không chấm).

@@ -1,6 +1,6 @@
 # Cài đặt môi trường (làm trước buổi học)
 
-Mục tiêu: trước 16:00 Ngày 13, máy bạn chạy được lệnh `--dry-run` ở mục 5 và mở được CVAT. Tổng thời gian khoảng 30–60 phút, phần lớn là chờ tải. Nếu kẹt, báo coach **trước buổi học**.
+Mục tiêu: trước 16:00 Ngày 13, máy bạn chạy được `python scripts/lab.py dry` ở mục 5 và mở được CVAT. Tổng thời gian khoảng 30–60 phút, phần lớn là chờ tải. Nếu kẹt, báo coach **trước buổi học**.
 
 Mỗi bước có hai khối lệnh. Chọn đúng khối của máy bạn:
 
@@ -27,7 +27,7 @@ python3 --version
 docker --version
 ```
 
-Cần `git` bất kỳ bản nào và Python **3.11 trở lên** (khuyên dùng 3.12). `cvat-sdk` từ bản 2.80 (bản mới nhất là 2.83) và Pillow 13 không còn hỗ trợ Python 3.10, nên với Python cũ hơn 3.11, bước cài thư viện ở mục 3 sẽ báo lỗi. `docker` chỉ cần nếu bạn cài CVAT trên máy ([CVAT_SETUP.md](CVAT_SETUP.md)). Thiếu cái nào thì cài ở mục 2; đủ rồi thì sang mục 3.
+Cần `git` bất kỳ bản nào và Python **3.11 trở lên** (khuyên dùng 3.12). `cvat-sdk` từ bản 2.80 và Pillow 13 không còn hỗ trợ Python 3.10, nên với Python cũ hơn 3.11, bước cài thư viện ở mục 3 sẽ báo lỗi. `docker` cần để cài CVAT trên máy ([CVAT_SETUP.md](CVAT_SETUP.md)). Thiếu cái nào thì cài ở mục 2; đủ rồi thì sang mục 3.
 
 Trên Windows, nếu `python --version` mở Microsoft Store hoặc không in gì, coi như chưa có Python. Trên macOS, `python3` có sẵn của Apple là bản 3.9: không dùng được, cài bản mới ở mục 2.
 
@@ -68,10 +68,13 @@ Homebrew cài Python 3.12 dưới tên lệnh `python3.12`; lệnh `python3` có
 
 Trên GitHub, mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab, bấm **Use this template → Create a new repository**, chọn **Public**, đặt tên `K5-L23-DAY13-<MSHV>-PointCloudCuboid` (xem [../SUBMISSION.md](../SUBMISSION.md)). Trong các lệnh dưới, thay `<tài-khoản>` bằng tên tài khoản GitHub và `<MSHV>` bằng mã số của bạn.
 
+Repo và dữ liệu đặt trong thư mục `lab` ở thư mục người dùng, **không** đặt trong Documents, Desktop hay thư mục OneDrive, iCloud Drive, Google Drive: các thư mục đó thường tự đồng bộ lên mây, kéo theo dữ liệu VF được cấp theo cam kết bảo mật. CVAT ([CVAT_SETUP.md](CVAT_SETUP.md)) cũng đặt trong `lab`, cạnh repo.
+
 **Windows (PowerShell)**
 
 ```powershell
-cd $HOME\Documents
+New-Item -ItemType Directory -Force $HOME\lab
+cd $HOME\lab
 git clone https://github.com/<tài-khoản>/K5-L23-DAY13-<MSHV>-PointCloudCuboid.git
 cd K5-L23-DAY13-<MSHV>-PointCloudCuboid
 python -m venv .venv
@@ -95,7 +98,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 **macOS (Terminal)**
 
 ```bash
-cd ~/Documents
+mkdir -p ~/lab && cd ~/lab
 git clone https://github.com/<tài-khoản>/K5-L23-DAY13-<MSHV>-PointCloudCuboid.git
 cd K5-L23-DAY13-<MSHV>-PointCloudCuboid
 python3 -m venv .venv
@@ -116,36 +119,52 @@ Kích hoạt thành công thì đầu dòng lệnh có chữ `(.venv)`. Từ đ�
 
 ## 4. Tải và giải nén dữ liệu VF
 
-Tải `Data-VF.zip` (khoảng 600 MB) bằng trình duyệt từ link GV gửi riêng cho bạn (xem [../data/README.md](../data/README.md)). Tải **trước giờ học**. Các lệnh dưới giả định file nằm trong thư mục Downloads và bạn đang đứng trong thư mục repo.
+GV gửi riêng cho bạn link tải `Data-VF.zip` (khoảng 600 MB) và **mật khẩu giải nén** (xem [../data/README.md](../data/README.md)). Tải bằng trình duyệt **trước giờ học**. Các lệnh dưới giả định file nằm trong thư mục Downloads và bạn đang đứng trong thư mục repo.
+
+Lệnh giải nén sẽ hỏi mật khẩu (`Enter passphrase:`). Gõ mật khẩu rồi Enter; màn hình không hiện ký tự nào, đó là bình thường. Đừng gõ mật khẩu thẳng vào dòng lệnh: nó sẽ nằm lại trong lịch sử lệnh.
 
 **Windows (PowerShell)**
 
 ```powershell
 tar -xf "$HOME\Downloads\Data-VF.zip" -C data
+```
+
+```powershell
 Get-ChildItem data\data-VF
 ```
 
 **macOS (Terminal)**
 
 ```bash
-unzip -q ~/Downloads/Data-VF.zip -d data
+tar -xf ~/Downloads/Data-VF.zip -C data
+```
+
+```bash
 ls data/data-VF
 ```
 
 Lệnh thứ hai phải liệt kê `sequence_01` đến `sequence_05`. Thư mục có thể mang tên `Data-VF` hoặc `data-VF`; Windows và macOS không phân biệt hoa thường nên lệnh vẫn chạy.
 
+- Báo `Incorrect passphrase` hoặc `Couldn't read passphrase`: xoá phần đã giải nén (`data/data-VF`), chạy lại lệnh `tar` trong cửa sổ PowerShell/Terminal bình thường và gõ lại mật khẩu.
+- `tar` vẫn không giải được: dùng 7-Zip (Windows) hoặc Keka (macOS), giải nén vào thư mục `data` của repo. Không dùng `Expand-Archive` của PowerShell và lệnh `unzip` của macOS: chúng không đọc được zip mã hoá kiểu AES.
+- Kiểm đủ dữ liệu: mỗi `sequence_XX/lidar` có 60 file `.bin`. Lệnh `python scripts/lab.py dry` ở mục 5 cũng tự kiểm và báo nếu thiếu file hoặc file hỏng.
+
 Nếu giải nén ra thẳng các thư mục `sequence_XX` trong `data/` (không có thư mục bọc ngoài), tạo `data/data-VF` rồi chuyển chúng vào:
+
+**Windows (PowerShell)**
 
 ```powershell
 New-Item -ItemType Directory -Force data\data-VF
 Move-Item data\sequence_* data\data-VF
 ```
 
+**macOS (Terminal)**
+
 ```bash
 mkdir -p data/data-VF && mv data/sequence_* data/data-VF/
 ```
 
-Nếu bạn để dữ liệu ở nơi khác (ổ D, USB), không cần chép lại: ghi đường dẫn đầy đủ vào dòng `data =` trong `configs/lab.ini`, ví dụ `data = D:\lab\Data-VF` hoặc `data = /Volumes/USB/Data-VF`.
+Nếu bạn để dữ liệu ở nơi khác (ổ D, USB), không cần chép lại: ghi đường dẫn đầy đủ vào dòng `data =` trong `configs/lab.ini`, ví dụ `data = D:\lab\Data-VF` hoặc `data = /Volumes/USB/Data-VF` (không cần ngoặc kép). File `lab.ini` nằm trên repo public, nên tránh đường dẫn có tên tài khoản máy nếu được.
 
 ## 5. Điền cấu hình và chạy thử (không cần CVAT)
 
@@ -169,26 +188,27 @@ Lưu file, rồi chạy (giống nhau trên hai hệ điều hành):
 python scripts/lab.py dry
 ```
 
-Kết quả đúng có dạng:
+Kết quả đúng có dạng (frame của bạn khác ví dụ này):
 
 ```
-Task: D13-2A202600123
+Task: D13-<MÃ SỐ>
 10 frame của bạn (chỉ số đếm từ 0):
-  s01f07  sequence_01  ts=...  camera=7
+  s01f21  sequence_01  ts=...  camera=7
   ...
 Đã đóng gói 23.1 MB trong 2.4 s.
 --dry-run: không kết nối CVAT.
 ```
 
-Kiểm ba điều: có đủ 10 dòng frame, mỗi dòng `camera=7`, và dòng cuối báo `--dry-run`. Chạy lại cùng mã số luôn ra cùng 10 frame.
+Kiểm ba điều: có đủ 10 dòng frame, mỗi dòng `camera=7`, và dòng cuối báo `--dry-run`. Không có dòng `CẢNH BÁO: data-VF thiếu file`. Chạy lại cùng mã số luôn ra cùng 10 frame.
 
 ## 6. Cài CVAT
 
-Làm theo [CVAT_SETUP.md](CVAT_SETUP.md), rồi điền `cvat_user` trong `configs/lab.ini`. Nếu coach thông báo lớp dùng máy chủ CVAT chung, bạn bỏ qua bước cài: đổi `cvat_host` thành địa chỉ coach phát và mở thử địa chỉ đó bằng Chrome hoặc Edge.
+Làm theo [CVAT_SETUP.md](CVAT_SETUP.md), rồi điền `cvat_user` trong `configs/lab.ini`. Lớp không có máy chủ CVAT chung: mỗi người chạy CVAT trên máy mình.
 
 ## Bảng kiểm trước buổi học
 
 - [ ] `python --version` (đã kích hoạt `.venv`) in 3.11 trở lên.
-- [ ] `python scripts/lab.py dry` in đủ 10 frame, mỗi frame 7 camera.
+- [ ] Repo và dữ liệu nằm trong `lab`, không nằm trong thư mục tự đồng bộ lên mây.
+- [ ] `python scripts/lab.py dry` in đủ 10 frame, mỗi frame 7 camera, không có cảnh báo thiếu file.
 - [ ] Mở được CVAT và đăng nhập được.
 - [ ] Đã đọc [COORDINATES.md](COORDINATES.md), [GUIDELINE.md](GUIDELINE.md) và [../RULES.md](../RULES.md).

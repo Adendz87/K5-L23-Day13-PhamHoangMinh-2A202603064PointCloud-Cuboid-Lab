@@ -8,23 +8,44 @@ from __future__ import annotations
 import configparser
 import csv
 import hashlib
+import io
 import json
+import math
 import re
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "cvat_lab"))
+sys.path.insert(0, str(ROOT / "scripts"))
 for _stream in (sys.stdout, sys.stderr):
     if hasattr(_stream, "reconfigure"):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 import vf_common as vf  # noqa: E402
+from lab import IMAGE_SUFFIXES, N_IMAGES, data_dir, load_config  # noqa: E402
 from vf_cvat import TABLE_A_FIELDS  # noqa: E402
+from vf_qa import CHECK_FIELDS  # noqa: E402
 
 MIN_TOTAL, MIN_FIRST, MIN_OTHER = 50, 8, 5
-N_IMAGES = 11
+BOM = b"\xef\xbb\xbf"
+INI_KEYS = {"student", "cvat_host", "cvat_user", "cvat_org", "data"}
+SECRET_KEY = re.compile(r"pass|pwd|mat_?khau|mật|token|secret", re.IGNORECASE)
+# File không bao giờ được vào repo public: dữ liệu VF, ảnh, file nén, video, tài liệu xuất, bảng A, phiếu tự kiểm.
+LEAK_SUFFIXES = {".bin", ".pcd", ".ply", ".zip", ".7z", ".rar", ".tar", ".gz", ".tgz", ".jpg", ".jpeg", ".png",
+                 ".webp", ".heic", ".gif", ".bmp", ".tif", ".tiff", ".mp4", ".mov", ".pdf", ".docx", ".pptx", ".csv"}
+LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|hoso|.*-hoso\.md", re.IGNORECASE)
+ALLOWED = {"docs/assets/hero.png", "docs/assets/coordinates.png", "docs/assets/workflow.png",
+           "docs/3D_Cuboid_Annotation_Guideline.docx"}
+# Định dạng đúng như `report` ghi ra (cvat_lab/vf_cvat.py, table_a_row). Excel lưu lại sẽ làm sai định dạng.
+FORMATS = {key: re.compile(pattern) for key, pattern in {
+    "frame": r"s\d{2}f\d{2}", "idx": r"[1-9]\d*", "occluded": r"[01]",
+    **{k: r"-?\d+\.\d{3}" for k in ("x", "y", "z", "length", "width", "height", "z_bottom")},
+    "yaw_rad": r"-?\d+\.\d{4}", "yaw_deg": r"-?\d+\.\d", "az_deg": r"-?\d+\.\d", "dist_m": r"\d+\.\d{2}",
+    "dist_bin": r"0-10|10-20|20-30|30-50|>=50",
+}.items()}
 errs, warns = [], []
 
 
@@ -32,26 +53,88 @@ def sha1(path: Path) -> str:
     return hashlib.sha1(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()  # chuẩn hoá CRLF (Windows) -> LF
 
 
-# 1. README
-first = next((l for l in (ROOT / "README.md").read_text(encoding="utf-8").splitlines() if l.startswith("# ")), "")
-if not re.match(r"# Day 13 Lab — .+: \S+ - .+", first):
-    errs.append("dòng tiêu đề (dòng `# ...` đầu tiên) của README.md phải là: "
-                "'# Day 13 Lab — <Họ và tên>: <MSHV> - <Họ và tên>' (xem SUBMISSION.md)")
-
-# 2. mã số
-student = ""
-ini = configparser.ConfigParser()
-ini.read(ROOT / "configs/lab.ini", encoding="utf-8-sig")  # Notepad/PowerShell có thể lưu kèm BOM
-raw_student = ini.get("lab", "student", fallback="").strip()
-if not raw_student:
-    errs.append("configs/lab.ini chưa có `student` (mã số học viên)")
-else:
+def git(*args: str) -> str | None:
+    """Chạy git, trả về stdout (UTF-8), hoặc None nếu không có git / không phải git repo."""
     try:
-        student = vf.normalize_student(raw_student)
+        result = subprocess.run(["git", "-c", "core.quotepath=off", *args], cwd=ROOT, capture_output=True)
+    except OSError:
+        return None
+    return result.stdout.decode("utf-8", errors="replace") if result.returncode == 0 else None
+
+
+def leaks(paths) -> list[str]:
+    found = []
+    for path in paths:
+        low = path.lower()
+        parts = low.split("/")
+        if path in ALLOWED or low in ("data/readme.md",):
+            continue
+        if (Path(low).suffix in LEAK_SUFFIXES or parts[0] in {"data", "work", "nop", "xem"}
+                or any(LEAK_PART.fullmatch(part) for part in parts)):
+            found.append(path)
+    return found
+
+
+def row_problem(row: dict, student: str) -> str | None:
+    """Lý do một dòng bảng A không giống bản `report` sinh ra, hoặc None."""
+    if row.get("student") != student:
+        return f"student = {row.get('student')!r}"
+    if row.get("label") not in vf.CLASS_IDS:
+        return f"class {row.get('label')!r} ngoài 5 class"
+    for key, pattern in FORMATS.items():
+        if not pattern.fullmatch(row.get(key) or ""):
+            return f"{key} = {row.get(key)!r} sai định dạng"
+    x, y, z, height, yaw_rad, yaw_deg, z_bottom, dist, az = (float(row[k]) for k in (
+        "x", "y", "z", "height", "yaw_rad", "yaw_deg", "z_bottom", "dist_m", "az_deg"))
+    if abs(z_bottom - (z - height / 2)) > 0.002:
+        return "z_bottom khác z − height/2"
+    if abs(dist - math.hypot(x, y)) > 0.006:
+        return "dist_m khác √(x² + y²)"
+    if abs(yaw_deg - math.degrees(yaw_rad)) > 0.06:
+        return "yaw_deg khác yaw_rad"
+    expected = vf.azimuth_deg({"x": x, "y": y})
+    if abs((az - expected + 180) % 360 - 180) > 0.051 + math.degrees(0.0008 / max(dist, 1e-3)):
+        return "az_deg khác góc của tâm"
+    if row["dist_bin"] not in {vf.dist_bin(dist - 0.005), vf.dist_bin(dist + 0.005)}:
+        return "dist_bin khác dist_m"
+    return None
+
+
+# 1. cấu hình
+cfg, student = {}, ""
+try:
+    cfg = load_config(require_student=False)
+except SystemExit as exc:
+    errs.append(f"configs/lab.ini: {exc}")
+if cfg and not cfg.get("student"):
+    errs.append("configs/lab.ini chưa có `student` (mã số học viên)")
+elif cfg:
+    try:
+        student = vf.normalize_student(cfg["student"])
     except SystemExit as exc:
         errs.append(f"configs/lab.ini: {exc}")
-if ini.has_option("lab", "password") or ini.has_option("lab", "cvat_password"):
-    errs.append("configs/lab.ini có mục mật khẩu: xoá ngay và đổi mật khẩu CVAT (RULES.md)")
+ini = configparser.ConfigParser(interpolation=None, inline_comment_prefixes=("#", ";"), strict=False)
+try:
+    ini.read(ROOT / "configs/lab.ini", encoding="utf-8-sig")
+except (configparser.Error, UnicodeDecodeError):
+    pass  # đã báo ở trên
+for section in ini.sections():
+    for key, value in ini[section].items():
+        if SECRET_KEY.search(key) and value.strip():
+            errs.append(f"configs/lab.ini có khoá `{key}` giống mật khẩu: xoá ngay, đổi mật khẩu CVAT (RULES.md)")
+        elif section == "lab" and key not in INI_KEYS:
+            warns.append(f"configs/lab.ini có khoá lạ `{key}` (chỉ cần {', '.join(sorted(INI_KEYS))})")
+    if section != "lab":
+        warns.append(f"configs/lab.ini có mục lạ [{section}]")
+
+# 2. README
+first = next((l for l in (ROOT / "README.md").read_text(encoding="utf-8").splitlines() if l.startswith("# ")), "")
+title = re.match(r"# Day 13 Lab\s*[—–-]\s*(.+?):\s*(\S+)\s+-\s+(.+)$", first)
+if not title or "<" in first or ">" in first:
+    errs.append("dòng tiêu đề (dòng `# ...` đầu tiên) của README.md phải là: "
+                "'# Day 13 Lab — <Họ và tên>: <MSHV> - <Họ và tên>', thay cả dấu < > (xem SUBMISSION.md)")
+elif student and title.group(2).strip().upper() != student:
+    errs.append(f"README.md: MSHV ở dòng tiêu đề ({title.group(2)}) khác `student` trong configs/lab.ini ({student})")
 
 # 3. file đã viết sẵn không được đổi
 pin = ROOT / "scripts/_protected.json"
@@ -63,11 +146,11 @@ else:
     warns.append("thiếu scripts/_protected.json: không kiểm được file đã viết sẵn")
 
 # 4. bảng A
-rows, assigned = [], []
+rows, assigned, header = [], [], []
+table = check = None
 if student:
     task = vf.task_name(student)
-    data = Path(ini.get("lab", "data", fallback="data/data-VF").strip() or "data/data-VF").expanduser()
-    data = data if data.is_absolute() else ROOT / data
+    data = data_dir(cfg)
     try:
         counts = {seq: len(stamps) for seq, stamps in vf.list_sequences(data).items()}
     except SystemExit:
@@ -78,21 +161,35 @@ if student:
 
     table = ROOT / "submission" / f"{task}-bangA.csv"
     if not table.exists():
-        errs.append(f"thiếu submission/{table.name} (chạy `python scripts/lab.py report`)")
+        errs.append(f"thiếu submission/{table.name}: bấm Save trong CVAT rồi chạy `python scripts/lab.py sync`")
     else:
-        with table.open(encoding="utf-8-sig", newline="") as handle:
-            reader = csv.DictReader(handle)
+        raw = table.read_bytes()
+        try:
+            text = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            text = None
+        if raw.startswith(BOM) or text is None:
+            errs.append(f"{table.name} đã bị lưu lại bằng bảng tính (BOM/bảng mã khác): công cụ chấm không đọc được. "
+                        "Chạy lại `python scripts/lab.py sync`")
+        else:
+            reader = csv.DictReader(io.StringIO(text, newline=""))
             header = reader.fieldnames or []
             rows = list(reader)
-        if header != TABLE_A_FIELDS:
-            errs.append(f"{table.name}: cột khác bản do `report` sinh ra (bảng A bị sửa tay hoặc lưu lại từ Excel?)")
-            rows = []
+            if header != TABLE_A_FIELDS:
+                errs.append(f"{table.name}: cột khác bản do `report` sinh ra (sửa tay hoặc lưu lại từ Excel?). "
+                            "Chạy lại `python scripts/lab.py sync`")
+                rows = []
+            elif not rows:
+                errs.append(f"{table.name} trống: bấm Save trong CVAT (vẽ bằng Shape, không phải Track) rồi chạy lại "
+                            "`python scripts/lab.py sync`")
     if rows:
-        if {r["student"] for r in rows} != {student}:
-            errs.append(f"{table.name}: cột student không phải {student} (bảng A của người khác?)")
-        bad_label = sorted({r["label"] for r in rows} - set(vf.CLASS_IDS))
-        if bad_label:
-            errs.append(f"{table.name}: class ngoài 5 class của guideline: {bad_label}")
+        problems = [f"dòng {n}: {why}" for n, row in enumerate(rows, start=2) if (why := row_problem(row, student))]
+        keys = [(r["frame"], r["idx"]) for r in rows]
+        if len(set(keys)) != len(keys):
+            problems.append("có cặp (frame, idx) lặp lại")
+        if problems:
+            errs.append(f"{table.name} không giống bản do `report` sinh ra ({len(problems)} chỗ, ví dụ "
+                        f"{'; '.join(problems[:3])}): đừng sửa tay hay lưu lại từ Excel. Chạy lại `python scripts/lab.py sync`")
         stray = sorted({r["frame"] for r in rows} - set(assigned))
         if stray:
             errs.append(f"{table.name}: có frame không thuộc 10 frame của mã số {student}: {stray}")
@@ -104,22 +201,32 @@ if student:
             need = MIN_FIRST if index == 0 else MIN_OTHER
             if count < need:
                 warns.append(f"frame {name}: {count} cuboid < {need}")
-        swapped = [f"{r['frame']}#{r['idx']}" for r in rows
-                   if r["label"] != "Pedestrian" and float(r["length"]) < float(r["width"])]
-        if swapped:
-            warns.append(f"{len(swapped)} cuboid có length < width (mũi tên yaw nằm ngang thân xe?): {', '.join(swapped[:8])}")
-    elif table.exists() and header == TABLE_A_FIELDS:
-        errs.append(f"{table.name} trống: bấm Save trong CVAT rồi chạy lại `python scripts/lab.py report`")
+        if not problems:
+            swapped = [f"{r['frame']}#{r['idx']}" for r in rows
+                       if r["label"] != "Pedestrian" and float(r["length"]) < float(r["width"])]
+            if swapped:
+                warns.append(f"{len(swapped)} cuboid có length < width (mũi tên yaw nằm ngang thân xe?): "
+                             f"{', '.join(swapped[:8])}")
 
-    # 5. phiếu tự kiểm phải khớp bảng A
+    # 5. phiếu tự kiểm phải khớp bảng A hiện tại
     check = ROOT / "submission" / f"{task}-tukiem.csv"
     if not check.exists():
-        errs.append(f"thiếu submission/{check.name} (chạy `python scripts/lab.py selfcheck`)")
+        errs.append(f"thiếu submission/{check.name} (chạy `python scripts/lab.py selfcheck` hoặc `sync`)")
     elif rows:
-        with check.open(encoding="utf-8-sig", newline="") as handle:
-            checked = list(csv.DictReader(handle))
-        if {(r["frame"], r["idx"]) for r in checked} != {(r["frame"], r["idx"]) for r in rows}:
-            errs.append(f"{check.name} không khớp bảng A hiện tại: chạy lại `python scripts/lab.py selfcheck` sau `report`")
+        stale = True
+        try:
+            with check.open(encoding="utf-8", newline="") as handle:
+                reader = csv.DictReader(handle)
+                checked = list(reader)
+            if reader.fieldnames == CHECK_FIELDS:
+                mine = {(r["frame"], r["idx"]): (r["label"], math.hypot(float(r["x"]), float(r["y"]))) for r in rows}
+                theirs = {(r["frame"], r["idx"]): (r["label"], float(r["dist_m"])) for r in checked}
+                stale = mine.keys() != theirs.keys() or any(
+                    theirs[k][0] != mine[k][0] or abs(theirs[k][1] - mine[k][1]) > 0.06 for k in mine)
+        except (UnicodeDecodeError, ValueError, KeyError, csv.Error):
+            stale = True
+        if stale:
+            errs.append(f"{check.name} không khớp bảng A hiện tại (cũ hơn, hoặc bị sửa): chạy lại `python scripts/lab.py sync`")
         else:
             flagged = sum(bool(r.get("flags")) for r in checked)
             print(f"tự kiểm: {flagged}/{len(checked)} cuboid còn cảnh báo (cảnh báo không tính điểm)")
@@ -130,30 +237,61 @@ if not report.exists():
     errs.append("thiếu submission/REPORT.md")
 else:
     text = report.read_text(encoding="utf-8")
-    if "TODO(học viên)" in text:
-        errs.append(f"submission/REPORT.md còn {text.count('TODO(học viên)')} dấu TODO(học viên) chưa điền")
+    todo = sum(line.count("TODO(học viên)") for line in text.splitlines() if not line.lstrip().startswith(">"))
+    if todo:
+        errs.append(f"submission/REPORT.md còn {todo} dấu TODO(học viên) chưa điền")
+    if "<Họ và tên>" in text or "<MSHV>" in text:
+        errs.append("submission/REPORT.md: dòng đầu còn <Họ và tên> hoặc <MSHV>")
     if student and student not in text.upper():
         errs.append(f"submission/REPORT.md không nhắc tới mã số {student}")
     missing = [name for name in assigned[:2] if name not in text]
     if assigned and missing:
         warns.append(f"REPORT.md mục 2 chưa nhắc tới hai frame đọc kỹ đầu tiên: {missing}")
 
-# 7. ảnh chụp: nằm trên máy, nộp qua LMS, không vào git
-images = [p for p in (ROOT / "submission/images").glob("*") if p.suffix.lower() in {".png", ".jpg", ".jpeg"}]
+# 7. ảnh chụp và file zip nộp LMS (không vào git)
+images = [p for p in (ROOT / "submission/images").glob("*") if p.suffix.lower() in IMAGE_SUFFIXES]
 if len(images) < N_IMAGES:
-    warns.append(f"submission/images có {len(images)}/{N_IMAGES} ảnh chụp (T1: 4, T2: 3, T4: 4); ảnh nộp qua LMS bằng `python scripts/lab.py pack`")
+    warns.append(f"submission/images có {len(images)}/{N_IMAGES} ảnh chụp (Bước 2: 4, Bước 3: 3, Bước 4: 4)")
+if student:
+    bundle = ROOT / "work" / f"K5-L23-DAY13-{student}-nop.zip"
+    if not bundle.exists():
+        errs.append(f"chưa có work/{bundle.name} (file nộp LMS): chạy `python scripts/lab.py pack`")
+    else:
+        try:
+            with zipfile.ZipFile(bundle) as archive:
+                names = set(archive.namelist())
+                old = [p.name for p in (table, check)
+                       if p is not None and p.exists() and (p.name not in names or archive.read(p.name) != p.read_bytes())]
+                zipped = sum(1 for n in names if n.startswith("images/") and not n.endswith("/"))
+        except zipfile.BadZipFile:
+            old, zipped = ["(file zip hỏng)"], len(images)
+        if old:
+            errs.append(f"work/{bundle.name} chứa bản cũ hoặc thiếu {', '.join(old)}: chạy lại `python scripts/lab.py pack`")
+        elif zipped != len(images):
+            warns.append(f"work/{bundle.name} có {zipped} ảnh, submission/images có {len(images)}: chạy lại `python scripts/lab.py pack`")
 
-# 8. không commit dữ liệu
-try:
-    tracked = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, encoding="utf-8").stdout.splitlines()
-except OSError:
-    tracked = []
-    warns.append("không chạy được git: không kiểm được file đã commit")
-leaked = [f for f in tracked
-          if (Path(f).suffix.lower() in {".bin", ".pcd", ".zip", ".jpg", ".jpeg", ".png"} and not f.startswith("docs/assets/"))
-          or f.startswith(("data/data-VF/", "work/"))]
-if leaked:
-    errs.append(f"repo đang theo dõi {len(leaked)} file dữ liệu/ảnh (RULES.md: không commit dữ liệu VF): {leaked[:5]}")
+# 8. repo public: không commit dữ liệu, ảnh, bảng A; đã commit và push báo cáo chưa
+listing = git("ls-files", "-z")
+if listing is None:
+    warns.append("thư mục này không phải git repo (tải ZIP?) hoặc không chạy được git: không kiểm được file sẽ push. "
+                 "Hãy `git clone` repo của bạn và nộp bằng git")
+else:
+    tracked = [f for f in listing.split("\0") if f]
+    leaked = leaks(tracked)
+    if leaked:
+        errs.append(f"repo đang theo dõi {len(leaked)} file không được đưa lên repo public (dữ liệu, ảnh, file nén, "
+                    f"bảng A, phiếu tự kiểm): {leaked[:5]}. Gỡ: `git rm --cached <file>` (docs/COMMON_ERRORS.md mục 5)")
+    history = git("log", "--all", "--format=", "--name-only", "--diff-filter=A", "-z") or ""
+    old_leaks = sorted(set(leaks(f for f in history.split("\0") if f.strip())) - set(leaked))
+    if old_leaks:
+        errs.append(f"lịch sử commit vẫn còn {len(old_leaks)} file không được public: {old_leaks[:5]}. "
+                    "Gỡ khỏi git chưa đủ: xem docs/COMMON_ERRORS.md mục 5 trước khi push")
+    dirty = git("status", "--porcelain", "--", "README.md", "submission/REPORT.md", "configs/lab.ini")
+    if dirty and dirty.strip():
+        warns.append("README.md, REPORT.md hoặc configs/lab.ini còn thay đổi chưa commit: `git add -A`, `git commit`, `git push`")
+    ahead = git("rev-list", "--count", "@{u}..HEAD")
+    if ahead and ahead.strip() not in ("", "0"):
+        warns.append(f"có {ahead.strip()} commit chưa push: chạy `git push`")
 
 print()
 for w in warns:

@@ -1,22 +1,49 @@
-# Dữ liệu VF chỉ ở trên máy bạn (RULES.md): không bao giờ commit dữ liệu hay ảnh
+# Dữ liệu VF chỉ ở trên máy bạn (RULES.md): không bao giờ commit dữ liệu, ảnh, file nén, video
 data/*
 !data/README.md
 data-VF/
 Data-VF/
 sequence_*/
-*.zip
+calib.json
 *.bin
 *.pcd
+*.ply
+*.zip
+*.7z
+*.rar
+*.tar
+*.gz
+*.tgz
 *.jpg
 *.jpeg
 *.png
-!docs/assets/*.png
+*.webp
+*.heic
+*.gif
+*.bmp
+*.tif
+*.tiff
+*.mp4
+*.mov
+*.pdf
+*.docx
+*.pptx
+!docs/assets/hero.png
+!docs/assets/coordinates.png
+!docs/assets/workflow.png
+!docs/3D_Cuboid_Annotation_Guideline.docx
 
-# Ảnh chụp màn hình của báo cáo: nộp qua LMS (python scripts/lab.py pack), không đưa lên repo
+# Bài nộp qua LMS (python scripts/lab.py pack), không lên repo public: bảng A, phiếu tự kiểm, ảnh chụp
+submission/*
+!submission/REPORT.md
+!submission/images/
 submission/images/*
 !submission/images/.gitkeep
+*.csv
+*-hoso.md
+hoso/
 
-# Thư mục làm việc: ảnh preview, file zip để nộp
+# Thư mục làm việc: ảnh xem trước, file zip, bảng A của vòng hiệu chuẩn
 work/
 nop/
 xem/
@@ -25,8 +52,8 @@ xem/
 .env
 .env*
 *.env
-
 .venv/
+venv/
 __pycache__/
 *.pyc
 .pytest_cache/
