@@ -26,7 +26,7 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 import vf_common as vf  # noqa: E402
-from lab import IMAGE_SUFFIXES, N_IMAGES, data_dir, load_config  # noqa: E402
+from lab import IMAGE_DIR, IMAGE_SUFFIXES, N_IMAGES, data_dir, load_config  # noqa: E402
 from vf_cvat import TABLE_A_FIELDS  # noqa: E402
 from vf_qa import CHECK_FIELDS  # noqa: E402
 
@@ -38,10 +38,17 @@ SECRET_KEY = re.compile(r"pass|pwd|mat_?khau|mật|token|secret", re.IGNORECASE)
 # Riêng bảng A và phiếu tự kiểm của bạn (submission/D13-<MÃ SỐ>-bangA.csv, -tukiem.csv) phải được commit.
 LEAK_SUFFIXES = {".bin", ".pcd", ".ply", ".zip", ".7z", ".rar", ".tar", ".gz", ".tgz", ".jpg", ".jpeg", ".png",
                  ".webp", ".heic", ".gif", ".bmp", ".tif", ".tiff", ".mp4", ".mov", ".pdf", ".docx", ".pptx", ".csv"}
-LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|.*hoso.*", re.IGNORECASE)
+# Phiếu hồ sơ lỗi coach phát: D13-<MSSV>-hoso.md, kể cả bản tải lần hai "D13-<MSSV>-hoso (1).md".
+# Có dấu '-' trước "hoso" để không bắt nhầm báo cáo của người tên có "HoSon" (2A..._NguyenHoSon.md).
+LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|hoso|.*-hoso.*\.md", re.IGNORECASE)
 ALLOWED = {"docs/assets/hero.png", "docs/assets/coordinates.png", "docs/assets/workflow.png",
            "docs/3D_Cuboid_Annotation_Guideline.docx"}
+# Lịch sử của repo đề có chính file guideline ở đường dẫn cũ (cùng nội dung với bản trong docs/).
+ALLOWED_IN_HISTORY = ALLOWED | {"guideline/3D_Cuboid_Annotation_Guideline.docx"}
 SUBMITTED_CSV = re.compile(r"submission/D13-([^/]+)-(?:bangA|tukiem)\.csv")
+REPORT_DIR = ROOT / "report" / "individual"
+REPORT_TEMPLATE = "MSSV_HoTen.md"
+REPORT_NAME = re.compile(r"(\S+)_([A-Za-z]+)\.md")  # <MSSV>_<HoTen>.md, họ tên không dấu, viết liền
 # Định dạng đúng như `report` ghi ra (cvat_lab/vf_cvat.py, table_a_row). Excel lưu lại sẽ làm sai định dạng.
 FORMATS = {key: re.compile(pattern) for key, pattern in {
     "frame": r"s\d{2}f\d{2}", "idx": r"[1-9]\d*", "occluded": r"[01]",
@@ -65,12 +72,12 @@ def git(*args: str) -> str | None:
     return result.stdout.decode("utf-8", errors="replace") if result.returncode == 0 else None
 
 
-def leaks(paths) -> list[str]:
+def leaks(paths, allowed=ALLOWED) -> list[str]:
     found = []
     for path in paths:
         low = path.lower()
         parts = low.split("/")
-        if path in ALLOWED or low in ("data/readme.md",) or SUBMITTED_CSV.fullmatch(path):
+        if path in allowed or low in ("data/readme.md",) or SUBMITTED_CSV.fullmatch(path):
             continue
         if (Path(low).suffix in LEAK_SUFFIXES or parts[0] in {"data", "work", "nop", "xem"}
                 or any(LEAK_PART.fullmatch(part) for part in parts)):
@@ -135,9 +142,9 @@ first = next((l for l in (ROOT / "README.md").read_text(encoding="utf-8").splitl
 title = re.match(r"# Day 13 Lab\s*[—–-]\s*(.+?):\s*(\S+)\s+-\s+(.+)$", first)
 if not title or "<" in first or ">" in first:
     errs.append("dòng tiêu đề (dòng `# ...` đầu tiên) của README.md phải là: "
-                "'# Day 13 Lab — <Họ và tên>: <MSHV> - <Họ và tên>', thay cả dấu < > (xem SUBMISSION.md)")
+                "'# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>', thay cả dấu < > (xem SUBMISSION.md)")
 elif student and title.group(2).strip().upper() != student:
-    errs.append(f"README.md: MSHV ở dòng tiêu đề ({title.group(2)}) khác `student` trong configs/lab.ini ({student})")
+    errs.append(f"README.md: MSSV ở dòng tiêu đề ({title.group(2)}) khác `student` trong configs/lab.ini ({student})")
 
 # 3. file đã viết sẵn không được đổi
 pin = ROOT / "scripts/_protected.json"
@@ -234,27 +241,51 @@ if student:
             flagged = sum(bool(r.get("flags")) for r in checked)
             print(f"tự kiểm: {flagged}/{len(checked)} cuboid còn cảnh báo (cảnh báo không tính điểm)")
 
-# 6. báo cáo
-report = ROOT / "submission/REPORT.md"
-if not report.exists():
-    errs.append("thiếu submission/REPORT.md")
-else:
-    text = report.read_text(encoding="utf-8")
-    todo = sum(line.count("TODO(học viên)") for line in text.splitlines() if not line.lstrip().startswith(">"))
-    if todo:
-        errs.append(f"submission/REPORT.md còn {todo} dấu TODO(học viên) chưa điền")
-    if "<Họ và tên>" in text or "<MSHV>" in text:
-        errs.append("submission/REPORT.md: dòng đầu còn <Họ và tên> hoặc <MSHV>")
-    if student and student not in text.upper():
-        errs.append(f"submission/REPORT.md không nhắc tới mã số {student}")
-    missing = [name for name in assigned[:2] if name not in text]
-    if assigned and missing:
-        warns.append(f"REPORT.md mục 2 chưa nhắc tới hai frame đọc kỹ đầu tiên: {missing}")
+# 6. báo cáo: report/individual/<MSSV>_<HoTen>.md, đổi tên từ bản mẫu MSSV_HoTen.md
+example = f"{student or '2A202600123'}_NguyenVanAn.md"
+candidates = sorted(p for p in REPORT_DIR.glob("*.md") if p.name not in (REPORT_TEMPLATE, "README.md"))
+well_named = [p for p in candidates if REPORT_NAME.fullmatch(p.name)]
+mine = [p for p in well_named if not student or REPORT_NAME.fullmatch(p.name).group(1).upper() == student]
+report = mine[0] if len(mine) == 1 else None
+if not candidates:
+    errs.append(f"chưa có báo cáo: đổi tên report/individual/{REPORT_TEMPLATE} thành <MSSV>_<HoTen>.md "
+                f"(họ tên không dấu, viết liền), ví dụ {example}")
+bad_names = [p.name for p in candidates if p not in well_named]
+if bad_names:
+    errs.append(f"tên báo cáo {bad_names[:3]} chưa đúng dạng <MSSV>_<HoTen>.md (họ tên không dấu, không khoảng trắng), "
+                f"ví dụ {example}")
+foreign = [p.name for p in well_named if p not in mine]
+if foreign:
+    errs.append(f"report/individual/ có báo cáo mang mã số khác `student` ({student}): {foreign[:3]}. "
+                "Chỉ để một báo cáo của bạn")
+if len(mine) > 1:
+    errs.append(f"report/individual/ có {len(mine)} báo cáo: {[p.name for p in mine]}. Chỉ giữ một file")
+if report and (REPORT_DIR / REPORT_TEMPLATE).exists():
+    warns.append(f"còn bản mẫu report/individual/{REPORT_TEMPLATE}: bạn đã chép thay vì đổi tên, xoá bản mẫu đi")
+if report:
+    rel = f"report/individual/{report.name}"
+    try:
+        text = report.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        text = None
+        errs.append(f"{rel} không phải UTF-8: mở bằng VS Code hoặc Notepad, lưu lại dạng UTF-8")
+    if text is not None:
+        todo = sum(line.count("TODO(học viên)") for line in text.splitlines() if not line.lstrip().startswith(">"))
+        if todo:
+            errs.append(f"{rel} còn {todo} dấu TODO(học viên) chưa điền")
+        heading = next((line for line in text.splitlines() if line.startswith("# ")), "")
+        if "<Họ và tên>" in heading or "<MSSV>" in heading:
+            errs.append(f"{rel}: dòng tiêu đề còn <Họ và tên> hoặc <MSSV>")
+        if student and student not in text.upper():
+            errs.append(f"{rel} không nhắc tới mã số {student}")
+        missing = [name for name in assigned[:2] if name not in text]
+        if assigned and missing:
+            warns.append(f"báo cáo mục 2 chưa nhắc tới hai frame đọc kỹ đầu tiên: {missing}")
 
 # 7. ảnh chụp: nằm trên máy, nộp qua LMS trong file zip, không vào git
-images = [p for p in (ROOT / "submission/images").glob("*") if p.suffix.lower() in IMAGE_SUFFIXES]
+images = [p for p in IMAGE_DIR.glob("*") if p.suffix.lower() in IMAGE_SUFFIXES]
 if len(images) < N_IMAGES:
-    warns.append(f"submission/images có {len(images)}/{N_IMAGES} ảnh chụp (Bước 2: 4, Bước 3: 3, Bước 4: 4)")
+    warns.append(f"report/individual/images có {len(images)}/{N_IMAGES} ảnh chụp (Bước 2: 4, Bước 3: 3, Bước 4: 4)")
 if student and images:
     bundle = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
     zipped, broken = None, False
@@ -270,7 +301,7 @@ if student and images:
     elif zipped is None:
         warns.append(f"chưa có work/{bundle.name} (ảnh nộp LMS): chạy `python scripts/lab.py pack`")
     elif zipped != {f"images/{p.name}": zlib.crc32(p.read_bytes()) for p in images}:
-        warns.append(f"work/{bundle.name} khác ảnh trong submission/images (thêm, xoá, đổi tên hoặc chụp lại ảnh sau khi "
+        warns.append(f"work/{bundle.name} khác ảnh trong report/individual/images (thêm, xoá, đổi tên hoặc chụp lại ảnh sau khi "
                      "pack): chạy lại `python scripts/lab.py pack` và nộp lại file zip lên LMS")
 
 # 8. repo public: không commit dữ liệu, ảnh; bảng A, phiếu tự kiểm, báo cáo đã commit và push chưa
@@ -297,11 +328,13 @@ else:
                     f"{student}: xoá file kia hoặc chuyển ra ngoài repo; đã commit thì `git rm <file>` (không thêm "
                     "`--cached`), rồi commit và push")
     history = git("log", "--all", "--format=", "--name-only", "--diff-filter=A", "-z") or ""
-    old_leaks = sorted(set(leaks(f for f in history.split("\0") if f.strip())) - set(leaked))
+    old_leaks = sorted(set(leaks((f for f in history.split("\0") if f.strip()), ALLOWED_IN_HISTORY)) - set(leaked))
     if old_leaks:
         errs.append(f"lịch sử commit vẫn còn {len(old_leaks)} file không được public: {old_leaks[:5]}. "
                     "Gỡ khỏi git chưa đủ: xem docs/COMMON_ERRORS.md mục 5 trước khi push")
-    paths = ["README.md", "submission/REPORT.md", "configs/lab.ini"]
+    paths = ["README.md", "configs/lab.ini", f"report/individual/{REPORT_TEMPLATE}"]
+    if report:
+        paths.append(f"report/individual/{report.name}")
     if student:
         paths += [f"submission/D13-{student}-bangA.csv", f"submission/D13-{student}-tukiem.csv"]
     dirty = git("status", "--porcelain", "--untracked-files=all", "--", *paths)

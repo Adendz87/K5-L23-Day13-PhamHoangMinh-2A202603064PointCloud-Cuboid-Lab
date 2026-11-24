@@ -38,5 +38,5 @@ Chỉ 10 frame này được đóng gói (khoảng 23 MB) và tải lên task CV
 
 - Dữ liệu **chỉ dùng trong lớp, trên máy của bạn và trong CVAT trên máy bạn**. Không đăng lại, không chia sẻ ra ngoài.
 - Ảnh camera có người và biển số thật: **không** dán ảnh hay ảnh chụp màn hình lên dịch vụ AI bên ngoài, nhóm chat, mạng xã hội.
-- Repo của bạn là public: không commit bất cứ thứ gì trong `data/data-VF/`, `work/`, `submission/images/`. Bảng A và phiếu tự kiểm (số đo các cuboid bạn vẽ, số điểm LiDAR trong và quanh từng cuboid) được commit vào repo. Ngoài hai file này và các số bạn dẫn trong báo cáo, không công khai số liệu nào trích từ dữ liệu.
+- Repo của bạn là public: không commit bất cứ thứ gì trong `data/data-VF/`, `work/`, `report/individual/images/`. Bảng A và phiếu tự kiểm (số đo các cuboid bạn vẽ, số điểm LiDAR trong và quanh từng cuboid) được commit vào repo. Ngoài hai file này và các số bạn dẫn trong báo cáo, không công khai số liệu nào trích từ dữ liệu.
 - Hết khóa, xóa `data/data-VF/` (hoặc thư mục bạn ghi ở dòng `data =` của `configs/lab.ini`), `work/`, và file `Data-VF.zip` đã tải.

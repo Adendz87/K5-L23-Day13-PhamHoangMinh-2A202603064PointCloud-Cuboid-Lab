@@ -12,6 +12,7 @@ import math
 import random
 import re
 import struct
+import sys
 from array import array
 from pathlib import Path
 
@@ -25,6 +26,20 @@ LABEL_COLORS = {
     "Pedestrian": "#2979ff",
 }
 CAMERAS = ("cam01", "cam03", "cam05", "cam06", "cam07", "cam08", "cam09")
+
+
+def utf8_stdio() -> None:
+    """Print Vietnamese safely on Windows.
+
+    When output goes to a file or pipe, Windows Python encodes stdout with the
+    ANSI code page (cp1252) and crashes on Vietnamese letters with
+    UnicodeEncodeError. Every command line entry point calls this first.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure") and (stream.encoding or "").lower().replace("-", "") != "utf8":
+            stream.reconfigure(encoding="utf-8", errors="replace")
+
+
 FRAME_NAME = re.compile(r"^s(\d{2})f(\d{2})$")
 DIST_BINS = ((0, 10), (10, 20), (20, 30), (30, 50))
 # Frames with fewer than 8 labelled objects within 50 m (counted once from the

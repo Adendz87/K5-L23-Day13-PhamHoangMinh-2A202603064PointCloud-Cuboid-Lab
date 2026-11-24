@@ -1,17 +1,17 @@
 # Rubric — 100 điểm
 
-Điểm dựa trên **bằng chứng bạn nộp**: bảng A, phiếu tự kiểm và `REPORT.md` trong repo, cùng ảnh chụp trong file zip nộp LMS. Điểm không dựa vào việc còn nhiều hay ít cờ tự kiểm. Báo cáo **trung thực** những cuboid còn chưa chắc, có phân tích, vẫn được điểm tốt.
+Điểm dựa trên **bằng chứng bạn nộp**: bảng A, phiếu tự kiểm và báo cáo `report/individual/<MSSV>_<HoTen>.md` trong repo, cùng ảnh chụp trong file zip nộp LMS. Điểm không dựa vào việc còn nhiều hay ít cờ tự kiểm. Báo cáo **trung thực** những cuboid còn chưa chắc, có phân tích, vẫn được điểm tốt.
 
 > Trạng thái: đề xuất của Lab Coach. Trọng số và ngưỡng đạt chính thức do GV/VinUni quyết định. Mốc độ phủ 0,4 là mốc tạm, chốt sau buổi chạy thử.
 
 | # | Hạng mục | Điểm | Bằng chứng |
 |---|---|---:|---|
 | 1 | Cuboid (chấm tự động so với nhãn chuẩn) | 40 | `submission/D13-<MÃ SỐ>-bangA.csv` trong repo |
-| 2 | Đọc frame năm bước | 10 | `REPORT.md` §2, 4 ảnh |
-| 3 | Ba cuboid có hướng dẫn | 10 | `REPORT.md` §3, 3 ảnh |
-| 4 | Bốn hiện tượng chất lượng | 16 | `REPORT.md` §4, 4 ảnh |
-| 5 | Số từ cuboid của bạn | 14 | `REPORT.md` §5, bảng A, phiếu tự kiểm |
-| 6 | Báo cáo, kỷ luật dữ liệu, hợp tác | 10 | `REPORT.md` §1, §5, §6, `check_submission.py`, repo |
+| 2 | Đọc frame năm bước | 10 | báo cáo §2, 4 ảnh |
+| 3 | Ba cuboid có hướng dẫn | 10 | báo cáo §3, 3 ảnh |
+| 4 | Bốn hiện tượng chất lượng | 16 | báo cáo §4, 4 ảnh |
+| 5 | Số từ cuboid của bạn | 14 | báo cáo §5, bảng A, phiếu tự kiểm |
+| 6 | Báo cáo, kỷ luật dữ liệu, hợp tác | 10 | báo cáo §1, §5, §6, `check_submission.py`, repo |
 
 ## 1. Cuboid (40)
 Chấm tự động từ bảng A, trên các vật trong vùng 360° quanh xe có tâm cách LiDAR ≤ 50 m (xe của chính mình không tính). Nhìn từ trên xuống, mỗi cuboid là một hình chữ nhật. Một cuboid được **ghép** với một vật khi **BEV-IoU ≥ 0,5**, tức diện tích phần chung chia diện tích phần hợp của hai hình chữ nhật. Hai hộp cùng kích thước phải chồng nhau khoảng 2/3 mới đạt 0,5: xe con dài 4,5 m chỉ được lệch dọc thân khoảng 1,5 m, hoặc lệch ngang khoảng 0,6 m; người đi bộ 0,6 m chỉ được lệch khoảng 0,2 m. Mỗi cuboid ghép với nhiều nhất một vật và ngược lại.
@@ -50,23 +50,23 @@ Mỗi hiện tượng 4 điểm:
 - 2: đủ 11 ảnh chụp trong file zip nộp LMS; repo public **không** có dữ liệu VF hay ảnh.
 - 2: mọi con số có đơn vị (m, °).
 - 2: bảng A và phiếu tự kiểm nộp đúng hạn, sinh từ task của bạn bằng `python scripts/lab.py sync`, không sửa tay; `check_submission.py` hết LỖI.
-- 2: hai câu "để làm gì" (`REPORT.md` §6) nói từ phía model học trên nhãn này.
-- 2: đổi kiểm hai con số với bạn bên cạnh (ghi ở `REPORT.md` §5); coach quan sát 2 lần trong buổi.
+- 2: hai câu "để làm gì" (báo cáo §6) nói từ phía model học trên nhãn này.
+- 2: đổi kiểm hai con số với bạn bên cạnh (ghi ở báo cáo §5); coach quan sát 2 lần trong buổi.
 - Bị trừ nặng: bảng A không sinh từ task của bạn (sửa tay, lấy của người khác, kể cả chép từ repo public của bạn khác); đưa dữ liệu VF, ảnh camera, ảnh chụp màn hình lên repo public hay nơi công khai.
 
 ## Điều kiện đạt
-Đạt khi thỏa **tất cả**: tổng ≥ 60 điểm · `recall_30m` ≥ 0,4 · `IoU_tb` ≥ 0,5 · không quá 2 cuboid ngược đầu · bảng A có từ 50 cuboid · đã nộp bảng A và `REPORT.md` đủ mục 2–5.
+Đạt khi thỏa **tất cả**: tổng ≥ 60 điểm · `recall_30m` ≥ 0,4 · `IoU_tb` ≥ 0,5 · không quá 2 cuboid ngược đầu · bảng A có từ 50 cuboid · đã nộp bảng A và báo cáo đủ mục 2–5.
 Mức 8 cuboid ở frame 1 và 5 cuboid ở mỗi frame sau (tổng 53) là yêu cầu khi làm bài: thiếu thì `check_submission.py` cảnh báo, nhưng đó không phải điều kiện đạt.
 
 ## Không chấm
 - Cuboid trong task chung của vòng hiệu chuẩn (đầu Bước 3).
 - Cảnh báo của `selfcheck`: còn cờ không bị trừ, hết cờ không được cộng.
-- Phần "điều còn chưa chắc" ở `REPORT.md` §6(c).
+- Phần "điều còn chưa chắc" ở báo cáo §6(c).
 
 ## Cách chấm trên máy coach
-- Coach tải repo của cả lớp ngay khi hết hạn 20:00 và chấm bảng A trong bản đó bằng công cụ chấm của mình. Giờ ghi trong commit do máy học viên đặt nên không dùng để tính hạn; khi cần, coach đối chiếu giờ push GitHub ghi lại. Nhãn chuẩn không phát cho học viên. Coach không vào được CVAT trên máy bạn: ảnh chụp màn hình là bằng chứng bạn vẽ trên CVAT, và khi cần coach có thể nhờ bạn mở task trên máy mình.
+- Coach chấm sau hạn nộp: tải repo của cả lớp và chấm bảng A ở commit cuối cùng đã push trước deadline (23:59 GMT+7 ngày làm lab, hoặc deadline coach thông báo) bằng công cụ chấm của mình. Giờ ghi trong commit do máy học viên đặt nên không dùng để tính hạn; coach đối chiếu giờ push GitHub ghi lại. Nhãn chuẩn không phát cho học viên. Coach không vào được CVAT trên máy bạn: ảnh chụp màn hình là bằng chứng bạn vẽ trên CVAT, và khi cần coach có thể nhờ bạn mở task trên máy mình.
 - Ghi đè các file "ĐÃ VIẾT SẴN" bằng bản gốc của repo đề `K5-L23-Day13-PointCloud-Cuboid-Lab` (danh sách và sha1 ở `scripts/_protected.json`), rồi chạy lại `check_submission.py`.
-- Sau khi chốt bài nộp, coach có thể phát **phiếu hồ sơ lỗi** cho từng người: số cuboid đúng, ngược hướng, sai class, vẽ lệch, bỏ sót, và độ phủ theo khoảng cách. Phiếu có số vật theo từng frame, suy ra từ nhãn chuẩn, nên chỉ dành cho bạn: không commit, không chia sẻ, không chép số trong phiếu vào `REPORT.md` hay nơi công khai (muốn rút kinh nghiệm thì viết bằng lời).
+- Sau khi chốt bài nộp, coach có thể phát **phiếu hồ sơ lỗi** cho từng người: số cuboid đúng, ngược hướng, sai class, vẽ lệch, bỏ sót, và độ phủ theo khoảng cách. Phiếu có số vật theo từng frame, suy ra từ nhãn chuẩn, nên chỉ dành cho bạn: không commit, không chia sẻ, không chép số trong phiếu vào báo cáo hay nơi công khai (muốn rút kinh nghiệm thì viết bằng lời).
 
 ## Nhất quán chưa phải là đúng
 Bạn và bạn bên cạnh vẽ giống nhau chỉ cho thấy hai người **nhất quán**. Coach chấm theo guideline và nhãn chuẩn, không theo số đông.

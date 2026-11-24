@@ -33,19 +33,23 @@ calib.json
 !docs/assets/workflow.png
 !docs/3D_Cuboid_Annotation_Guideline.docx
 
-# submission/: chỉ commit REPORT.md, bảng A và phiếu tự kiểm. Các dòng ! dưới đây cho qua file D13-* của
-# mọi mã số, nên trong submission/ chỉ để file của mã bạn (check_submission.py báo LỖI nếu có mã khác).
-# Ảnh chụp màn hình nộp qua LMS (python scripts/lab.py pack), không đưa lên repo public.
+# submission/: chỉ commit bảng A và phiếu tự kiểm. Các dòng ! dưới đây cho qua file D13-* của mọi mã số,
+# nên trong submission/ chỉ để file của mã bạn (check_submission.py báo LỖI nếu có mã khác).
 *.csv
 submission/*
-!submission/REPORT.md
+!submission/README.md
 !submission/D13-*-bangA.csv
 !submission/D13-*-tukiem.csv
-!submission/images/
-submission/images/*
-!submission/images/.gitkeep
-# Phiếu hồ sơ lỗi coach phát (kể cả bản tải lần hai "…-hoso (1).md"): chỉ dành cho bạn
-*hoso*
+
+# report/individual/: báo cáo <MSSV>_<HoTen>.md được commit. Ảnh chụp màn hình có ảnh camera thật:
+# không đưa lên repo public, nén bằng `python scripts/lab.py pack` rồi nộp LMS.
+report/individual/images/*
+!report/individual/images/.gitkeep
+
+# Phiếu hồ sơ lỗi coach phát, kể cả bản tải lần hai "D13-<MSSV>-hoso (1).md": chỉ dành cho bạn.
+# Có dấu '-' trước "hoso" để không chặn nhầm báo cáo của người tên có "HoSon".
+*-hoso*.md
+hoso/
 
 # Thư mục làm việc: ảnh xem trước, file zip, bảng A của vòng hiệu chuẩn
 work/

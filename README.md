@@ -37,10 +37,10 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 2. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ.
 3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).
 4. **Săn bốn hiện tượng** làm hỏng point cloud: bóng che, thưa ở xa, phản xạ thấp, điểm lạ ([docs/PHENOMENA.md](docs/PHENOMENA.md)).
-5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết `submission/REPORT.md`, `python scripts/lab.py pack`, `python scripts/check_submission.py` hết LỖI, commit và push (repo có báo cáo, bảng A, phiếu tự kiểm) → nộp **link repo** và **file zip ảnh** lên LMS.
+5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết báo cáo `report/individual/<MSSV>_<HoTen>.md`, `python scripts/lab.py pack`, `python scripts/check_submission.py` hết LỖI, commit và push (repo có báo cáo, bảng A, phiếu tự kiểm) → nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**.
 
-> **Khi nộp:** đổi dòng tiêu đề README thành `# Day 13 Lab — <Họ và tên>: <MSHV> - <Họ và tên>`.
-> `<MÃ SỐ>` và `<MSHV>` trong tài liệu là một: mã số học viên của bạn, đúng như dòng `student` trong `configs/lab.ini`.
+> **Khi nộp:** đổi dòng tiêu đề README thành `# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>`, và đổi tên báo cáo `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (ví dụ `2A202600123_NguyenVanAn.md`).
+> `<MÃ SỐ>` và `<MSSV>` trong tài liệu là một: mã số của bạn, đúng như dòng `student` trong `configs/lab.ini`.
 > Mọi lệnh `python scripts/lab.py ...` chạy **giống nhau trên Windows và macOS**. macOS có thêm lệnh tắt `make` ([Makefile](Makefile)). Lệnh riêng từng hệ điều hành (cài đặt, kích hoạt môi trường, mở file): [docs/COMMANDS.md](docs/COMMANDS.md).
 
 <details>
@@ -53,7 +53,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 <summary><b>Máy yếu / không chạy được Docker / CVAT không chiếu cuboid lên ảnh?</b></summary>
 
 - Máy 8 GB RAM: dùng `cvat/docker-compose.lowspec.yml` ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 6).
-- Không chạy nổi Docker: báo coach để ngồi ghép đôi. Mỗi người vẫn một tài khoản CVAT và một task riêng.
+- Không chạy nổi Docker: báo coach để ngồi ghép đôi. Mỗi người vẫn một tài khoản CVAT, một task và một repo riêng ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 6, Ngồi ghép đôi).
 - CVAT 2.82/2.83 của lớp không chiếu cuboid lên ảnh camera (không có "biểu tượng vàng" như trong bản guideline .docx). Dùng `python scripts/lab.py preview` để xem cuboid của bạn trên 7 ảnh camera.
 - Không có chuột: vẽ cuboid 3D bằng touchpad rất chậm. Mang chuột có con lăn.
 </details>
@@ -65,8 +65,8 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 | Task CVAT `D13-<MÃ SỐ>` với 60–70 cuboid đã Save | CVAT trên máy bạn |
 | **Bảng A**: 7 tham số, khoảng cách, đáy cuboid của từng cuboid | `submission/D13-<MÃ SỐ>-bangA.csv` (commit vào repo) |
 | **Phiếu tự kiểm**: số điểm trong cuboid, khoảng hở với mặt đường, cảnh báo | `submission/D13-<MÃ SỐ>-tukiem.csv` (commit vào repo) |
-| 11 ảnh chụp màn hình (đọc frame, cuboid mẫu, bốn hiện tượng) | `submission/images/` (nén bằng `pack`, nộp LMS, không commit) |
-| **Một báo cáo duy nhất**: đọc frame, cuboid mẫu, bốn hiện tượng, số đo, điều còn chưa chắc | `submission/REPORT.md` (trong repo) |
+| 11 ảnh chụp màn hình (đọc frame, cuboid mẫu, bốn hiện tượng) | `report/individual/images/` (nén bằng `pack`, nộp LMS, không commit) |
+| **Một báo cáo duy nhất**: đọc frame, cuboid mẫu, bốn hiện tượng, số đo, điều còn chưa chắc | `report/individual/<MSSV>_<HoTen>.md` (commit vào repo) |
 
 ## Tài liệu
 
@@ -98,3 +98,10 @@ Slide tham khảo: **Day 13 — LiDAR, point cloud và nhãn 3D**. Nền tảng:
 - **Kiểm bằng số**: đọc bảng A, so với bảng kích thước, và báo cáo trung thực cả những cuboid còn chưa chắc.
 
 <sub>Hình trong `docs/assets/` là hình vẽ minh hoạ do lab coach tạo bằng `docs/assets/make_figures.py`, không chứa dữ liệu VF.</sub>
+
+## Góp ý bài lab (30 giây)
+
+Làm xong, dành 30 giây góp ý để bài lab sau tốt hơn: **[mở form góp ý](https://docs.google.com/forms/d/e/1FAIpQLSd8Mh7YkGEn-hnaePgbli4KqJ8-rkzCrFOIjr3YyCcrDs1UHA/viewform?usp=publish-editor)**.
+
+- Chọn đúng lớp của bạn: **L2 · Day13** hoặc **L3 · Day13**.
+- Form không hỏi họ tên, email hay MSSV.

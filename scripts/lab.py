@@ -8,7 +8,7 @@
     python scripts/lab.py preview     vẽ cuboid lên ảnh camera -> work/xem/
     python scripts/lab.py selfcheck   soát cuboid bằng point cloud -> submission/D13-<MÃ SỐ>-tukiem.csv
     python scripts/lab.py sync        report + preview + selfcheck
-    python scripts/lab.py pack        nén ảnh chụp -> work/K5-L23-DAY13-<MÃ SỐ>-images.zip (nộp LMS, không commit)
+    python scripts/lab.py pack        nén ảnh trong report/individual/images -> work/K5-L23-DAY13-<MÃ SỐ>-images.zip (nộp LMS)
 
 Vòng hiệu chuẩn, với mã chung coach phát (không đụng tới task và bài nộp của bạn):
     python scripts/lab.py task --code <MÃ CHUNG>      tạo task D13-<MÃ CHUNG>
@@ -31,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "cvat_lab"))
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg"}
+IMAGE_DIR = ROOT / "report" / "individual" / "images"  # ảnh chụp màn hình: không commit, `pack` nén để nộp LMS
 N_IMAGES = 11
 FRAMES_PER_SEQUENCE = 60
 MIN_PYTHON = (3, 11)  # cvat-sdk >= 2.80 và Pillow 13 không còn hỗ trợ Python 3.10
@@ -163,10 +164,10 @@ def ensure_writable(paths) -> None:
 
 def pack(student: str) -> int:
     """Nén ảnh chụp của báo cáo để nộp lên LMS. Ảnh có dữ liệu camera thật nên không đưa lên repo public."""
-    folder = ROOT / "submission" / "images"
+    folder = IMAGE_DIR
     images = sorted(p for p in folder.glob("*") if p.suffix.lower() in IMAGE_SUFFIXES)
     if not images:
-        raise SystemExit(f"Chưa có ảnh nào trong {folder}.")
+        raise SystemExit(f"Chưa có ảnh nào trong {folder} (đuôi .png hoặc .jpg).")
     out = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
     out.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
@@ -174,7 +175,7 @@ def pack(student: str) -> int:
             bundle.write(image, f"images/{image.name}")
     print(f"Đã nén {len(images)} ảnh -> {out}")
     if len(images) < N_IMAGES:
-        print(f"CẢNH BÁO: submission/images mới có {len(images)}/{N_IMAGES} ảnh chụp (SUBMISSION.md).")
+        print(f"CẢNH BÁO: report/individual/images mới có {len(images)}/{N_IMAGES} ảnh chụp (SUBMISSION.md).")
     print("Nộp file zip này lên LMS cùng link repo. Không commit ảnh.")
     return 0
 

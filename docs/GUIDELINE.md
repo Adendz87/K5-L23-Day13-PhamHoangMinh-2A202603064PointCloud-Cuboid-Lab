@@ -46,7 +46,7 @@ Dùng để kiểm kích thước có hợp lý không, nhất là khi vật th�
 
 ## 4. Khi không chắc
 
-Không đoán cho xong. Ghi lại frame, vị trí đại khái và loại nghi vấn vào `REPORT.md`, rồi hỏi coach:
+Không đoán cho xong. Ghi lại frame, vị trí đại khái và loại nghi vấn vào báo cáo, rồi hỏi coach:
 
 | Loại nghi vấn | Ví dụ |
 |---|---|

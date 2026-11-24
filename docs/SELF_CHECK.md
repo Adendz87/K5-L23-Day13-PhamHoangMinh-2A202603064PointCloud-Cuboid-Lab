@@ -15,7 +15,7 @@ Mỗi frame ra một ảnh trong thư mục `work/xem/`: 7 ảnh camera và mộ
 - Hộp quá to hoặc quá nhỏ so với vật.
 - Class không khớp thứ bạn thấy trên ảnh (bán tải gán Car, người dắt xe gán Cyclist).
 
-Lệnh cũng báo số hộp không camera nào thấy. Điều này bình thường với vật bị che hoặc nằm ở góc mù giữa các camera (7 camera không phủ kín 360°, còn LiDAR thì có).
+Lệnh cũng báo số hộp không camera nào thấy. Điều này bình thường khi hộp nằm ở góc mù giữa các camera (7 camera không phủ kín 360°, còn LiDAR thì có) hoặc quá sát thân xe. Công cụ không xét che khuất: vật bị che vẫn được vẽ lên ảnh.
 
 ## 2. `selfcheck` — soát từng cuboid bằng point cloud
 
@@ -25,7 +25,7 @@ python scripts/lab.py selfcheck
 
 Kết quả ghi vào `submission/D13-<MÃ SỐ>-tukiem.csv` với các cột `frame, idx, label, dist_m, points_in, ground_gap_m, flags`:
 
-- `points_in`: số điểm LiDAR nằm trong cuboid. Dùng cho câu mật độ ở `REPORT.md` mục 5.
+- `points_in`: số điểm LiDAR nằm trong cuboid. Dùng cho câu mật độ ở báo cáo mục 5.
 - `ground_gap_m`: đáy cuboid trừ độ cao mặt đường ước từ các điểm quanh hộp (trong vòng khoảng 4 m). Dương là đáy cao hơn mặt đường, âm là đáy thấp hơn. Trống nếu quanh hộp quá ít điểm mặt đường.
 - `flags`: các cảnh báo dưới đây, cách nhau bằng dấu `;`.
 
@@ -40,7 +40,7 @@ Kết quả ghi vào `submission/D13-<MÃ SỐ>-tukiem.csv` với các cột `fr
 
 **Cảnh báo là gợi ý để xem lại, không phải lỗi chắc chắn.** Trên nhãn chuẩn của chính bộ VF, hộp đúng vẫn bị cờ khoảng 7% với Car và 22–28% với các class nhỏ (người đi bộ, xe hai bánh). Hộp sai có thể không bị cờ. Đừng chỉnh hộp cho hết cờ mà không nhìn lại point cloud.
 
-Yêu cầu của bài lab: xem lại mọi cuboid có cờ, **sửa ít nhất 2 cuboid** trên CVAT, Save, chạy lại `python scripts/lab.py sync`. Ghi vào `REPORT.md` mục 5 cờ nào bạn giữ nguyên và vì sao.
+Yêu cầu của bài lab: xem lại mọi cuboid có cờ, **sửa ít nhất 2 cuboid** trên CVAT, Save, chạy lại `python scripts/lab.py sync`. Ghi vào báo cáo mục 5 cờ nào bạn giữ nguyên và vì sao.
 
 ## 3. Các cột của bảng A
 

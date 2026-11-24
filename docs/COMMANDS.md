@@ -22,14 +22,14 @@ Windows không có `make`: dùng cột giữa. Mã chung mặc định là `HC48
 
 ## 0. Mỗi lần mở terminal mới
 
-Bật CVAT nếu đang tắt (Docker Desktop phải đang mở), rồi vào thư mục repo và kích hoạt môi trường. Lệnh `docker compose` chạy trong thư mục `cvat` **của CVAT** (`lab/cvat`, cạnh repo), không phải thư mục `cvat/` nhỏ trong repo.
+Bật CVAT nếu đang tắt (Docker Desktop phải đang mở), rồi vào thư mục repo và kích hoạt môi trường. Thay `K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid` bằng đúng tên repo của bạn, ví dụ `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid`. Lệnh `docker compose` chạy trong thư mục `cvat` **của CVAT** (`lab/cvat`, cạnh repo), không phải thư mục `cvat/` nhỏ trong repo.
 
 **Windows (PowerShell)**
 
 ```powershell
 cd $HOME\lab\cvat
 docker compose up -d
-cd $HOME\lab\K5-L23-DAY13-<MSHV>-PointCloudCuboid
+cd $HOME\lab\K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
@@ -39,7 +39,7 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```bash
 cd ~/lab/cvat
 docker compose up -d
-cd ~/lab/K5-L23-DAY13-<MSHV>-PointCloudCuboid
+cd ~/lab/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
 source .venv/bin/activate
 ```
 
@@ -159,29 +159,29 @@ git commit -m "Day 13: bang A, phieu tu kiem, bao cao"
 git push
 ```
 
-`pack` tạo `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` gồm ảnh trong `submission/images/`. Nộp file này cùng link repo lên LMS. `git add -A` đưa lên repo báo cáo, cấu hình, bảng A và phiếu tự kiểm; `.gitignore` chặn ảnh, file zip, dữ liệu.
+`pack` tạo `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` gồm ảnh trong `report/individual/images/`. Nộp file này cùng link repo lên LMS. `git add -A` đưa lên repo báo cáo, cấu hình, bảng A và phiếu tự kiểm; `.gitignore` chặn ảnh, file zip, dữ liệu.
 
 ## 5. Chụp màn hình
 
-Lưu ảnh **thẳng vào** `submission/images/` của repo, đặt tên theo [../SUBMISSION.md](../SUBMISSION.md). Đừng để ảnh nằm lại ở Desktop hay Pictures: các thư mục đó thường tự đồng bộ lên OneDrive, iCloud.
+Lưu ảnh **thẳng vào** `report/individual/images/` của repo, đặt tên theo [../SUBMISSION.md](../SUBMISSION.md). Đừng để ảnh nằm lại ở Desktop hay Pictures: các thư mục đó thường tự đồng bộ lên OneDrive, iCloud.
 
 | | Chụp một vùng | Lưu ở đâu |
 |---|---|---|
-| Windows | `Win + Shift + S`, kéo chọn vùng | Bấm vào thông báo để mở Snipping Tool → **Save as** → chọn thư mục `submission\images` của repo. Snipping Tool có thể tự lưu thêm một bản vào Pictures\Screenshots: xoá bản đó |
-| macOS | `Cmd + Shift + 5` → **Options** → **Other Location…** → chọn thư mục `submission/images` của repo (chỉ cần chọn một lần); rồi chụp vùng | Thư mục đã chọn |
+| Windows | `Win + Shift + S`, kéo chọn vùng | Bấm vào thông báo để mở Snipping Tool → **Save as** → chọn thư mục `report\individual\images` của repo. Snipping Tool có thể tự lưu thêm một bản vào Pictures\Screenshots: xoá bản đó |
+| macOS | `Cmd + Shift + 5` → **Options** → **Other Location…** → chọn thư mục `report/individual/images` của repo (chỉ cần chọn một lần); rồi chụp vùng | Thư mục đã chọn |
 
 Mở thư mục ảnh:
 
 **Windows (PowerShell)**
 
 ```powershell
-Invoke-Item submission\images
+Invoke-Item report\individual\images
 ```
 
 **macOS (Terminal)**
 
 ```bash
-open submission/images
+open report/individual/images
 ```
 
 ## 6. Mật khẩu qua biến môi trường (không bắt buộc)

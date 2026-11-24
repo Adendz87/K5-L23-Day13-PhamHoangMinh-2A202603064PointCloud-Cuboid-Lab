@@ -69,7 +69,7 @@ Nhập tên đăng nhập, email (có thể để trống) và mật khẩu. Khi
 1. Mở Chrome hoặc Edge, vào `http://localhost:8080`.
 2. Đăng nhập bằng tài khoản vừa tạo.
 3. Thấy trang **Projects** hoặc **Tasks** là xong.
-4. Bấm tên tài khoản ở góc phải → **About**: hộp thoại hiện *Server version* và *UI version* (2.83.0, hoặc 2.82.0 nếu dùng lại bản Ngày 12). Ghi số này vào `REPORT.md` mục 1.
+4. Bấm tên tài khoản ở góc phải → **About**: hộp thoại hiện *Server version* và *UI version* (2.83.0, hoặc 2.82.0 nếu dùng lại bản Ngày 12). Ghi số này vào báo cáo `report/individual/<MSSV>_<HoTen>.md` mục 1.
 
 ## 5. Bật và tắt
 
@@ -113,17 +113,17 @@ docker compose up -d
 
 3. Chép file `cvat/docker-compose.lowspec.yml` của repo bài lab vào thư mục `cvat` của CVAT, rồi khởi động CVAT bằng hai file compose. File này giảm số tiến trình worker và không chạy Grafana (trang Analytics, bài lab không dùng).
 
-   **Windows (PowerShell)**, đang đứng trong thư mục `cvat` của CVAT:
+   **Windows (PowerShell)**, đang đứng trong thư mục `cvat` của CVAT (thay `K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid` bằng tên repo của bạn):
 
    ```powershell
-   Copy-Item ..\K5-L23-DAY13-<MSHV>-PointCloudCuboid\cvat\docker-compose.lowspec.yml .
+   Copy-Item ..\K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid\cvat\docker-compose.lowspec.yml .
    docker compose -f docker-compose.yml -f docker-compose.lowspec.yml up -d --remove-orphans
    ```
 
    **macOS (Terminal)**, đang đứng trong thư mục `cvat` của CVAT:
 
    ```bash
-   cp ../K5-L23-DAY13-<MSHV>-PointCloudCuboid/cvat/docker-compose.lowspec.yml .
+   cp ../K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid/cvat/docker-compose.lowspec.yml .
    docker compose -f docker-compose.yml -f docker-compose.lowspec.yml up -d --remove-orphans
    ```
 
@@ -135,7 +135,30 @@ docker compose up -d
 
    Từ đây, mỗi lần bật lại CVAT cũng dùng đúng lệnh hai `-f` ở trên, không dùng `docker compose up -d` thường.
 
-4. Máy vẫn không chạy nổi Docker: báo coach để ngồi ghép đôi. Khi dùng chung máy, mỗi người đăng nhập tài khoản CVAT riêng và tạo task `D13-<MÃ SỐ>` riêng.
+4. Máy vẫn không chạy nổi Docker: báo coach để ngồi ghép đôi. Khi dùng chung máy, mỗi người đăng nhập tài khoản CVAT riêng và tạo task `D13-<MÃ SỐ>` riêng, làm theo mục dưới.
+
+### Ngồi ghép đôi
+
+Gọi máy có CVAT chạy được là máy A, bạn không chạy được Docker là B. Bảng A của B phải lên repo của B, nên B làm mọi việc trong **repo của B** đặt trên máy A:
+
+1. Trên CVAT của máy A, B tạo tài khoản CVAT riêng.
+2. B clone repo của B vào thư mục `lab` của máy A (cạnh repo của A), tạo `.venv` và cài thư viện như [SETUP.md](SETUP.md) mục 3.
+3. Trong thư mục repo của B, đặt tên và email commit của B **chỉ cho repo này** (không thêm `--global`, để không đổi cấu hình git của A), mỗi lệnh một dòng:
+
+   ```bash
+   git config user.name "<Họ và tên của B>"
+   git config user.email "<email-noreply-GitHub-của-B>"
+   ```
+
+4. Trong `configs/lab.ini` của repo B: `student` là mã của B, `cvat_user` là tài khoản CVAT của B, `data` trỏ tới dữ liệu của A bằng đường dẫn tương đối, ví dụ `data = ../<repo-của-A>/data/data-VF`.
+5. Mọi lệnh (`task`, `sync`, `pack`, `check_submission.py`) chạy trong thư mục repo của B. Ảnh chụp lưu vào `report/individual/images/` của repo B.
+6. Trước lần push đầu, đặt tên tài khoản GitHub của B vào địa chỉ repo để git hỏi đăng nhập đúng tài khoản B, không dùng tài khoản đã lưu của A:
+
+   ```bash
+   git remote set-url origin https://<tài-khoản-B>@github.com/<tài-khoản-B>/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid.git
+   ```
+
+7. B nộp link repo và file zip ảnh lên LMS bằng tài khoản của B. Xong buổi: đăng xuất LMS và GitHub trên trình duyệt của máy A, xoá thư mục repo của B khỏi máy A, xoá đăng nhập GitHub của B mà git đã lưu (Windows: Control Panel → Credential Manager → Windows Credentials, mục bắt đầu bằng `git:https://` có tên tài khoản B; macOS: Keychain Access, tìm `github.com`, mục có tên tài khoản B).
 
 ## 7. Tạo task bằng tay (khi `python scripts/lab.py task` không nối được CVAT)
 

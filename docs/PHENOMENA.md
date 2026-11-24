@@ -11,7 +11,7 @@ Mỗi hiện tượng cần **một ảnh chụp từ CVAT** và **một dòng**
 
 ## Tìm ở đâu
 
-Tìm trong 10 frame của bạn trước. Không thấy thì dùng frame gợi ý dưới đây: cả 4 frame đều nằm trong task chung `D13-HC485087` của vòng hiệu chuẩn ([../GUIDE.md](../GUIDE.md) Bước 1), nên ai cũng mở được. Hoặc mượn frame của bạn bên cạnh. Frame mượn thì ghi rõ nguồn: task chung, hoặc MSHV của bạn cho mượn.
+Tìm trong 10 frame của bạn trước. Không thấy thì dùng frame gợi ý dưới đây: cả 4 frame đều nằm trong task chung `D13-HC485087` của vòng hiệu chuẩn ([../GUIDE.md](../GUIDE.md) Bước 1), nên ai cũng mở được. Hoặc mượn frame của bạn bên cạnh. Frame mượn thì ghi rõ nguồn: task chung, hoặc MSSV của bạn cho mượn.
 
 | Hiện tượng | Frame gợi ý | Nhìn ở đâu |
 |---|---|---|

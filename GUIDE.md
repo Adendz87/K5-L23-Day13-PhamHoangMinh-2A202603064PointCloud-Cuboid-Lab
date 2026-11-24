@@ -6,10 +6,10 @@ Quy tắc: [RULES.md](RULES.md) · Chấm điểm: [RUBRIC.md](RUBRIC.md) · N�
 | Bước | Việc | Lệnh chính | Sản phẩm | Thời gian |
 |---|---|---|---|---|
 | 1 | Chuẩn bị, tạo task | `python scripts/lab.py dry`, `python scripts/lab.py task`, `python scripts/lab.py task --code <MÃ CHUNG>` | task `D13-<MÃ SỐ>` và task chung | ~15' |
-| 2 | **Đọc frame** năm bước (T1) | — (làm trên CVAT) | `REPORT.md` §2, 4 ảnh | ~25' |
-| 3 | **Vẽ cuboid** (T2, T3) | `python scripts/lab.py report` | 60–70 cuboid, `REPORT.md` §3, 3 ảnh | ~90' |
-| 4 | Săn bốn hiện tượng (T4) | — (làm trên CVAT) | `REPORT.md` §4, 4 ảnh | ~25' |
-| 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/lab.py pack`, `python scripts/check_submission.py` | bảng A, phiếu tự kiểm, `REPORT.md` trong repo; file zip ảnh nộp LMS | ~30' |
+| 2 | **Đọc frame** năm bước (T1) | — (làm trên CVAT) | báo cáo §2, 4 ảnh | ~25' |
+| 3 | **Vẽ cuboid** (T2, T3) | `python scripts/lab.py report` | 60–70 cuboid, báo cáo §3, 3 ảnh | ~90' |
+| 4 | Săn bốn hiện tượng (T4) | — (làm trên CVAT) | báo cáo §4, 4 ảnh | ~25' |
+| 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/lab.py pack`, `python scripts/check_submission.py` | bảng A, phiếu tự kiểm, báo cáo trong repo; file zip ảnh nộp LMS | ~30' |
 
 T1–T5 là số nhiệm vụ của đề, dùng trong tên ảnh (`t1-…`, `t2-…`, `t4-…`, xem [SUBMISSION.md](SUBMISSION.md)). Lệnh `python scripts/lab.py ...` giống nhau trên Windows và macOS. macOS có thể gõ tắt `make dry`, `make task`, `make sync`, `make pack`, `make check`. Lệnh riêng từng hệ điều hành: [docs/COMMANDS.md](docs/COMMANDS.md).
 
@@ -32,7 +32,7 @@ Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). 
 
 > **Không dùng `--replace` nếu đã vẽ gì**: `python scripts/lab.py task --replace` xóa task cùng mọi cuboid rồi tạo lại.
 
-Đọc [docs/COORDINATES.md](docs/COORDINATES.md) (3'): **x trái, y sau, z lên; phía trước xe là −y**. Điền `submission/REPORT.md` mục 1 phần thông tin.
+Đọc [docs/COORDINATES.md](docs/COORDINATES.md) (3'): **x trái, y sau, z lên; phía trước xe là −y**. Đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`): đó là báo cáo của bạn. Điền mục 1 phần thông tin.
 
 ## Bước 2 — Đọc frame năm bước (~25', chưa vẽ)
 
@@ -53,7 +53,7 @@ Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). 
 | 4 | **Ảnh camera** | Đổi qua đủ 7 camera. 3 điều chỉ camera cho biết, 3 điều chỉ LiDAR cho biết |
 | 5 | **Quét cảnh** | Có những loại vật nào? Ít nhất một cụm điểm bạn chưa đọc được |
 
-Chụp một ảnh khung 3D và một ảnh nhìn từ trên xuống cho mỗi frame đọc kỹ; trên ảnh nhìn từ trên xuống, đánh dấu phía trước, +x, +y (Windows: Paint; macOS: Preview → Markup). Lưu thẳng vào `submission/images/` ([docs/COMMANDS.md](docs/COMMANDS.md) mục 5). Điền `REPORT.md` mục 2.
+Chụp một ảnh khung 3D và một ảnh nhìn từ trên xuống cho mỗi frame đọc kỹ; trên ảnh nhìn từ trên xuống, đánh dấu phía trước, +x, +y (Windows: Paint; macOS: Preview → Markup). Lưu thẳng vào `report/individual/images/` ([docs/COMMANDS.md](docs/COMMANDS.md) mục 5). Điền báo cáo mục 2.
 **Vật phía sau và hai bên không có trong ảnh cam01.** Tìm chúng trên ảnh nhìn từ trên xuống rồi đối chiếu camera nhìn về hướng đó (cam09 nhìn ra sau; hướng 7 camera ở [docs/COORDINATES.md](docs/COORDINATES.md)).
 
 ## Bước 3 — Vẽ cuboid (~90', nghỉ ở giữa)
@@ -84,7 +84,7 @@ Checklist cho mỗi cuboid ([docs/GUIDELINE.md](docs/GUIDELINE.md)):
 4. Đáy chạm mặt đường: kiểm ở Side và Front.
 5. Kiểm đủ Top, Side, Front (đủ 6 mặt hộp sát điểm của vật), rồi đối chiếu ảnh camera.
 6. So kích thước với bảng 4.3. Vật bị che một phần: bật occluded (nút hình người trên thẻ cuboid ở danh sách bên phải, hoặc phím `Q`).
-7. Vật rất thưa: thấy khoảng 15–20% thể tích thì vẽ; không đủ cơ sở thì bỏ qua và ghi vào `REPORT.md`.
+7. Vật rất thưa: thấy khoảng 15–20% thể tích thì vẽ; không đủ cơ sở thì bỏ qua và ghi vào báo cáo.
 
 **3b. Frame 2–10 (55').** Mỗi frame khoảng 6 phút: frame 2–6 trước giờ nghỉ, frame 7–10 sau. **Hết giờ của frame thì sang frame sau, không dồn.** Mỗi frame **từ 5 cuboid, nên 6**, theo thứ tự gần → xa. Quét ảnh nhìn từ trên xuống theo vòng tròn quanh xe để không sót vật phía sau và hai bên. Không vẽ xe của chính mình. **Save sau mỗi frame** (`Ctrl+S`, macOS `Cmd+S`); `F` / `D` sang frame sau / trước. Mỗi cuboid soát lại hai lần: lúc vẽ, và khi lướt lại cả frame trước khi sang frame sau.
 
@@ -107,7 +107,7 @@ Mỗi hiện tượng cần **một ảnh chụp từ CVAT** và **một dòng**
 | 3 | Phản xạ thấp hoặc ít điểm bất thường | Ghi giả thuyết, không khẳng định |
 | 4 | Điểm lạ | Không gán thành vật |
 
-Tìm trong 10 frame của bạn trước. Không có thì xem frame gợi ý trong task chung `D13-HC485087`, hoặc mượn frame của bạn bên cạnh, và **ghi rõ nguồn** (task chung, hoặc MSHV của bạn cho mượn). Cách tìm và danh sách frame gợi ý: [docs/PHENOMENA.md](docs/PHENOMENA.md). Điền `REPORT.md` mục 4.
+Tìm trong 10 frame của bạn trước. Không có thì xem frame gợi ý trong task chung `D13-HC485087`, hoặc mượn frame của bạn bên cạnh, và **ghi rõ nguồn** (task chung, hoặc MSSV của bạn cho mượn). Cách tìm và danh sách frame gợi ý: [docs/PHENOMENA.md](docs/PHENOMENA.md). Điền báo cáo mục 4.
 
 ## Bước 5 — Đọc số, tự kiểm, báo cáo, nộp (~30')
 
@@ -128,7 +128,7 @@ python scripts/lab.py sync
 Mở ảnh trong `work/xem/` và danh sách cảnh báo ([docs/SELF_CHECK.md](docs/SELF_CHECK.md)). **Sửa ít nhất 2 cuboid** trên CVAT, Save, chạy lại `sync`. Trước khi chạy lại, đóng bảng A, phiếu tự kiểm nếu đang mở trong Excel: Excel giữ file thì lệnh không ghi được.
 Cảnh báo là **gợi ý để xem lại**, không phải lỗi chắc chắn và không tính điểm: cuboid đúng vẫn có thể bị cờ, cuboid sai có thể không bị cờ. Đừng chỉnh cho hết cờ mà không nhìn lại point cloud.
 
-Điền `REPORT.md` mục 5 từ bảng A:
+Điền báo cáo mục 5 từ bảng A:
 
 - Ba z đáy (z − h/2). Mặt đường khoảng −1,7 m: lệch hơn 0,3 m nghĩa là cuboid lơ lửng hoặc chìm, sửa trên CVAT.
 - Cuboid gần nhất và xa nhất: `dist_m` (trên mặt đường) và r = √(x² + y² + z²). Khoảng cách tới điểm gần nhất của vật nhỏ hơn `dist_m` khoảng nửa chiều dài vật.
@@ -137,7 +137,7 @@ Cảnh báo là **gợi ý để xem lại**, không phải lỗi chắc chắn 
 
 Rồi mục 6.
 
-**Đổi kiểm với bạn bên cạnh (~5').** Đưa `REPORT.md` mục 5 cho bạn ngồi cạnh: bạn ấy chọn 2 con số và đối chiếu với bảng A mở trên máy bạn; bạn làm ngược lại với bài của bạn ấy. Ghi vào `REPORT.md` mục 5 đã đổi kiểm với ai (MSHV) và kết quả. Chỉ xem trên màn hình, không gửi file bảng A cho nhau.
+**Đổi kiểm với bạn bên cạnh (~5').** Đưa báo cáo mục 5 cho bạn ngồi cạnh: bạn ấy chọn 2 con số và đối chiếu với bảng A mở trên máy bạn; bạn làm ngược lại với bài của bạn ấy. Ghi vào báo cáo mục 5 đã đổi kiểm với ai (MSSV) và kết quả. Chỉ xem trên màn hình, không gửi file bảng A cho nhau.
 
 Cuối cùng:
 
@@ -146,7 +146,7 @@ python scripts/lab.py pack
 python scripts/check_submission.py
 ```
 
-`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, `REPORT.md` lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong `REPORT.md` nếu cuboid đã dẫn bị đổi (xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
+`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, báo cáo lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong báo cáo nếu cuboid đã dẫn bị đổi (xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Lỗi hay gặp
 

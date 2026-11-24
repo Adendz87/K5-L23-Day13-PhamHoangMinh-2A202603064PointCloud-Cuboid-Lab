@@ -68,7 +68,7 @@ Homebrew cài Python 3.12 dưới tên lệnh `python3.12`; lệnh `python3` có
 
 ## 3. Tạo repo của bạn, tải về và cài thư viện
 
-Trên GitHub, mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab, bấm **Use this template → Create a new repository**, chọn **Public**, đặt tên `K5-L23-DAY13-<MSHV>-PointCloudCuboid` (xem [../SUBMISSION.md](../SUBMISSION.md)). Trong các lệnh dưới, thay `<tài-khoản>` bằng tên tài khoản GitHub và `<MSHV>` bằng mã số của bạn.
+Trên GitHub, mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab, bấm **Use this template → Create a new repository**, chọn **Public**, đặt tên `K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid`, ví dụ `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid` (quy ước ở [../SUBMISSION.md](../SUBMISSION.md)). Trong các lệnh dưới, thay `<tài-khoản>` bằng tên tài khoản GitHub và thay cả cụm `K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid` bằng đúng tên repo bạn vừa tạo.
 
 Repo và dữ liệu đặt trong thư mục `lab` ở thư mục người dùng, **không** đặt trong Documents, Desktop hay thư mục OneDrive, iCloud Drive, Google Drive: các thư mục đó thường tự đồng bộ lên mây, kéo theo dữ liệu VF được cấp theo cam kết bảo mật. CVAT ([CVAT_SETUP.md](CVAT_SETUP.md)) cũng đặt trong `lab`, cạnh repo.
 
@@ -78,8 +78,8 @@ Repo và dữ liệu đặt trong thư mục `lab` ở thư mục người dùng
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 New-Item -ItemType Directory -Force $HOME\lab
 cd $HOME\lab
-git clone https://github.com/<tài-khoản>/K5-L23-DAY13-<MSHV>-PointCloudCuboid.git
-cd K5-L23-DAY13-<MSHV>-PointCloudCuboid
+git clone https://github.com/<tài-khoản>/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid.git
+cd K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
@@ -98,8 +98,8 @@ py -3.12 -m venv .venv
 
 ```bash
 mkdir -p ~/lab && cd ~/lab
-git clone https://github.com/<tài-khoản>/K5-L23-DAY13-<MSHV>-PointCloudCuboid.git
-cd K5-L23-DAY13-<MSHV>-PointCloudCuboid
+git clone https://github.com/<tài-khoản>/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid.git
+cd K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
@@ -218,7 +218,21 @@ Làm theo [CVAT_SETUP.md](CVAT_SETUP.md), rồi điền `cvat_user` trong `confi
 
 ## 7. Push thử lên GitHub
 
-Lúc nộp bài (19:30) bạn phải push được bảng A lên GitHub. Thử ngay bây giờ để lỗi đăng nhập hay cấu hình lộ ra trước buổi học.
+Ở mốc CP7 (19:30) bạn push bảng A lên GitHub lần đầu. Thử push ngay bây giờ để lỗi đăng nhập hay cấu hình lộ ra trước buổi học.
+
+Trước hết quay về thư mục repo của bạn: sau mục 6, terminal đang đứng trong thư mục `cvat` của CVAT.
+
+**Windows (PowerShell)**
+
+```powershell
+cd $HOME\lab\K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
+```
+
+**macOS (Terminal)**
+
+```bash
+cd ~/lab/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid
+```
 
 Lần đầu dùng git trên máy này thì khai báo tên và email cho commit (thay chỗ `<...>`). Repo của bạn là public nên ai cũng xem được email này. Nên dùng địa chỉ dạng `…@users.noreply.github.com` ở GitHub → **Settings → Emails** (bật **Keep my email addresses private**).
 
@@ -229,6 +243,14 @@ git config --global user.name "<Họ và tên>"
 ```bash
 git config --global user.email "<email-noreply-GitHub>"
 ```
+
+Xem git sẽ commit gì:
+
+```bash
+git status
+```
+
+Phải thấy `configs/lab.ini` trong danh sách. Không thấy, hoặc thấy toàn file lạ, là bạn đang đứng sai thư mục.
 
 Rồi commit cấu hình và push, mỗi lệnh một dòng (Windows và macOS như nhau):
 
