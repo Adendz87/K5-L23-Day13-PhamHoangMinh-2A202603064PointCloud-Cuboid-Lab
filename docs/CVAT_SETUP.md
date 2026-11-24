@@ -10,7 +10,7 @@ Nguồn: https://docs.cvat.ai/docs/administration/basics/installation/
 
 ## 1. Cần có
 
-- **Docker Desktop** đã cài ([SETUP.md](SETUP.md) mục 2) và **đang mở**, biểu tượng cá voi báo *Engine running*.
+- **Docker Desktop** đã cài ([SETUP.md](SETUP.md) mục 2) và **đang mở**, biểu tượng cá voi báo *Engine running*. Docker Desktop cho Mac cần macOS 14 trở lên; Windows cần WSL 2.
 - **Git**, **Chrome hoặc Edge**, ít nhất 10 GB đĩa trống (15 GB nếu sau này cập nhật CVAT).
 - RAM cho Docker: khoảng 8 GB nếu máy có 16 GB. Máy 8 GB xem mục 6.
 - **Mac chip Apple (M1 trở lên):** Docker Desktop → Settings → General → bật **Use Rosetta for x86_64/amd64 emulation on Apple Silicon**. Image `cvat/server` chỉ có bản amd64.
@@ -127,7 +127,13 @@ docker compose up -d
    docker compose -f docker-compose.yml -f docker-compose.lowspec.yml up -d --remove-orphans
    ```
 
-   Từ đây, mỗi lần bật lại CVAT cũng dùng đúng lệnh hai `-f` này. Lỡ chạy `docker compose up -d` thường thì Grafana bật lại; tắt nó bằng `docker stop cvat_grafana`.
+   Nếu trước đó máy đã chạy CVAT bản đủ, Grafana có thể vẫn đang chạy. Tắt nó (giống nhau trên hai hệ điều hành; báo `No such container` thì bỏ qua):
+
+   ```bash
+   docker stop cvat_grafana
+   ```
+
+   Từ đây, mỗi lần bật lại CVAT cũng dùng đúng lệnh hai `-f` ở trên, không dùng `docker compose up -d` thường.
 
 4. Máy vẫn không chạy nổi Docker: báo coach để ngồi ghép đôi. Khi dùng chung máy, mỗi người đăng nhập tài khoản CVAT riêng và tạo task `D13-<MÃ SỐ>` riêng.
 

@@ -57,8 +57,10 @@ Cài Homebrew nếu chưa có (kiểm bằng `brew --version`), theo hướng d�
 
 ```bash
 brew install git python@3.12
-brew install --cask docker
+brew install --cask docker-desktop
 ```
+
+Bản Homebrew cũ báo không có `docker-desktop` thì dùng `brew install --cask docker`. Docker Desktop chỉ chạy trên các bản macOS còn được hỗ trợ (hiện là macOS 14 trở lên); máy cũ hơn báo coach để ngồi ghép đôi.
 
 Lần đầu gõ `git` trên macOS có thể hiện hộp thoại cài Command Line Tools. Bấm **Install** và chờ xong.
 
@@ -73,6 +75,7 @@ Repo và dữ liệu đặt trong thư mục `lab` ở thư mục người dùng
 **Windows (PowerShell)**
 
 ```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 New-Item -ItemType Directory -Force $HOME\lab
 cd $HOME\lab
 git clone https://github.com/<tài-khoản>/K5-L23-DAY13-<MSHV>-PointCloudCuboid.git
@@ -83,16 +86,12 @@ python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
+Dòng đầu cho phép PowerShell chạy `Activate.ps1`, chỉ trong cửa sổ đang mở. Thiếu nó, máy mặc định chặn script (*running scripts is disabled on this system*), `.venv` không được kích hoạt và `pip` cài nhầm vào Python của máy.
+
 Nếu `python --version` ở mục 1 in bản dưới 3.11, thay dòng `python -m venv .venv` bằng:
 
 ```powershell
 py -3.12 -m venv .venv
-```
-
-Nếu dòng `Activate.ps1` báo *running scripts is disabled on this system*, chạy lệnh sau rồi kích hoạt lại. Lệnh chỉ có hiệu lực trong cửa sổ PowerShell đang mở:
-
-```powershell
-Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
 **macOS (Terminal)**
@@ -113,7 +112,7 @@ Nếu `python3 --version` ở mục 1 in bản dưới 3.11 (ví dụ bản 3.9 
 python3.12 -m venv .venv
 ```
 
-Kích hoạt thành công thì đầu dòng lệnh có chữ `(.venv)`. Từ đây lệnh `python` giống nhau trên cả hai hệ điều hành. Kiểm lại bằng `python --version`: phải in **3.11 trở lên**. Nếu không, `.venv` đã được tạo bằng Python cũ: xoá và tạo lại theo [COMMON_ERRORS.md](COMMON_ERRORS.md) mục 1. Thư viện rất nhẹ (`cvat-sdk`, `Pillow`), không cần GPU.
+Kích hoạt thành công thì đầu dòng lệnh có chữ `(.venv)`. Từ đây lệnh `python` giống nhau trên cả hai hệ điều hành. Kiểm lại bằng `python --version`: phải in **3.11 trở lên**. Nếu không, `.venv` đã được tạo bằng Python cũ: xoá và tạo lại theo [COMMON_ERRORS.md](COMMON_ERRORS.md) mục 1. Kiểm thư viện bằng `python -m pip show cvat-sdk`: phải in `Version: 2.83.0` (hoặc 2.82.x). Thư viện rất nhẹ (`cvat-sdk`, `Pillow`), không cần GPU.
 
 **Mỗi lần mở cửa sổ terminal mới**, bạn phải vào lại thư mục repo và kích hoạt lại môi trường ([COMMANDS.md](COMMANDS.md) mục 0).
 
@@ -121,7 +120,7 @@ Kích hoạt thành công thì đầu dòng lệnh có chữ `(.venv)`. Từ đ�
 
 GV gửi riêng cho bạn link tải `Data-VF.zip` (khoảng 600 MB) và **mật khẩu giải nén** (xem [../data/README.md](../data/README.md)). Tải bằng trình duyệt **trước giờ học**. Các lệnh dưới giả định file nằm trong thư mục Downloads và bạn đang đứng trong thư mục repo.
 
-Lệnh giải nén sẽ hỏi mật khẩu (`Enter passphrase:`). Gõ mật khẩu rồi Enter; màn hình không hiện ký tự nào, đó là bình thường. Đừng gõ mật khẩu thẳng vào dòng lệnh: nó sẽ nằm lại trong lịch sử lệnh.
+Lệnh giải nén sẽ hỏi mật khẩu (`Enter passphrase:`). Gõ mật khẩu rồi Enter; màn hình không hiện ký tự nào, đó là bình thường. Gõ sai thì lệnh hỏi lại; bấm `Ctrl+C` để dừng. Đừng gõ mật khẩu thẳng vào dòng lệnh: nó sẽ nằm lại trong lịch sử lệnh.
 
 **Windows (PowerShell)**
 
@@ -147,7 +146,19 @@ Lệnh thứ hai phải liệt kê `sequence_01` đến `sequence_05`. Thư mụ
 
 - Báo `Incorrect passphrase` hoặc `Couldn't read passphrase`: xoá phần đã giải nén (`data/data-VF`), chạy lại lệnh `tar` trong cửa sổ PowerShell/Terminal bình thường và gõ lại mật khẩu.
 - `tar` vẫn không giải được: dùng 7-Zip (Windows) hoặc Keka (macOS), giải nén vào thư mục `data` của repo. Không dùng `Expand-Archive` của PowerShell và lệnh `unzip` của macOS: chúng không đọc được zip mã hoá kiểu AES.
-- Kiểm đủ dữ liệu: mỗi `sequence_XX/lidar` có 60 file `.bin`. Lệnh `python scripts/lab.py dry` ở mục 5 cũng tự kiểm và báo nếu thiếu file hoặc file hỏng.
+- Kiểm đủ dữ liệu: 5 sequence × 60 = **300** file `.bin`. Lệnh `python scripts/lab.py dry` ở mục 5 cũng tự kiểm và báo nếu thiếu file hoặc file hỏng.
+
+**Windows (PowerShell)**
+
+```powershell
+(Get-ChildItem data\data-VF\sequence_*\lidar\*.bin).Count
+```
+
+**macOS (Terminal)**
+
+```bash
+ls data/data-VF/sequence_*/lidar/*.bin | wc -l
+```
 
 Nếu giải nén ra thẳng các thư mục `sequence_XX` trong `data/` (không có thư mục bọc ngoài), tạo `data/data-VF` rồi chuyển chúng vào:
 
@@ -207,7 +218,7 @@ Làm theo [CVAT_SETUP.md](CVAT_SETUP.md), rồi điền `cvat_user` trong `confi
 
 ## Bảng kiểm trước buổi học
 
-- [ ] `python --version` (đã kích hoạt `.venv`) in 3.11 trở lên.
+- [ ] `python --version` (đã kích hoạt `.venv`) in 3.11 trở lên; `python -m pip show cvat-sdk` in `Version: 2.83.0` (hoặc 2.82.x).
 - [ ] Repo và dữ liệu nằm trong `lab`, không nằm trong thư mục tự đồng bộ lên mây.
 - [ ] `python scripts/lab.py dry` in đủ 10 frame, mỗi frame 7 camera, không có cảnh báo thiếu file.
 - [ ] Mở được CVAT và đăng nhập được.

@@ -18,12 +18,14 @@ T1–T5 là số nhiệm vụ của đề, dùng trong tên ảnh (`t1-…`, `t2
 Mở `configs/lab.ini`, điền `student` (mã số của bạn) và `cvat_user` (tên đăng nhập CVAT). Không ghi mật khẩu vào file. Bật CVAT trên máy ([docs/COMMANDS.md](docs/COMMANDS.md) mục 0), rồi:
 
 ```bash
-python scripts/lab.py dry                     # in 10 frame của bạn, mỗi frame camera=7; kiểm dữ liệu; không nối CVAT
-python scripts/lab.py task                    # tạo task D13-<MÃ SỐ>; hỏi mật khẩu CVAT, màn hình không hiện ký tự
-python scripts/lab.py task --code HC485087    # tạo task chung D13-HC485087 cho vòng hiệu chuẩn (Bước 3) và Bước 4
+python scripts/lab.py dry
+python scripts/lab.py task
+python scripts/lab.py task --code HC485087
 ```
 
-Mã chung mặc định là `HC485087`; nếu coach phát mã khác thì dùng mã của coach ở mọi lệnh có `--code`. Task chung không phải bài của bạn và không được chấm.
+- `dry` in 10 frame của bạn, mỗi frame `camera=7`, và kiểm dữ liệu; không nối CVAT.
+- `task` tạo task `D13-<MÃ SỐ>`; lệnh hỏi mật khẩu CVAT, màn hình không hiện ký tự khi gõ.
+- `task --code HC485087` tạo task chung `D13-HC485087` cho vòng hiệu chuẩn (Bước 3) và để xem frame gợi ý ở Bước 4. Mã chung mặc định là `HC485087`; nếu coach phát mã khác thì dùng mã của coach ở mọi lệnh có `--code`. Task chung không phải bài của bạn và không được chấm.
 
 Mở `http://localhost:8080/tasks` bằng Chrome hoặc Edge, bấm **Open** ở task `D13-<MÃ SỐ>`, rồi bấm **Job #…** ở mục Jobs. Bạn phải thấy point cloud và ảnh camera.
 Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). Nếu task đã có, chạy lại `task` chỉ in lại đường dẫn cũ, không tạo task mới. Lệnh `task` lỗi mà trình duyệt vẫn mở được CVAT thì tạo task bằng tay ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 7).
@@ -61,10 +63,10 @@ Chụp một ảnh khung 3D và một ảnh nhìn từ trên xuống cho mỗi f
 **Vòng hiệu chuẩn (~10', không chấm).** Coach chỉ định một frame trong task chung `D13-HC485087` và 3 vật (ví dụ "xe trắng bên trái, khoảng 10 m"). Mở task chung, vẽ 3 cuboid trong 6 phút, **không trao đổi**, Save, rồi:
 
 ```bash
-python scripts/lab.py report --code HC485087   # -> work/hieuchuan/D13-HC485087-<MÃ SỐ>-bangA.csv
+python scripts/lab.py report --code HC485087
 ```
 
-Gửi file đó cho coach theo kênh coach chỉ định. Coach ghép file của cả lớp, chiếu chỗ các bạn lệch nhau nhiều nhất (tâm, kích thước, yaw), và cả lớp chốt cách hiểu theo guideline. Các bạn vẽ giống nhau chỉ cho thấy **nhất quán**, chưa chắc **đúng**; guideline và coach mới là căn cứ. Cuboid trong task chung không vào bài nộp của bạn.
+Lệnh ghi `work/hieuchuan/D13-HC485087-<MÃ SỐ>-bangA.csv`. Gửi file đó cho coach theo kênh coach chỉ định. Coach ghép file của cả lớp, chiếu chỗ các bạn lệch nhau nhiều nhất (tâm, kích thước, yaw), và cả lớp chốt cách hiểu theo guideline. Các bạn vẽ giống nhau chỉ cho thấy **nhất quán**, chưa chắc **đúng**; guideline và coach mới là căn cứ. Cuboid trong task chung không vào bài nộp của bạn.
 
 Tiếp theo, trong task `D13-<MÃ SỐ>` của bạn, trên frame đầu tiên, vẽ ba vật mẫu: **(a)** xe con gần nhất, **(b)** một xe buýt hoặc xe tải, **(c)** một người đi bộ hoặc xe hai bánh (frame thiếu loại nào thì lấy ở frame 2). Chụp ảnh từng cuboid. Rồi vẽ tiếp các vật gần đến khi frame 1 có **từ 8 cuboid, nên 10**.
 
@@ -89,10 +91,10 @@ Checklist cho mỗi cuboid ([docs/GUIDELINE.md](docs/GUIDELINE.md)):
 Sau frame 1, kiểm nhanh bằng số:
 
 ```bash
-python scripts/lab.py report   # -> submission/D13-<MÃ SỐ>-bangA.csv, in số cuboid từng frame
+python scripts/lab.py report
 ```
 
-Xe con phải có `length` khoảng 3,8–5,3 m và lớn hơn `width`; xe cùng chiều phía trước có `yaw_deg` gần 270°; `z_bottom` khoảng −1,7 m (lệch hơn 0,3 m là lơ lửng hoặc chìm). Lệnh báo `CẢNH BÁO … cuboid dạng Track` nghĩa là có cuboid không được chấm: xoá và vẽ lại bằng Shape.
+Lệnh ghi `submission/D13-<MÃ SỐ>-bangA.csv` và in số cuboid từng frame. Xe con phải có `length` khoảng 3,8–5,3 m và lớn hơn `width`; xe cùng chiều phía trước có `yaw_deg` gần 270°; `z_bottom` khoảng −1,7 m (lệch hơn 0,3 m là lơ lửng hoặc chìm). Lệnh báo `CẢNH BÁO … cuboid dạng Track` nghĩa là có cuboid không được chấm: xoá và vẽ lại bằng Shape.
 
 ## Bước 4 — Săn bốn hiện tượng (~25')
 
@@ -112,8 +114,10 @@ Tìm trong 10 frame của bạn trước. Không có thì xem frame gợi ý tro
 Bấm **Save** trong CVAT, rồi:
 
 ```bash
-python scripts/lab.py sync     # = report + preview + selfcheck
+python scripts/lab.py sync
 ```
+
+`sync` chạy liền ba lệnh con:
 
 | Lệnh con | Ra file | Dùng để |
 |---|---|---|
@@ -138,11 +142,11 @@ Rồi mục 6.
 Cuối cùng:
 
 ```bash
-python scripts/lab.py pack            # nén bảng A, phiếu tự kiểm, 11 ảnh -> work/K5-L23-DAY13-<MÃ SỐ>-nop.zip
-python scripts/check_submission.py    # kiểm bài nộp: hết LỖI mới nộp
+python scripts/lab.py pack
+python scripts/check_submission.py
 ```
 
-Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit, push, rồi nộp **link repo** và **file zip** lên LMS. Sửa gì sau đó thì chạy lại `sync`, `pack`, `check_submission.py` và nộp lại file zip.
+`pack` nén bảng A, phiếu tự kiểm và 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-nop.zip`. `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit, push, rồi nộp **link repo** và **file zip** lên LMS. Sửa gì sau đó thì chạy lại `sync`, `pack`, `check_submission.py` và nộp lại file zip.
 
 ## Lỗi hay gặp
 

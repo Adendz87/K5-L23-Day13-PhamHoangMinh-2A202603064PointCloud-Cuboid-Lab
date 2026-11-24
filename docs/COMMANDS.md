@@ -22,27 +22,28 @@ Windows không có `make`: dùng cột giữa. Mã chung mặc định là `HC48
 
 ## 0. Mỗi lần mở terminal mới
 
+Bật CVAT nếu đang tắt (Docker Desktop phải đang mở), rồi vào thư mục repo và kích hoạt môi trường. Lệnh `docker compose` chạy trong thư mục `cvat` **của CVAT** (`lab/cvat`, cạnh repo), không phải thư mục `cvat/` nhỏ trong repo.
+
 **Windows (PowerShell)**
 
 ```powershell
+cd $HOME\lab\cvat
+docker compose up -d
 cd $HOME\lab\K5-L23-DAY13-<MSHV>-PointCloudCuboid
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 .\.venv\Scripts\Activate.ps1
 ```
 
 **macOS (Terminal)**
 
 ```bash
+cd ~/lab/cvat
+docker compose up -d
 cd ~/lab/K5-L23-DAY13-<MSHV>-PointCloudCuboid
 source .venv/bin/activate
 ```
 
-Bật CVAT nếu đang tắt. Chạy trong thư mục `cvat` **của CVAT** (cạnh repo, ví dụ `cd ../cvat`), không phải thư mục `cvat/` trong repo; giống nhau trên hai hệ điều hành:
-
-```bash
-docker compose up -d
-```
-
-Máy dùng cấu hình máy yếu thì bật bằng lệnh hai `-f` ở [CVAT_SETUP.md](CVAT_SETUP.md) mục 6.
+Máy dùng cấu hình máy yếu thì thay dòng `docker compose up -d` bằng lệnh hai `-f` ở [CVAT_SETUP.md](CVAT_SETUP.md) mục 6.
 
 ## 1. Điền `configs/lab.ini` (một lần)
 
@@ -76,23 +77,19 @@ python scripts/lab.py task --code HC485087
 
 Lệnh `task` hỏi `Mật khẩu CVAT cho <tên>:`. Gõ mật khẩu rồi Enter; màn hình không hiện ký tự nào. Lệnh in đường dẫn task, dạng `http://localhost:8080/tasks/12`: dán vào Chrome hoặc Edge, hoặc mở danh sách task rồi bấm **Open** ở task cần làm, rồi bấm **Job #…** ở mục Jobs.
 
-**Windows (PowerShell)**
+**Windows (PowerShell)**, mở bằng Edge:
 
 ```powershell
-Start-Process "http://localhost:8080/tasks"
+Start-Process msedge "http://localhost:8080/tasks"
 ```
 
-**macOS (Terminal)**
+**macOS (Terminal)**, mở bằng trình duyệt mặc định; nếu đó không phải Chrome hay Edge thì dán link vào Chrome:
 
 ```bash
 open "http://localhost:8080/tasks"
 ```
 
-Nếu task đã có, chạy lại `task` chỉ in lại đường dẫn cũ, không tạo task mới. Lệnh dưới đây **xóa task cùng mọi cuboid** rồi tạo lại; chỉ dùng khi chưa vẽ gì hoặc khi coach bảo:
-
-```bash
-python scripts/lab.py task --replace
-```
+Nếu task đã có, chạy lại `task` chỉ in lại đường dẫn cũ, không tạo task mới. Thêm `--replace` vào lệnh `task` thì lệnh **xóa task cùng mọi cuboid** rồi tạo lại, không hỏi lại: chỉ dùng khi chưa vẽ gì hoặc khi coach bảo.
 
 ## 3. Bước 3 và 5 · Bảng A, xem trước, tự kiểm
 
