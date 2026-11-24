@@ -12,7 +12,7 @@ Bài cá nhân, buổi thực hành **16:00–20:00**. Mốc giờ là điểm *
 | 19:00 | **CP6** Bốn hiện tượng | 4 ảnh và 4 dòng trong `REPORT.md` §4; nguyên nhân ghi là giả thuyết |
 | 19:30 | **CP7** Tự kiểm + nộp | `python scripts/lab.py sync` đã chạy sau lần Save cuối; đã sửa ≥ 2 cuboid; `python scripts/check_submission.py` hết LỖI; `REPORT.md` xong |
 
-Sau CP7: exit ticket cuối buổi (19:35), rồi 20' dự phòng để bắt kịp hoặc vẽ thêm.
+Sau CP7: exit ticket cuối buổi (19:35), rồi 20' dự phòng (19:40–20:00) để bắt kịp, vẽ thêm hoặc sửa cuboid kém. Sửa xong thì Save, `python scripts/lab.py sync`, `python scripts/check_submission.py` rồi push lại: bản push cuối cùng trước **20:00** được chấm ([SUBMISSION.md](SUBMISSION.md)).
 
 ## Cần hiểu ở mỗi mốc
 

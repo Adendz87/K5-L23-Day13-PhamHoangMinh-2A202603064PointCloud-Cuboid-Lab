@@ -9,7 +9,7 @@ Quy tắc: [RULES.md](RULES.md) · Chấm điểm: [RUBRIC.md](RUBRIC.md) · N�
 | 2 | **Đọc frame** năm bước (T1) | — (làm trên CVAT) | `REPORT.md` §2, 4 ảnh | ~25' |
 | 3 | **Vẽ cuboid** (T2, T3) | `python scripts/lab.py report` | 60–70 cuboid, `REPORT.md` §3, 3 ảnh | ~90' |
 | 4 | Săn bốn hiện tượng (T4) | — (làm trên CVAT) | `REPORT.md` §4, 4 ảnh | ~25' |
-| 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/check_submission.py` | bảng A, phiếu tự kiểm, `REPORT.md` | ~45' |
+| 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/check_submission.py` | bảng A, phiếu tự kiểm, `REPORT.md` | ~30' |
 
 Lệnh `python scripts/lab.py ...` giống nhau trên Windows và macOS. macOS có thể gõ tắt `make dry`, `make task`, `make sync`, `make check`. Lệnh riêng từng hệ điều hành: [docs/COMMANDS.md](docs/COMMANDS.md).
 
@@ -83,7 +83,7 @@ Mỗi hiện tượng cần **một ảnh chụp từ CVAT** và **một dòng**
 
 Cách tìm và danh sách frame gợi ý: [docs/PHENOMENA.md](docs/PHENOMENA.md). Frame của bạn thiếu hiện tượng nào thì xem nhờ frame của bạn bên cạnh và **ghi rõ mượn của ai**. Điền `REPORT.md` mục 4.
 
-## Bước 5 — Đọc số, tự kiểm, báo cáo, nộp (~45')
+## Bước 5 — Đọc số, tự kiểm, báo cáo, nộp (~30')
 
 Bấm **Save** trong CVAT, rồi:
 

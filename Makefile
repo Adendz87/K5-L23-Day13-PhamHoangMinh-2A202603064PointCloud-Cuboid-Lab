@@ -8,6 +8,9 @@ dry:             ## xem 10 frame của bạn, không nối CVAT (kiểm cài đ�
 task:            ## tạo task D13-<MÃ SỐ> trên CVAT (đã có thì chỉ in lại link, không tạo thêm)
 	$(PY) scripts/lab.py task
 
+bundle:          ## đóng gói 10 frame -> work/D13-<MÃ SỐ>.zip để tạo task bằng tay (docs/CVAT_SETUP.md mục 7)
+	$(PY) scripts/lab.py bundle
+
 report:          ## xuất bảng A từ cuboid đã Save -> submission/D13-<MÃ SỐ>-bangA.csv
 	$(PY) scripts/lab.py report
 

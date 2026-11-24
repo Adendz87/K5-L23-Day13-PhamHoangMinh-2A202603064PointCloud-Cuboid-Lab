@@ -3,6 +3,7 @@
 
     python scripts/lab.py dry         xem 10 frame của bạn, không nối CVAT
     python scripts/lab.py task        tạo task D13-<MÃ SỐ> trên CVAT
+    python scripts/lab.py bundle      đóng gói 10 frame -> work/D13-<MÃ SỐ>.zip để tạo task bằng tay
     python scripts/lab.py report      xuất bảng A  -> submission/D13-<MÃ SỐ>-bangA.csv
     python scripts/lab.py preview     vẽ cuboid lên ảnh camera -> work/xem/
     python scripts/lab.py selfcheck   soát cuboid bằng point cloud -> submission/D13-<MÃ SỐ>-tukiem.csv
@@ -16,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import configparser
+import json
 import sys
 import zipfile
 from pathlib import Path
@@ -25,13 +27,15 @@ sys.path.insert(0, str(ROOT / "cvat_lab"))
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg"}
 MIN_PYTHON = (3, 11)  # cvat-sdk >= 2.80 và Pillow 13 không còn hỗ trợ Python 3.10
+USES_DATA = {"dry", "task", "bundle", "preview", "selfcheck", "sync"}
 
 
 def load_config() -> dict:
     """Đọc configs/lab.ini; dừng với thông báo rõ nếu chưa điền mã số."""
     path = ROOT / "configs" / "lab.ini"
     parser = configparser.ConfigParser()
-    if not parser.read(path, encoding="utf-8") or "lab" not in parser:
+    # utf-8-sig: Notepad hay PowerShell có thể lưu file kèm BOM
+    if not parser.read(path, encoding="utf-8-sig") or "lab" not in parser:
         raise SystemExit(f"Không đọc được {path}. File phải có mục [lab].")
     cfg = {key: value.strip() for key, value in parser["lab"].items()}
     if not cfg.get("student"):
@@ -44,6 +48,21 @@ def load_config() -> dict:
 def data_dir(cfg: dict) -> Path:
     path = Path(cfg["data"]).expanduser()
     return path if path.is_absolute() else ROOT / path
+
+
+def check_data_axes(data: Path) -> None:
+    """Dừng nếu data-VF là bản cũ: ở bản cập nhật 22/11/2026, cam01 nhìn theo -y (phía trước xe)."""
+    for calib_path in sorted(data.glob("sequence_*/calib.json")):
+        try:
+            calib = json.loads(calib_path.read_text(encoding="utf-8"))["calib"]
+            axis_y = float(calib["cam01"]["cam_to_velo"][1][2])
+        except (OSError, ValueError, KeyError, IndexError, TypeError):
+            return  # không kiểm được; các lệnh sau tự báo lỗi nếu dữ liệu hỏng
+        if not axis_y < -0.9:
+            raise SystemExit(
+                f"{calib_path.parent.name}: data-VF này là bản cũ (hệ trục cũ: cam01 không nhìn theo -y). "
+                "Tải lại bản cập nhật 22/11/2026 theo link GV gửi riêng; xem docs/COMMON_ERRORS.md mục 2.")
+        return
 
 
 def server_args(cfg: dict) -> list[str]:
@@ -79,7 +98,7 @@ def main(argv=None) -> int:
         print(f"CẢNH BÁO: đang chạy Python {sys.version.split()[0]}; bài lab cần Python 3.11 trở lên. "
               "Tạo lại .venv theo docs/COMMON_ERRORS.md mục 1.", file=sys.stderr)
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("command", choices=["dry", "task", "report", "preview", "selfcheck", "sync", "pack"])
+    parser.add_argument("command", choices=["dry", "task", "bundle", "report", "preview", "selfcheck", "sync", "pack"])
     parser.add_argument("--replace", action="store_true",
                         help="chỉ cho `task`: XÓA task cùng tên và mọi cuboid rồi tạo lại")
     args = parser.parse_args(argv)
@@ -94,11 +113,19 @@ def main(argv=None) -> int:
     selfcheck = ROOT / "submission" / f"{name}-tukiem.csv"
     base = ["--student", student]
     data = ["--data", str(data_dir(cfg))]
+    if args.command in USES_DATA:
+        check_data_axes(data_dir(cfg))
 
     if args.command == "pack":
         return pack_images(student)
     if args.command == "dry":
         return vf_cvat.main(["day13", *base, *data, "--dry-run"])
+    if args.command == "bundle":
+        out = ROOT / "work" / f"{name}.zip"
+        code = vf_cvat.main(["day13", *base, *data, "--dry-run", "--bundle-out", str(out)])
+        if code == 0:
+            print(f"File để tải lên CVAT bằng tay (docs/CVAT_SETUP.md mục 7): {out}")
+        return code
     if args.command == "task":
         extra = ["--replace"] if args.replace else []
         return vf_cvat.main(["day13", *base, *data, *server_args(cfg), *extra])

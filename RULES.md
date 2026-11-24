@@ -18,7 +18,7 @@
 - Không chỉnh cuboid chỉ để tắt cờ của `selfcheck`. Cờ không tính điểm; cuboid đúng vẫn có thể bị cờ. Giữ cuboid bạn tin là đúng và ghi lý do vào `REPORT.md` mục 5.
 - Vật không đủ cơ sở thì **không đoán**: bỏ qua và ghi vào báo cáo. Báo cáo trung thực "chưa chắc" vẫn được điểm tốt. Điều bị trừ là số trong báo cáo không khớp bảng A, hoặc khẳng định nguyên nhân của một hiện tượng khi chỉ có giả thuyết.
 - Các bạn vẽ giống nhau chỉ cho thấy **nhất quán**, không chứng minh cuboid **đúng**. Guideline và coach là căn cứ phân xử.
-- Sau hạn nộp, không sửa cuboid trong task. Lỗi phát hiện thêm thì ghi vào `REPORT.md` mục 6.
+- Hạn cuối là 20:00 ([SUBMISSION.md](SUBMISSION.md)). Sau hạn, không sửa cuboid trong task. Lỗi phát hiện thêm thì ghi vào `REPORT.md` mục 6.
 
 ## Dữ liệu và giấy phép
 - Dữ liệu VF là dữ liệu lái xe thực tế của dự án, **chỉ dùng trong lớp**. Ảnh camera có người và biển số thật.

@@ -41,7 +41,7 @@ if not re.match(r"# Day 13 Lab — .+: \S+ - .+", first):
 # 2. mã số
 student = ""
 ini = configparser.ConfigParser()
-ini.read(ROOT / "configs/lab.ini", encoding="utf-8")
+ini.read(ROOT / "configs/lab.ini", encoding="utf-8-sig")  # Notepad/PowerShell có thể lưu kèm BOM
 raw_student = ini.get("lab", "student", fallback="").strip()
 if not raw_student:
     errs.append("configs/lab.ini chưa có `student` (mã số học viên)")

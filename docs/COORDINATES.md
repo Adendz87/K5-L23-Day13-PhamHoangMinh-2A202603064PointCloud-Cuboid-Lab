@@ -35,3 +35,5 @@ Hệ này khác KITTI và ROS (x tiến, y trái). Nếu bạn đã quen hệ kh
 | cam09 | phía sau |
 
 LiDAR phủ 360°, mỗi camera chỉ phủ một hình quạt. **Vật phía sau và hai bên không có trong ảnh cam01**: tìm chúng ở view Top rồi đối chiếu camera nhìn về hướng đó.
+
+Bảng trên là **hướng nhìn** (trục quang), tính từ `calib.json`. Sơ đồ chính thức của bộ VF vẽ **vị trí gắn** camera trên thân xe, và hai thứ này không trùng nhau: ví dụ cam08 gắn ở phía trước bên phải nhưng nhìn về phía sau bên phải, cam07 gắn phía sau bên phải nhưng nhìn về phía trước bên phải. Khi tìm vật, dùng bảng hướng nhìn ở trên.

@@ -8,6 +8,7 @@ Lệnh của bài lab đọc mã số, địa chỉ CVAT, tên đăng nhập và
 |---|---|---|
 | Xem 10 frame, không nối CVAT | `python scripts/lab.py dry` | `make dry` |
 | Tạo task `D13-<MÃ SỐ>` | `python scripts/lab.py task` | `make task` |
+| Đóng gói 10 frame để tạo task bằng tay ([CVAT_SETUP.md](CVAT_SETUP.md) mục 7) | `python scripts/lab.py bundle` | `make bundle` |
 | Xuất bảng A | `python scripts/lab.py report` | `make report` |
 | Vẽ cuboid lên ảnh camera | `python scripts/lab.py preview` | `make preview` |
 | Soát cuboid bằng point cloud | `python scripts/lab.py selfcheck` | `make selfcheck` |
@@ -204,6 +205,7 @@ unset CVAT_PASSWORD
 
 ```bash
 python cvat_lab/vf_cvat.py day13 --student <MÃ SỐ> --data data/data-VF --dry-run
+python cvat_lab/vf_cvat.py day13 --student <MÃ SỐ> --data data/data-VF --dry-run --bundle-out work/D13-<MÃ SỐ>.zip
 python cvat_lab/vf_cvat.py day13 --student <MÃ SỐ> --data data/data-VF --host <URL-CVAT> --user <tên> [--org <slug>]
 python cvat_lab/vf_cvat.py report d13 --student <MÃ SỐ> --host <URL-CVAT> --user <tên> [--org <slug>] --out submission
 python cvat_lab/vf_cvat.py preview d13 --student <MÃ SỐ> --data data/data-VF --table submission/D13-<MÃ SỐ>-bangA.csv --out work/xem

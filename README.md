@@ -36,7 +36,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame, không phải track. Tr
 2. `python scripts/lab.py task` tạo task `D13-<MÃ SỐ>`. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ ([GUIDE.md](GUIDE.md)).
 3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).
 4. **Săn bốn hiện tượng** làm hỏng point cloud: bóng che, thưa ở xa, phản xạ thấp, điểm lạ ([docs/PHENOMENA.md](docs/PHENOMENA.md)).
-5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết `submission/REPORT.md`, `python scripts/check_submission.py` hết LỖI → nộp.
+5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết `submission/REPORT.md`, `python scripts/check_submission.py` hết LỖI, `python scripts/lab.py pack` → nộp link repo và file zip ảnh lên LMS.
 
 > **Khi nộp:** đổi dòng tiêu đề README thành `# Day 13 Lab — <Họ và tên>: <MSHV> - <Họ và tên>`.
 > Mọi lệnh `python scripts/lab.py ...` chạy **giống nhau trên Windows và macOS**. macOS có thêm lệnh tắt `make` ([Makefile](Makefile)). Lệnh riêng từng hệ điều hành (cài đặt, kích hoạt môi trường, mở file): [docs/COMMANDS.md](docs/COMMANDS.md).
@@ -44,7 +44,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame, không phải track. Tr
 <details>
 <summary><b>Vì sao tối thiểu 8/5 mà lại khuyên vẽ 10/6?</b></summary>
 
-Độ phủ chấm trên vật trong 30 m, khoảng 9 vật mỗi frame. Cuboid lệch quá nửa diện tích so với vật thì không được tính. Vẽ đúng mức tối thiểu 8/5 và vẽ chính xác thì độ phủ chỉ quanh 0,45–0,5, sát ngưỡng đạt 0,4. Vẽ 10/6 cho bạn khoảng dư để vài cuboid lệch không làm trượt. Xem [RUBRIC.md](RUBRIC.md).
+Độ phủ chấm trên vật trong 30 m, khoảng 9 vật mỗi frame. Cuboid lệch quá nửa diện tích so với vật thì không được tính. Vẽ đúng mức tối thiểu 8/5 và vẽ chính xác thì độ phủ chỉ quanh 0,45–0,5, sát mốc dự kiến 0,4. Vẽ 10/6 cho bạn khoảng dư để vài cuboid lệch không làm trượt. Xem [RUBRIC.md](RUBRIC.md).
 </details>
 
 <details>
@@ -52,7 +52,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame, không phải track. Tr
 
 - Máy 8 GB RAM: dùng `cvat/docker-compose.lowspec.yml` ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 6).
 - Không chạy nổi Docker: báo coach để ngồi ghép đôi. Mỗi người vẫn một tài khoản CVAT và một task riêng.
-- CVAT bản thường có thể không chiếu cuboid lên ảnh camera ("biểu tượng vàng" trong guideline). Dùng `python scripts/lab.py preview` để xem cuboid của bạn trên 7 ảnh camera.
+- CVAT 2.82/2.83 của lớp không chiếu cuboid lên ảnh camera (không có "biểu tượng vàng" như trong guideline). Dùng `python scripts/lab.py preview` để xem cuboid của bạn trên 7 ảnh camera.
 - Không có chuột: vẽ cuboid 3D bằng touchpad rất chậm. Mang chuột có con lăn.
 </details>
 
@@ -85,7 +85,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame, không phải track. Tr
 | Lỗi hay gặp và cách tự gỡ | [docs/COMMON_ERRORS.md](docs/COMMON_ERRORS.md) |
 | Label cuboid cho CVAT | [cvat/labels.json](cvat/labels.json) |
 
-Slide tham khảo: **Day 13 — LiDAR, point cloud và nhãn 3D**. Buổi sau: Ngày 24–26 (gán nhãn chính thức theo track).
+Slide tham khảo: **Day 13 — LiDAR, point cloud và nhãn 3D**. Nền tảng: Ngày 12 (cài CVAT local). Gán nhãn chính thức theo track: Ngày 24–26.
 
 ## Bạn học được gì
 

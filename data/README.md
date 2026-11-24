@@ -5,11 +5,11 @@ Dữ liệu **không nằm trong repo**. Bạn tải riêng, giải nén vào th
 
 ## Tải và giải nén
 
-Tải `Data-VF.zip` (khoảng 600 MB) **trước giờ học** từ link do coach phát:
-
-(link GV gửi riêng)
+Bạn được cấp dữ liệu vì đã ký cam kết bảo mật. **GV gửi riêng** cho từng người link tải `Data-VF.zip` (khoảng 600 MB) và **mật khẩu giải nén**, qua LMS hoặc email. Link và mật khẩu không ghi trong repo này: không đăng lại, không dán vào nhóm chat hay vào repo của bạn. Tải **trước giờ học**.
 
 Giải nén vào `data/` sao cho có `data/data-VF/sequence_01 … sequence_05`. Lệnh cho Windows và macOS ở [../docs/SETUP.md](../docs/SETUP.md) mục 4.
+
+Dùng **bản cập nhật 22/11/2026** (hệ trục x trái, y sau, z lên). Bản cũ vẫn chạy mà không báo lỗi gì, nhưng mọi cuboid sẽ lệch hệ trục; `python scripts/lab.py dry` tự phát hiện và dừng nếu gặp bản cũ.
 Để dữ liệu ở nơi khác (ổ D, USB) cũng được: ghi đường dẫn đầy đủ vào `data` trong [../configs/lab.ini](../configs/lab.ini).
 
 ## Cấu trúc

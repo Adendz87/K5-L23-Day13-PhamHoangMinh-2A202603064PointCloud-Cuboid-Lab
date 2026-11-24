@@ -116,7 +116,7 @@ Kích hoạt thành công thì đầu dòng lệnh có chữ `(.venv)`. Từ đ�
 
 ## 4. Tải và giải nén dữ liệu VF
 
-Tải `Data-VF.zip` (khoảng 600 MB) bằng trình duyệt từ link trong [../data/README.md](../data/README.md). Tải **trước giờ học**. Các lệnh dưới giả định file nằm trong thư mục Downloads và bạn đang đứng trong thư mục repo.
+Tải `Data-VF.zip` (khoảng 600 MB) bằng trình duyệt từ link GV gửi riêng cho bạn (xem [../data/README.md](../data/README.md)). Tải **trước giờ học**. Các lệnh dưới giả định file nằm trong thư mục Downloads và bạn đang đứng trong thư mục repo.
 
 **Windows (PowerShell)**
 

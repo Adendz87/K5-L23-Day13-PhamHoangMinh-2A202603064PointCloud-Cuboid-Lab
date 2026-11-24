@@ -4,7 +4,7 @@ Mục tiêu: máy bạn mở được `http://localhost:8080` và đăng nhập 
 
 Phiên bản lớp dùng: **CVAT v2.83.0**. Nếu máy bạn còn CVAT từ Ngày 12 (v2.82.0) đang chạy tốt, bạn dùng tiếp được, không cần cài lại.
 
-Nếu coach thông báo lớp dùng **máy chủ CVAT chung**, bỏ qua file này. Đổi `cvat_host` trong `configs/lab.ini` thành địa chỉ coach phát.
+Lớp **không có máy chủ CVAT chung**: mỗi người chạy CVAT trên máy mình, task và nhãn chỉ nằm trên máy đó. Coach không vào được máy bạn; bài nộp là bảng A trong repo của bạn.
 
 Nguồn: https://docs.cvat.ai/docs/administration/basics/installation/
 
@@ -61,7 +61,7 @@ Giống nhau trên hai hệ điều hành, chạy trong thư mục `cvat`:
 docker exec -it cvat_server bash -ic 'python3 ~/manage.py createsuperuser'
 ```
 
-Nhập tên đăng nhập, email (có thể để trống) và mật khẩu. Khi gõ mật khẩu, màn hình không hiện ký tự nào; đó là bình thường. Mật khẩu này **chỉ dùng cho CVAT trên máy bạn**. Đừng dùng lại mật khẩu email hay LMS, và đừng gửi cho ai.
+Nhập tên đăng nhập, email (có thể để trống) và mật khẩu. Khi gõ mật khẩu, màn hình không hiện ký tự nào; đó là bình thường. Cách khác: mở `http://localhost:8080/auth/register` và tự đăng ký. Mật khẩu này **chỉ dùng cho CVAT trên máy bạn**. Đừng dùng lại mật khẩu email hay LMS, và đừng gửi cho ai.
 
 ## 4. Kiểm tra
 
@@ -127,7 +127,25 @@ docker compose up -d
 
 4. Máy vẫn không chạy nổi Docker: báo coach để ngồi ghép đôi. Khi dùng chung máy, mỗi người đăng nhập tài khoản CVAT riêng và tạo task `D13-<MÃ SỐ>` riêng.
 
-## 7. Lỗi hay gặp khi cài
+## 7. Tạo task bằng tay (khi `python scripts/lab.py task` không nối được CVAT)
+
+Lệnh `task` gửi dữ liệu lên CVAT qua `cvat-sdk`. Nếu lệnh đó lỗi mà trình duyệt vẫn mở được CVAT, tạo task bằng tay:
+
+1. Đóng gói đúng 10 frame của bạn thành một file zip (giống nhau trên Windows và macOS):
+
+   ```bash
+   python scripts/lab.py bundle
+   ```
+
+   Lệnh in đường dẫn file, dạng `work/D13-<MÃ SỐ>.zip` (khoảng 23 MB).
+2. Trên CVAT, trang **Tasks**, bấm nút **+** màu xanh → **Create a new task**. Nếu menu không hiện, mở thẳng `http://localhost:8080/tasks/create`.
+3. Ô **Name**: đúng `D13-<MÃ SỐ>`, ví dụ `D13-2A202600123`. Lệnh `report` tìm task theo tên này.
+4. **Labels**: chọn tab **Raw**, xoá nội dung có sẵn, dán toàn bộ nội dung file [`cvat/labels.json`](../cvat/labels.json) của repo, bấm **Done**. Kết quả là 5 nhãn kiểu Cuboid: Car, Truck, Bus, Cyclist, Pedestrian, đúng chữ hoa, chữ thường.
+5. **Select files → My computer**: chọn file zip ở bước 1. Kéo xuống, bấm **Submit & Open**.
+
+Sau đó vẽ và xuất bảng A như bình thường (`python scripts/lab.py report`).
+
+## 8. Lỗi hay gặp khi cài
 
 | Hiện tượng | Cách gỡ |
 |---|---|
@@ -138,8 +156,9 @@ docker compose up -d
 | Windows: Docker báo *WSL 2 installation is incomplete* | Chạy `wsl --install` trong PowerShell quyền administrator, khởi động lại máy |
 | Mac chip Apple: container thoát ngay, log có `exec format error` | Bật Rosetta (mục 1), cập nhật Docker Desktop |
 | Máy rất chậm | Làm theo mục 6 |
+| Lệnh `scripts/lab.py` in cảnh báo `Server version … is not compatible` | CVAT trên máy là 2.82 (từ Ngày 12), `cvat-sdk` là 2.83. Đã thử: tạo task, đọc nhãn, xuất bảng A vẫn đúng. Bỏ qua cảnh báo, hoặc cập nhật CVAT lên 2.83 **trước** buổi học |
 
-## 8. Mẹo dùng giao diện 3D (đọc trước, đỡ mất thời gian trong lớp)
+## 9. Mẹo dùng giao diện 3D (đọc trước, đỡ mất thời gian trong lớp)
 
 Vị trí chính xác các nút có thể khác giữa các bản CVAT. Coach demo lại trên bản của lớp ở đầu Bước 3.
 

@@ -26,7 +26,7 @@
 | `Không thấy sequence_XX/lidar/*.bin trong ...` | `data` trong `configs/lab.ini` trỏ sai thư mục, hoặc giải nén lồng hai lớp (`data-VF/Data-VF/sequence_01`) | `data` phải trỏ vào thư mục **chứa trực tiếp** `sequence_01 … sequence_05` |
 | Frame in ra `camera=0` hoặc nhỏ hơn 7 | Giải nén thiếu thư mục `cameras`, hoặc zip tải chưa xong | Kiểm kích thước zip (khoảng 600 MB), giải nén lại |
 | `Mã số không hợp lệ` | Mã có dấu cách, dấu tiếng Việt hoặc ký tự lạ | Chỉ dùng chữ không dấu, số, `-`, `_`; dài 2–32 ký tự |
-| Hướng xe trên view Top ngược với mô tả (phía trước là +y) | Đang dùng bản `data-VF` cũ | Tải lại bản mới theo link trong [../data/README.md](../data/README.md), xóa bản cũ |
+| `lab.py` báo `data-VF bản cũ`; hoặc `preview` thấy hộp lệch khỏi xe và `selfcheck` báo hàng loạt "hộp rỗng"; hoặc hướng xe trên view Top ngược với mô tả | Đang dùng `data-VF` bản cũ (hệ trục cũ). Bản cũ vẫn chạy mà không báo lỗi | Tải lại bản cập nhật 22/11/2026 theo link GV gửi riêng, xoá bản cũ. Task đã tạo bằng bản cũ thì tạo lại bằng `python scripts/lab.py task --replace` (mất cuboid đã vẽ) |
 
 ## 3. Kết nối CVAT và tạo task
 
@@ -50,7 +50,7 @@
 | Không thấy mũi tên đỏ | Chưa bật orientation | Tích ô **orientation** trong phần Appearance |
 | Đáy cuboid lơ lửng hoặc chìm | Chỉ chỉnh ở view Top | Chỉnh ở Side và Front; xem lại `z_bottom` ở bảng A |
 | Vẽ ra Track thay vì Shape | Bấm nhầm nút Track | Xóa và vẽ lại bằng **Shape**. Hôm nay không dùng track |
-| Tìm không ra biểu tượng vàng chiếu box lên ảnh | Bản CVAT này có thể không có tính năng đó | Dùng `python scripts/lab.py preview` để xem cuboid trên ảnh camera |
+| Tìm không ra biểu tượng vàng chiếu box lên ảnh | CVAT 2.82/2.83 của lớp không có tính năng này (guideline viết cho một bản CVAT khác) | Dùng ảnh camera để nhận loại vật và đầu/đuôi xe; đo kích thước ở Top, Side, Front; xem cuboid trên 7 ảnh camera bằng `python scripts/lab.py preview` |
 | Tưởng "phía trước là +x" hoặc "y là bên trái" | Nhớ hệ tọa độ khác (KITTI, ROS) | Xem cam01: ảnh trước trùng hướng −y. x dương là trái, y dương là sau |
 | Mất cuboid sau khi đóng tab | Chưa Save | Save sau mỗi frame (`Ctrl+S`, macOS `Cmd+S`) |
 
