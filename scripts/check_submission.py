@@ -38,9 +38,9 @@ SECRET_KEY = re.compile(r"pass|pwd|mat_?khau|mật|token|secret", re.IGNORECASE)
 # Riêng bảng A và phiếu tự kiểm của bạn (submission/D13-<MÃ SỐ>-bangA.csv, -tukiem.csv) phải được commit.
 LEAK_SUFFIXES = {".bin", ".pcd", ".ply", ".zip", ".7z", ".rar", ".tar", ".gz", ".tgz", ".jpg", ".jpeg", ".png",
                  ".webp", ".heic", ".gif", ".bmp", ".tif", ".tiff", ".mp4", ".mov", ".pdf", ".docx", ".pptx", ".csv"}
-# Phiếu hồ sơ lỗi coach phát: D13-<MSSV>-hoso.md, kể cả bản tải lần hai "D13-<MSSV>-hoso (1).md".
-# Có dấu '-' trước "hoso" để không bắt nhầm báo cáo của người tên có "HoSon" (2A..._NguyenHoSon.md).
-LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|hoso|.*-hoso.*\.md", re.IGNORECASE)
+# Phiếu hồ sơ lỗi coach phát: D13-<MSSV>-hoso.md, bản tải lần hai "D13-<MSSV>-hoso (1).md", hay bản đã đổi tên.
+# Không bắt "hoso" đứng trước chữ n, để báo cáo của người tên "Hồ Sơn" (2A..._NguyenHoSon.md) vẫn được commit.
+LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|.*hoso(?!n).*", re.IGNORECASE)
 ALLOWED = {"docs/assets/hero.png", "docs/assets/coordinates.png", "docs/assets/workflow.png",
            "docs/3D_Cuboid_Annotation_Guideline.docx"}
 # Lịch sử của repo đề có chính file guideline ở đường dẫn cũ (cùng nội dung với bản trong docs/).
@@ -243,21 +243,30 @@ if student:
 
 # 6. báo cáo: report/individual/<MSSV>_<HoTen>.md, đổi tên từ bản mẫu MSSV_HoTen.md
 example = f"{student or '2A202600123'}_NguyenVanAn.md"
-candidates = sorted(p for p in REPORT_DIR.glob("*.md") if p.name not in (REPORT_TEMPLATE, "README.md"))
-well_named = [p for p in candidates if REPORT_NAME.fullmatch(p.name)]
-mine = [p for p in well_named if not student or REPORT_NAME.fullmatch(p.name).group(1).upper() == student]
+# Phiếu hồ sơ lỗi lỡ để ở đây (.gitignore đã chặn) không phải báo cáo.
+candidates = sorted(p for p in REPORT_DIR.glob("*.md")
+                    if p.name not in (REPORT_TEMPLATE, "README.md") and not LEAK_PART.fullmatch(p.name))
+if student:  # báo cáo của bạn nhận theo tiền tố <MSSV>_, phần sau phải là họ tên viết liền
+    own = [p for p in candidates if p.name.upper().startswith(f"{student}_")]
+    mine = [p for p in own if re.fullmatch(r"[A-Za-z]+\.md", p.name[len(student) + 1:])
+            and p.name[len(student) + 1:-3].lower() != "hoten"]
+else:
+    own = mine = [p for p in candidates if REPORT_NAME.fullmatch(p.name)]
 report = mine[0] if len(mine) == 1 else None
 if not candidates:
     errs.append(f"chưa có báo cáo: đổi tên report/individual/{REPORT_TEMPLATE} thành <MSSV>_<HoTen>.md "
                 f"(họ tên không dấu, viết liền), ví dụ {example}")
-bad_names = [p.name for p in candidates if p not in well_named]
+foreign = [p.name for p in candidates if p not in own and REPORT_NAME.fullmatch(p.name)]
+bad_names = [p.name for p in candidates if p not in mine and p.name not in foreign]
 if bad_names:
-    errs.append(f"tên báo cáo {bad_names[:3]} chưa đúng dạng <MSSV>_<HoTen>.md (họ tên không dấu, không khoảng trắng), "
-                f"ví dụ {example}")
-foreign = [p.name for p in well_named if p not in mine]
+    errs.append(f"tên báo cáo {bad_names[:3]} chưa đúng dạng <MSSV>_<HoTen>.md (họ tên của bạn, không dấu, viết liền, "
+                f"không `_`, không khoảng trắng), ví dụ {example}: đổi tên lại"
+                + ("; đuôi bị lặp .md.md (Windows đang ẩn đuôi file): bỏ bớt một .md"
+                   if any(n.lower().endswith(".md.md") for n in bad_names) else ""))
 if foreign:
     errs.append(f"report/individual/ có báo cáo mang mã số khác `student` ({student}): {foreign[:3]}. "
-                "Chỉ để một báo cáo của bạn")
+                f"Báo cáo của bạn thì đổi tên thành {example} (đúng mã số trong configs/lab.ini, không để chữ MSSV "
+                "hay dấu < >); báo cáo của người khác thì xoá")
 if len(mine) > 1:
     errs.append(f"report/individual/ có {len(mine)} báo cáo: {[p.name for p in mine]}. Chỉ giữ một file")
 if report and (REPORT_DIR / REPORT_TEMPLATE).exists():
@@ -324,7 +333,9 @@ else:
     others = sorted(f for f in tracked + pending
                     if (m := SUBMITTED_CSV.fullmatch(f)) and m.group(1).upper() != student)
     if student and others:
-        errs.append(f"submission/ có bảng A hoặc phiếu tự kiểm của mã số khác: {others[:4]}. Chỉ để file của mã "
+        errs.append(f"submission/ có bảng A hoặc phiếu tự kiểm của mã số khác: {others[:4]}. Nếu bạn đã đổi "
+                    "`student` sau khi tạo task thì đừng xoá: file kia có thể là bảng A thật của bạn, trả `student` "
+                    "về mã cũ (docs/COMMON_ERRORS.md mục 5). Còn lại thì chỉ để file của mã "
                     f"{student}: xoá file kia hoặc chuyển ra ngoài repo; đã commit thì `git rm <file>` (không thêm "
                     "`--cached`), rồi commit và push")
     history = git("log", "--all", "--format=", "--name-only", "--diff-filter=A", "-z") or ""
@@ -332,9 +343,8 @@ else:
     if old_leaks:
         errs.append(f"lịch sử commit vẫn còn {len(old_leaks)} file không được public: {old_leaks[:5]}. "
                     "Gỡ khỏi git chưa đủ: xem docs/COMMON_ERRORS.md mục 5 trước khi push")
-    paths = ["README.md", "configs/lab.ini", f"report/individual/{REPORT_TEMPLATE}"]
-    if report:
-        paths.append(f"report/individual/{report.name}")
+    # Cả thư mục báo cáo: đổi tên chỉ khác chữ hoa/thường (Windows, macOS) thì git vẫn giữ tên cũ trong index.
+    paths = ["README.md", "configs/lab.ini", "report/individual"]
     if student:
         paths += [f"submission/D13-{student}-bangA.csv", f"submission/D13-{student}-tukiem.csv"]
     dirty = git("status", "--porcelain", "--untracked-files=all", "--", *paths)

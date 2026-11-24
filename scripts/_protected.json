@@ -3,5 +3,5 @@
  "cvat_lab/vf_cvat.py": "8b5802f4f7c2669104a62cc17a3bfac68d664172",
  "cvat_lab/vf_qa.py": "cb717e5c0d992f44b39941dbdb81da1888b14091",
  "scripts/lab.py": "eab9c8dcdf406d2a149f0393088653548cc50d8c",
- "scripts/check_submission.py": "1969f0c52472dfef399bb0d7c2003de2e2f33183"
+ "scripts/check_submission.py": "5b7b11c09aa17c010af1620801a3dfd71fefb047"
 }

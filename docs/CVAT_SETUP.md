@@ -141,7 +141,7 @@ docker compose up -d
 
 Gọi máy có CVAT chạy được là máy A, bạn không chạy được Docker là B. Bảng A của B phải lên repo của B, nên B làm mọi việc trong **repo của B** đặt trên máy A:
 
-1. Trên CVAT của máy A, B tạo tài khoản CVAT riêng.
+1. Trên CVAT của máy A, B tạo tài khoản CVAT riêng ở trang đăng ký `http://localhost:8080/auth/register`. **Không** dùng `createsuperuser` cho B: tài khoản superuser thấy cả task của A.
 2. B clone repo của B vào thư mục `lab` của máy A (cạnh repo của A), tạo `.venv` và cài thư viện như [SETUP.md](SETUP.md) mục 3.
 3. Trong thư mục repo của B, đặt tên và email commit của B **chỉ cho repo này** (không thêm `--global`, để không đổi cấu hình git của A), mỗi lệnh một dòng:
 
@@ -151,14 +151,19 @@ Gọi máy có CVAT chạy được là máy A, bạn không chạy được Doc
    ```
 
 4. Trong `configs/lab.ini` của repo B: `student` là mã của B, `cvat_user` là tài khoản CVAT của B, `data` trỏ tới dữ liệu của A bằng đường dẫn tương đối, ví dụ `data = ../<repo-của-A>/data/data-VF`.
-5. Mọi lệnh (`task`, `sync`, `pack`, `check_submission.py`) chạy trong thư mục repo của B. Ảnh chụp lưu vào `report/individual/images/` của repo B.
-6. Trước lần push đầu, đặt tên tài khoản GitHub của B vào địa chỉ repo để git hỏi đăng nhập đúng tài khoản B, không dùng tài khoản đã lưu của A:
+5. Mọi lệnh (`task`, `sync`, `pack`, `check_submission.py`) chạy trong thư mục repo của B. Ảnh chụp lưu vào `report/individual/images/` của repo B. Máy A chạy Windows thì tắt tự lưu ảnh của Snipping Tool trước khi B chụp ([COMMANDS.md](COMMANDS.md) mục 5).
+6. Vòng hiệu chuẩn: task chung của hai người cùng tên `D13-<MÃ CHUNG>`. A vẽ, Save và chạy xong `python scripts/lab.py report --code <MÃ CHUNG>` trước; sau đó B mới chạy `python scripts/lab.py task --code <MÃ CHUNG>` trong repo của B. Từ lúc đó A không chạy lại `report --code`: tài khoản tạo bằng `createsuperuser` thấy cả task chung của B.
+7. Trước lần push đầu, đặt tên tài khoản GitHub của B vào địa chỉ repo để git không dùng tài khoản đã lưu của A:
 
    ```bash
    git remote set-url origin https://<tài-khoản-B>@github.com/<tài-khoản-B>/K5-<Level>-DAY13-<HoVaTen>-<MSSV>-PointCloudCuboid.git
    ```
 
-7. B nộp link repo và file zip ảnh lên LMS bằng tài khoản của B. Xong buổi: đăng xuất LMS và GitHub trên trình duyệt của máy A, xoá thư mục repo của B khỏi máy A, xoá đăng nhập GitHub của B mà git đã lưu (Windows: Control Panel → Credential Manager → Windows Credentials, mục bắt đầu bằng `git:https://` có tên tài khoản B; macOS: Keychain Access, tìm `github.com`, mục có tên tài khoản B).
+   Rồi đăng xuất GitHub trên trình duyệt của máy A: cửa sổ đăng nhập của git mở đúng trình duyệt này, và GitHub cấp quyền cho tài khoản đang đăng nhập ở đó. Khi được hỏi, đăng nhập bằng tài khoản B. macOS: chạy `gh auth login`, đăng nhập tài khoản B, rồi mới `git push`.
+8. B nộp link repo và file zip ảnh lên LMS bằng tài khoản của B. Xong buổi:
+   - đăng xuất LMS và GitHub của B trên trình duyệt của máy A;
+   - xoá thư mục repo của B khỏi máy A, và ảnh còn sót trong Pictures\Screenshots nếu có;
+   - xoá đăng nhập GitHub của B mà git đã lưu. Windows: Control Panel → Credential Manager → Windows Credentials, mục bắt đầu bằng `git:https://` có tên tài khoản B. macOS: `gh auth logout --hostname github.com --user <tài-khoản-B>`, rồi `gh auth status` phải thấy tài khoản A đang active (nếu không: `gh auth switch --user <tài-khoản-A>`); máy dùng Keychain thì xoá mục `github.com` có tên tài khoản B trong Keychain Access.
 
 ## 7. Tạo task bằng tay (khi `python scripts/lab.py task` không nối được CVAT)
 

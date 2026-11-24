@@ -46,9 +46,10 @@ submission/*
 report/individual/images/*
 !report/individual/images/.gitkeep
 
-# Phiếu hồ sơ lỗi coach phát, kể cả bản tải lần hai "D13-<MSSV>-hoso (1).md": chỉ dành cho bạn.
-# Có dấu '-' trước "hoso" để không chặn nhầm báo cáo của người tên có "HoSon".
-*-hoso*.md
+# Phiếu hồ sơ lỗi coach phát, kể cả bản tải lần hai "D13-<MSSV>-hoso (1).md" hay bản đã đổi tên: chỉ dành cho bạn.
+# Không chặn "hoso" đứng trước chữ n, để báo cáo của người tên "Hồ Sơn" (…_NguyenHoSon.md) vẫn được commit.
+*hoso
+*hoso[!n]*
 hoso/
 
 # Thư mục làm việc: ảnh xem trước, file zip, bảng A của vòng hiệu chuẩn

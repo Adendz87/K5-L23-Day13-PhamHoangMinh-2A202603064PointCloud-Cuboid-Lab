@@ -32,7 +32,7 @@ Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). 
 
 > **Không dùng `--replace` nếu đã vẽ gì**: `python scripts/lab.py task --replace` xóa task cùng mọi cuboid rồi tạo lại.
 
-Đọc [docs/COORDINATES.md](docs/COORDINATES.md) (3'): **x trái, y sau, z lên; phía trước xe là −y**. Đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`): đó là báo cáo của bạn. Điền mục 1 phần thông tin.
+Đọc [docs/COORDINATES.md](docs/COORDINATES.md) (3'): **x trái, y sau, z lên; phía trước xe là −y**. Đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`; Windows: bật hiện đuôi file trong File Explorer để tên không thành `.md.md`): đó là báo cáo của bạn. Điền mục 1 phần thông tin.
 
 ## Bước 2 — Đọc frame năm bước (~25', chưa vẽ)
 
@@ -146,7 +146,7 @@ python scripts/lab.py pack
 python scripts/check_submission.py
 ```
 
-`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, báo cáo lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong báo cáo theo bảng A mới (§1 tổng số cuboid, số bị cờ; §3, §5 nếu cuboid đã dẫn bị đổi: xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
+`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, báo cáo lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong báo cáo theo bảng A và phiếu tự kiểm mới (§1 tổng số cuboid, frame ít nhất, số bị cờ; §5 cuboid gần nhất, xa nhất; §3, §5 nếu cuboid đã dẫn bị đổi: xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Lỗi hay gặp
 

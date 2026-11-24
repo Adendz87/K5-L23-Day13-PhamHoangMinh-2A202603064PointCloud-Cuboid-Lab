@@ -37,7 +37,7 @@ Ví dụ: `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid`.
 ## Trước khi nộp
 1. Bấm **Save** trong CVAT, rồi `python scripts/lab.py sync` để bảng A và phiếu tự kiểm khớp task.
 2. Đổi dòng tiêu đề `# Day 13 Lab ...` của `README.md` thành `# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>` (thay cả dấu `<` `>`; MSSV phải trùng `student` trong `configs/lab.ini`).
-3. Báo cáo: đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`) nếu chưa đổi, rồi điền đủ (xoá mọi dấu TODO). Đổi tên, đừng chép thành file thứ hai.
+3. Báo cáo: đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`) nếu chưa đổi, rồi điền đủ (xoá mọi dấu TODO). Đổi tên, đừng chép thành file thứ hai. Windows: bật File Explorer → **View → Show → File name extensions** trước khi đổi tên, để tên không thành `….md.md`.
 4. `python scripts/lab.py pack` (macOS: `make pack`): nén ảnh trong `report/individual/images/` thành `work/K5-L23-DAY13-<MSSV>-images.zip`.
 5. `python scripts/check_submission.py` (macOS: `make check`) hết **LỖI**. `CẢNH BÁO` thì đọc và tự quyết; cảnh báo `chưa commit` sẽ hết sau bước 6.
 6. Commit và push, mỗi lệnh một dòng (Windows và macOS như nhau; PowerShell 5.1 không chạy được `&&`):
@@ -51,7 +51,7 @@ Ví dụ: `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid`.
 
 Sửa cuboid sau khi nộp (trước deadline):
 - Đóng bảng A, phiếu tự kiểm nếu đang mở trong Excel (Excel giữ file thì lệnh không ghi được), Save trong CVAT, rồi `python scripts/lab.py sync`.
-- Sửa số trong báo cáo theo bảng A và phiếu tự kiểm mới: §1 (tổng số cuboid, số bị cờ) đổi mỗi khi vẽ thêm hay xoá; §3, §5 đổi khi cuboid đã dẫn bị sửa, hoặc khi trong frame của nó có cuboid bị xoá, vẽ lại (`idx` của các cuboid sau đó đổi theo).
+- Đối chiếu lại số trong báo cáo với bảng A và phiếu tự kiểm mới. Vẽ thêm, sửa hay xoá cuboid đều có thể đổi §1 (tổng số cuboid, frame ít nhất, số bị cờ) và §5 (cuboid gần nhất, xa nhất). Cuboid đã dẫn ở §3, §5 thì đổi khi chính nó bị sửa, hoặc khi trong frame của nó có cuboid bị xoá, vẽ lại (`idx` của các cuboid sau đó đổi theo).
 - `python scripts/check_submission.py`, rồi commit và push lại. Thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Cấu trúc

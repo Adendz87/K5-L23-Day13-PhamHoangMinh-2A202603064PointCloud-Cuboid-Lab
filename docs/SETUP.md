@@ -285,5 +285,6 @@ Trả lời các câu hỏi bằng **GitHub.com**, **HTTPS**, **Yes** (dùng tà
 - [ ] Repo và dữ liệu nằm trong `lab`, không nằm trong thư mục tự đồng bộ lên mây.
 - [ ] `python scripts/lab.py dry` in đủ 10 frame, mỗi frame 7 camera, không có cảnh báo thiếu file.
 - [ ] Mở được CVAT và đăng nhập được.
+- [ ] Windows: đã tắt tự lưu ảnh của Snipping Tool ([COMMANDS.md](COMMANDS.md) mục 5).
 - [ ] Đã push thử lên repo của bạn (mục 7).
 - [ ] Đã đọc [COORDINATES.md](COORDINATES.md), [GUIDELINE.md](GUIDELINE.md) và [../RULES.md](../RULES.md).

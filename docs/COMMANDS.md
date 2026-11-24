@@ -165,9 +165,11 @@ git push
 
 Lưu ảnh **thẳng vào** `report/individual/images/` của repo, đặt tên theo [../SUBMISSION.md](../SUBMISSION.md). Đừng để ảnh nằm lại ở Desktop hay Pictures: các thư mục đó thường tự đồng bộ lên OneDrive, iCloud.
 
+**Windows 11, làm một lần trước ảnh đầu tiên:** mở Snipping Tool → **···** → **Settings**, tắt **Automatically save screenshots** (bản mới ghi *Automatically save original screenshots*). Để bật thì mỗi lần `Win + Shift + S` máy lưu ngay một bản vào Pictures\Screenshots, và máy sao lưu Pictures lên OneDrive sẽ tải ảnh camera lên mây trước khi bạn kịp xoá.
+
 | | Chụp một vùng | Lưu ở đâu |
 |---|---|---|
-| Windows | `Win + Shift + S`, kéo chọn vùng | Bấm vào thông báo để mở Snipping Tool → **Save as** → chọn thư mục `report\individual\images` của repo. Snipping Tool có thể tự lưu thêm một bản vào Pictures\Screenshots: xoá bản đó |
+| Windows | `Win + Shift + S`, kéo chọn vùng | Bấm vào thông báo để mở Snipping Tool → **Save as** → chọn thư mục `report\individual\images` của repo. Lỡ đã có bản trong Pictures\Screenshots (chưa tắt tự lưu ở trên) thì xoá, rồi xoá cả trong thùng rác của OneDrive |
 | macOS | `Cmd + Shift + 5` → **Options** → **Other Location…** → chọn thư mục `report/individual/images` của repo (chỉ cần chọn một lần); rồi chụp vùng | Thư mục đã chọn |
 
 Mở thư mục ảnh:
