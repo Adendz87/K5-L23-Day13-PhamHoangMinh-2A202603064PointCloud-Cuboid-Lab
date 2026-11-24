@@ -137,18 +137,25 @@ Cảnh báo là **gợi ý để xem lại**, không phải lỗi chắc chắn 
 - Kích thước một người (hoặc xe hai bánh) và một xe con so với bảng 4.3; `yaw_deg` của xe cùng chiều và ngược chiều.
 - Mật độ: 4 cuboid ở các `dist_m` khác nhau, số điểm lấy ở cột `points_in` của phiếu tự kiểm. Viết một câu quy luật, so với đường cong ở slide bài giảng (xe con, trung vị: khoảng 1968 điểm ở 0–10 m, 718 ở 10–20 m, 214 ở 20–30 m, 72 ở 30–40 m, 19 ở 60–80 m).
 
-Rồi mục 6.
+Điền mục 6 của báo cáo. Giải thích vì sao nhãn 3D dùng mét và vì sao vật thưa điểm cần quy tắc riêng. Ghi cách bạn dùng AI nếu có, và nêu điều còn chưa chắc.
 
 **Đổi kiểm với bạn bên cạnh (~5').** Đưa báo cáo mục 5 cho bạn ngồi cạnh: bạn ấy chọn 2 con số và đối chiếu với bảng A mở trên máy bạn; bạn làm ngược lại với bài của bạn ấy. Ghi vào báo cáo mục 5 đã đổi kiểm với ai (MSSV) và kết quả. Chỉ xem trên màn hình, không gửi file bảng A cho nhau.
 
-Cuối cùng:
+### Nộp lần đầu
+
+Đổi tên báo cáo và sửa tiêu đề README theo [SUBMISSION.md](SUBMISSION.md). Sau đó chạy hai lệnh sau.
 
 ```bash
 python scripts/lab.py pack
 python scripts/check_submission.py
 ```
 
-`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, báo cáo lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong báo cáo theo bảng A và phiếu tự kiểm mới (§1 tổng số cuboid, frame ít nhất, số bị cờ; §5 cuboid gần nhất, xa nhất; §3, §5 nếu cuboid đã dẫn bị đổi: xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
+Khi checker hết lỗi, commit và push báo cáo, Bảng A và phiếu tự kiểm. Nộp link repo và ZIP ảnh lên LMS trước **23:59 GMT+7 ngày làm lab**.
+
+### Sửa bài sau khi nộp
+
+- **Nếu sửa cuboid.** Bấm **Save**, chạy lại `sync` và cập nhật số liệu trong báo cáo. Nếu xóa hoặc vẽ lại hộp, kiểm tra lại `idx` của các hộp cùng frame. Chạy checker, commit và push lại trước hạn.
+- **Nếu thêm hoặc thay ảnh.** Chạy lại `pack` và checker, rồi nộp ZIP mới lên LMS trước hạn. Giữ ảnh ngoài Git.
 
 ## Lỗi hay gặp
 

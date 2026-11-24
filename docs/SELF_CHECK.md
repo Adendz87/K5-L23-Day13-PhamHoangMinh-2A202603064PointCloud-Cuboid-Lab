@@ -23,11 +23,12 @@ Lệnh cũng báo số hộp không camera nào thấy. Điều này bình thư�
 python scripts/lab.py selfcheck
 ```
 
-Kết quả ghi vào `submission/D13-<MÃ SỐ>-tukiem.csv` với các cột `frame, idx, label, dist_m, points_in, ground_gap_m, flags`:
+Kết quả ghi vào `submission/D13-<MÃ SỐ>-tukiem.csv` với các cột `frame, idx, label, dist_m, points_in, ground_gap_m, flags, bang_a_sha256`.
 
 - `points_in`: số điểm LiDAR nằm trong cuboid. Dùng cho câu mật độ ở báo cáo mục 5.
 - `ground_gap_m`: đáy cuboid trừ độ cao mặt đường ước từ các điểm quanh hộp (trong vòng khoảng 4 m). Dương là đáy cao hơn mặt đường, âm là đáy thấp hơn. Trống nếu quanh hộp quá ít điểm mặt đường.
 - `flags`: các cảnh báo dưới đây, cách nhau bằng dấu `;`.
+- `bang_a_sha256` là mã băm của Bảng A dùng để tạo phiếu. Nếu checker báo phiếu bản cũ hoặc không khớp Bảng A, chạy lại `selfcheck`. Sau khi sửa cuboid trong CVAT, bấm **Save** rồi chạy `sync` để cập nhật cả hai file.
 
 | Cảnh báo | Nghĩa là | Việc cần làm |
 |---|---|---|

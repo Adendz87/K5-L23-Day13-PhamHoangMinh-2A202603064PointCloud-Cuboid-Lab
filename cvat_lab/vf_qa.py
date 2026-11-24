@@ -14,6 +14,7 @@ coefficients ``k1 k2 p1 p2 k3``.
 from __future__ import annotations
 
 import csv
+import io
 import json
 import math
 from collections import defaultdict
@@ -28,10 +29,12 @@ EDGE_STEPS = 12  # each edge is drawn as a polyline so lens distortion bends it 
 
 # ------------------------------------------------------------- reading
 
-def read_table_a(path: Path, student: str) -> dict[str, list[dict]]:
+def read_table_a(path: Path, student: str, *, content: bytes | None = None) -> dict[str, list[dict]]:
     """Boxes of ``student`` from a table-A CSV, grouped by frame name."""
     frames: dict[str, list[dict]] = defaultdict(list)
-    with open(path, newline="", encoding="utf-8") as handle:
+    if content is None:
+        content = path.read_bytes()
+    with io.StringIO(content.decode("utf-8"), newline="") as handle:
         for row in csv.DictReader(handle):
             if vf.normalize_student(row["student"]) != student:
                 continue
@@ -337,7 +340,8 @@ def check_frame(boxes: list[dict], points) -> list[dict]:
     return rows
 
 
-CHECK_FIELDS = ["frame", "idx", "label", "dist_m", "points_in", "ground_gap_m", "flags"]
+TABLE_HASH_FIELD = "bang_a_sha256"
+CHECK_FIELDS = ["frame", "idx", "label", "dist_m", "points_in", "ground_gap_m", "flags", TABLE_HASH_FIELD]
 
 
 def sorted_frames(frames: list[dict], table: dict[str, list[dict]]) -> list[tuple[dict, list[dict]]]:

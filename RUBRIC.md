@@ -65,7 +65,7 @@ Mức 8 cuboid ở frame 1 và 5 cuboid ở mỗi frame sau (tổng 53) là yêu
 
 ## Cách chấm trên máy coach
 - Coach chấm sau hạn nộp: tải repo của cả lớp và chấm bảng A ở commit cuối cùng đã push trước deadline (23:59 GMT+7 ngày làm lab, hoặc deadline coach thông báo) bằng công cụ chấm của mình. Giờ ghi trong commit do máy học viên đặt nên không dùng để tính hạn; coach đối chiếu giờ push GitHub ghi lại. Nhãn chuẩn không phát cho học viên. Coach không vào được CVAT trên máy bạn: ảnh chụp màn hình là bằng chứng bạn vẽ trên CVAT, và khi cần coach có thể nhờ bạn mở task trên máy mình.
-- Ghi đè các file "ĐÃ VIẾT SẴN" bằng bản gốc của repo đề `K5-L23-Day13-PointCloud-Cuboid-Lab` (danh sách và sha1 ở `scripts/_protected.json`), rồi chạy lại `check_submission.py`.
+- Ghi đè các file "ĐÃ VIẾT SẴN" bằng bản gốc của repo đề `K5-L23-Day13-PointCloud-Cuboid-Lab` (danh sách và SHA-1 ở `scripts/_protected.json`). Đặt ZIP ảnh lấy từ LMS vào `work/` theo tên trong [SUBMISSION.md](SUBMISSION.md), rồi chạy lại `check_submission.py`.
 - Sau khi chốt bài nộp, coach có thể phát **phiếu hồ sơ lỗi** cho từng người: số cuboid đúng, ngược hướng, sai class, vẽ lệch, bỏ sót, và độ phủ theo khoảng cách. Phiếu có số vật theo từng frame, suy ra từ nhãn chuẩn, nên chỉ dành cho bạn: không commit, không chia sẻ, không chép số trong phiếu vào báo cáo hay nơi công khai (muốn rút kinh nghiệm thì viết bằng lời).
 
 ## Nhất quán chưa phải là đúng

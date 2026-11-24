@@ -39,7 +39,7 @@ Ví dụ: `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid`.
 2. Đổi dòng tiêu đề `# Day 13 Lab ...` của `README.md` thành `# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>` (thay cả dấu `<` `>`; MSSV phải trùng `student` trong `configs/lab.ini`).
 3. Báo cáo: đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`) nếu chưa đổi, rồi điền đủ (xoá mọi dấu TODO). Đổi tên, đừng chép thành file thứ hai. Windows: bật File Explorer → **View → Show → File name extensions** trước khi đổi tên, để tên không thành `….md.md`.
 4. `python scripts/lab.py pack` (macOS: `make pack`): nén ảnh trong `report/individual/images/` thành `work/K5-L23-DAY13-<MSSV>-images.zip`.
-5. `python scripts/check_submission.py` (macOS: `make check`) hết **LỖI**. `CẢNH BÁO` thì đọc và tự quyết; cảnh báo `chưa commit` sẽ hết sau bước 6.
+5. Chạy `python scripts/check_submission.py` (macOS: `make check`) và sửa hết **LỖI**. Nếu lỗi ở ZIP, kiểm đủ 11 ảnh theo tên bên dưới rồi chạy lại `pack`. Cảnh báo `chưa commit` sẽ hết sau bước 6.
 6. Commit và push, mỗi lệnh một dòng (Windows và macOS như nhau; PowerShell 5.1 không chạy được `&&`):
    ```bash
    git add -A

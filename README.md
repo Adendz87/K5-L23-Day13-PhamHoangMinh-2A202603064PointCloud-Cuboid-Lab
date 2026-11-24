@@ -13,11 +13,11 @@
   <img alt="hệ điều hành" src="https://img.shields.io/badge/Windows%20·%20macOS-lệnh%20giống%20nhau-7b61ff">
 </p>
 
-> **Đọc trước, vẽ sau. Ba view, một vật.** Bạn vẽ 60–70 cuboid 3D trên point cloud thật, rồi **đọc lại bằng số** xem chính cuboid của mình có đúng hướng, chạm đường và hợp kích thước không.
+Xác định vật trên point cloud và ảnh camera. Sau khi vẽ cuboid, kiểm tra hộp ở ba khung Top, Side và Front. Cuối buổi, dùng Bảng A để kiểm tra hướng, độ cao đáy và kích thước hộp.
 
 Bạn tạo một task CVAT riêng trên CVAT của máy mình, gồm **10 frame LiDAR thật** của dữ liệu VF (1 LiDAR 40 tia + 7 camera), chọn cố định theo mã số của bạn.
 Trong vùng 360° quanh xe, xa ≤ 50 m, mỗi frame có khoảng 18 vật: xe con, xe tải, xe buýt, xe hai bánh, người đi bộ. **Không ai vẽ hết**, nên bạn vẽ vật gần và rõ trước.
-Việc của bạn là **đọc frame** theo năm bước, **vẽ cuboid** theo guideline 3D Cuboid, **săn bốn hiện tượng** làm hỏng point cloud, rồi **tự kiểm bằng số** từ bảng A và báo cáo trung thực.
+Đọc từng frame, vẽ theo guideline 3D Cuboid và tìm bốn hiện tượng ảnh hưởng đến việc gán nhãn. Ghi số đo từ Bảng A và những trường hợp còn chưa chắc vào báo cáo.
 
 Công cụ đã **viết sẵn** (`cvat_lab/`, `scripts/`): tạo task, xuất bảng A, chiếu cuboid lên ảnh camera, soát cuboid bằng point cloud. Bạn không viết code; bạn tập trung vào **đọc point cloud và vẽ cho đúng**.
 Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải track. Track và nội suy là nội dung Ngày 24–26.
@@ -37,7 +37,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 2. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ.
 3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).
 4. **Săn bốn hiện tượng** làm hỏng point cloud: bóng che, thưa ở xa, phản xạ thấp, điểm lạ ([docs/PHENOMENA.md](docs/PHENOMENA.md)).
-5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết báo cáo `report/individual/<MSSV>_<HoTen>.md`, `python scripts/lab.py pack`, `python scripts/check_submission.py` hết LỖI, commit và push (repo có báo cáo, bảng A, phiếu tự kiểm) → nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**.
+5. Bấm **Save** trong CVAT và chạy `python scripts/lab.py sync` để kiểm hộp. Sau khi sửa, bấm **Save** và chạy lại `sync`. Viết báo cáo từ số liệu mới, chạy `pack` và `python scripts/check_submission.py` theo [SUBMISSION.md](SUBMISSION.md). Commit, push rồi nộp **link repo** và **ZIP ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**.
 
 > **Khi nộp:** đổi dòng tiêu đề README thành `# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>`, và đổi tên báo cáo `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (ví dụ `2A202600123_NguyenVanAn.md`).
 > `<MÃ SỐ>` và `<MSSV>` trong tài liệu là một: mã số của bạn, đúng như dòng `student` trong `configs/lab.ini`.

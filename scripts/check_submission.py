@@ -26,9 +26,9 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 import vf_common as vf  # noqa: E402
-from lab import IMAGE_DIR, IMAGE_SUFFIXES, N_IMAGES, data_dir, load_config  # noqa: E402
+from lab import FRAMES_PER_SEQUENCE, IMAGE_DIR, IMAGE_SUFFIXES, SEQUENCE_IDS, data_dir, load_config  # noqa: E402
 from vf_cvat import TABLE_A_FIELDS  # noqa: E402
-from vf_qa import CHECK_FIELDS  # noqa: E402
+from vf_qa import CHECK_FIELDS, TABLE_HASH_FIELD  # noqa: E402
 
 MIN_TOTAL, MIN_FIRST, MIN_OTHER = 50, 8, 5
 BOM = b"\xef\xbb\xbf"
@@ -49,6 +49,10 @@ SUBMITTED_CSV = re.compile(r"submission/D13-([^/]+)-(?:bangA|tukiem)\.csv")
 REPORT_DIR = ROOT / "report" / "individual"
 REPORT_TEMPLATE = "MSSV_HoTen.md"
 REPORT_NAME = re.compile(r"(\S+)_([A-Za-z]+)\.md")  # <MSSV>_<HoTen>.md, họ tên không dấu, viết liền
+REQUIRED_IMAGE_STEMS = {
+    "t2-a-car", "t2-b-bus-truck", "t2-c-ped-cyclist",
+    "t4-1-bong-che", "t4-2-thua-o-xa", "t4-3-phan-xa-thap", "t4-4-diem-la",
+}
 # Định dạng đúng như `report` ghi ra (cvat_lab/vf_cvat.py, table_a_row). Excel lưu lại sẽ làm sai định dạng.
 FORMATS = {key: re.compile(pattern) for key, pattern in {
     "frame": r"s\d{2}f\d{2}", "idx": r"[1-9]\d*", "occluded": r"[01]",
@@ -87,6 +91,8 @@ def leaks(paths, allowed=ALLOWED) -> list[str]:
 
 def row_problem(row: dict, student: str) -> str | None:
     """Lý do một dòng bảng A không giống bản `report` sinh ra, hoặc None."""
+    if None in row or any(value is None for value in row.values()):
+        return "số cột không khớp tiêu đề"
     if row.get("student") != student:
         return f"student = {row.get('student')!r}"
     if row.get("label") not in vf.CLASS_IDS:
@@ -156,17 +162,19 @@ else:
     warns.append("thiếu scripts/_protected.json: không kiểm được file đã viết sẵn")
 
 # 4. bảng A
-rows, assigned, header = [], [], []
+rows, assigned, numbered_rows = [], [], []
 table = check = None
 if student:
     task = vf.task_name(student)
     data = data_dir(cfg)
+    expected_counts = dict.fromkeys(SEQUENCE_IDS, FRAMES_PER_SEQUENCE)
     try:
         counts = {seq: len(stamps) for seq, stamps in vf.list_sequences(data).items()}
     except SystemExit:
-        counts = {seq: 60 for seq in range(1, 6)}
-        warns.append(f"không thấy dữ liệu ở {data}: giả định 5 sequence × 60 frame để tính 10 frame của bạn")
-    assigned = vf.select_frames(student, counts)
+        counts = {}
+    if counts != expected_counts:
+        warns.append(f"không thấy đủ dữ liệu ở {data}: dùng cấu hình chuẩn 5 sequence × 60 frame để tính 10 frame của bạn")
+    assigned = vf.select_frames(student, expected_counts)
     print(f"mã số {student} · task {task} · frame: {', '.join(assigned)}")
 
     table = ROOT / "submission" / f"{task}-bangA.csv"
@@ -182,24 +190,30 @@ if student:
             errs.append(f"{table.name} đã bị lưu lại bằng bảng tính (BOM/bảng mã khác): công cụ chấm không đọc được. "
                         "Chạy lại `python scripts/lab.py sync`")
         else:
-            reader = csv.DictReader(io.StringIO(text, newline=""))
-            header = reader.fieldnames or []
-            rows = list(reader)
-            if header != TABLE_A_FIELDS:
-                errs.append(f"{table.name}: cột khác bản do `report` sinh ra (sửa tay hoặc lưu lại từ Excel?). "
-                            "Chạy lại `python scripts/lab.py sync`")
-                rows = []
-            elif not rows:
-                errs.append(f"{table.name} trống: bấm Save trong CVAT (vẽ bằng Shape, không phải Track) rồi chạy lại "
-                            "`python scripts/lab.py sync`")
+            reader = csv.DictReader(io.StringIO(text, newline=""), strict=True)
+            try:
+                header = reader.fieldnames or []
+                numbered_rows = [(reader.reader.line_num, row) for row in reader]
+                rows = [row for _, row in numbered_rows]
+            except csv.Error:
+                errs.append(f"{table.name}: CSV lỗi ở gần dòng {reader.reader.line_num}. Chạy lại `python scripts/lab.py sync`.")
+            else:
+                if header != TABLE_A_FIELDS:
+                    errs.append(f"{table.name}: cột khác bản do `report` sinh ra. Chạy lại `python scripts/lab.py sync`.")
+                    rows = []
+                elif not rows:
+                    errs.append(f"{table.name} trống: bấm Save trong CVAT (vẽ bằng Shape, không phải Track) rồi chạy lại "
+                                "`python scripts/lab.py sync`")
     if rows:
-        problems = [f"dòng {n}: {why}" for n, row in enumerate(rows, start=2) if (why := row_problem(row, student))]
+        problems = [f"dòng {n}: {why}" for n, row in numbered_rows if (why := row_problem(row, student))]
         keys = [(r["frame"], r["idx"]) for r in rows]
         if len(set(keys)) != len(keys):
             problems.append("có cặp (frame, idx) lặp lại")
         if problems:
             errs.append(f"{table.name} không giống bản do `report` sinh ra ({len(problems)} chỗ, ví dụ "
                         f"{'; '.join(problems[:3])}): đừng sửa tay hay lưu lại từ Excel. Chạy lại `python scripts/lab.py sync`")
+            rows = []  # Không dùng dòng thiếu cột hoặc sai định dạng để tính số liệu.
+    if rows:
         stray = sorted({r["frame"] for r in rows} - set(assigned))
         if stray:
             errs.append(f"{table.name}: có frame không thuộc 10 frame của mã số {student}: {stray}")
@@ -211,12 +225,11 @@ if student:
             need = MIN_FIRST if index == 0 else MIN_OTHER
             if count < need:
                 warns.append(f"frame {name}: {count} cuboid < {need}")
-        if not problems:
-            swapped = [f"{r['frame']}#{r['idx']}" for r in rows
-                       if r["label"] != "Pedestrian" and float(r["length"]) < float(r["width"])]
-            if swapped:
-                warns.append(f"{len(swapped)} cuboid có length < width (mũi tên yaw nằm ngang thân xe?): "
-                             f"{', '.join(swapped[:8])}")
+        swapped = [f"{r['frame']}#{r['idx']}" for r in rows
+                   if r["label"] != "Pedestrian" and float(r["length"]) < float(r["width"])]
+        if swapped:
+            warns.append(f"{len(swapped)} cuboid có length < width (mũi tên yaw nằm ngang thân xe?): "
+                         f"{', '.join(swapped[:8])}")
 
     # 5. phiếu tự kiểm phải khớp bảng A hiện tại
     check = ROOT / "submission" / f"{task}-tukiem.csv"
@@ -226,17 +239,20 @@ if student:
         stale = True
         try:
             with check.open(encoding="utf-8", newline="") as handle:
-                reader = csv.DictReader(handle)
+                reader = csv.DictReader(handle, strict=True)
                 checked = list(reader)
             if reader.fieldnames == CHECK_FIELDS:
                 mine = {(r["frame"], r["idx"]): (r["label"], math.hypot(float(r["x"]), float(r["y"]))) for r in rows}
                 theirs = {(r["frame"], r["idx"]): (r["label"], float(r["dist_m"])) for r in checked}
-                stale = mine.keys() != theirs.keys() or any(
-                    theirs[k][0] != mine[k][0] or abs(theirs[k][1] - mine[k][1]) > 0.06 for k in mine)
-        except (UnicodeDecodeError, ValueError, KeyError, csv.Error):
+                expected_hash = hashlib.sha256(raw).hexdigest()
+                stale = (len(checked) != len(mine) or mine.keys() != theirs.keys()
+                         or any(row[TABLE_HASH_FIELD] != expected_hash for row in checked)
+                         or any(theirs[k][0] != mine[k][0] or abs(theirs[k][1] - mine[k][1]) > 0.06 for k in mine))
+        except (UnicodeDecodeError, ValueError, TypeError, KeyError, csv.Error):
             stale = True
         if stale:
-            errs.append(f"{check.name} không khớp bảng A hiện tại (cũ hơn, hoặc bị sửa): chạy lại `python scripts/lab.py sync`")
+            errs.append(f"{check.name} không khớp bảng A hiện tại hoặc là phiếu bản cũ. "
+                        "Chạy `python scripts/lab.py selfcheck` để tạo lại từ Bảng A, hoặc `sync` nếu vừa sửa cuboid.")
         else:
             flagged = sum(bool(r.get("flags")) for r in checked)
             print(f"tự kiểm: {flagged}/{len(checked)} cuboid còn cảnh báo (cảnh báo không tính điểm)")
@@ -291,27 +307,33 @@ if report:
         if assigned and missing:
             warns.append(f"báo cáo mục 2 chưa nhắc tới hai frame đọc kỹ đầu tiên: {missing}")
 
-# 7. ảnh chụp: nằm trên máy, nộp qua LMS trong file zip, không vào git
-images = [p for p in IMAGE_DIR.glob("*") if p.suffix.lower() in IMAGE_SUFFIXES]
-if len(images) < N_IMAGES:
-    warns.append(f"report/individual/images có {len(images)}/{N_IMAGES} ảnh chụp (Bước 2: 4, Bước 3: 3, Bước 4: 4)")
-if student and images:
+# 7. ảnh chụp: nằm trong ZIP nộp qua LMS, không vào git
+if student:
     bundle = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
-    zipped, broken = None, False
-    if bundle.is_file():
+    if not bundle.is_file():
+        errs.append(f"chưa có work/{bundle.name} (ảnh nộp LMS): chạy `python scripts/lab.py pack`")
+    else:
         try:
             with zipfile.ZipFile(bundle) as archive:
+                names = archive.namelist()
+                if len(set(names)) != len(names) or archive.testzip() is not None:
+                    raise zipfile.BadZipFile("ảnh trùng tên hoặc hỏng")
                 zipped = {i.filename: i.CRC for i in archive.infolist()
                           if i.filename.startswith("images/") and not i.is_dir()}
-        except Exception:  # zip hỏng kiểu nào (cắt dở, sai mục lục, tên lỗi mã hoá) cũng chỉ cần pack lại
-            broken = True
-    if broken:
-        warns.append(f"work/{bundle.name} bị hỏng: chạy lại `python scripts/lab.py pack` và nộp lại file zip lên LMS")
-    elif zipped is None:
-        warns.append(f"chưa có work/{bundle.name} (ảnh nộp LMS): chạy `python scripts/lab.py pack`")
-    elif zipped != {f"images/{p.name}": zlib.crc32(p.read_bytes()) for p in images}:
-        warns.append(f"work/{bundle.name} khác ảnh trong report/individual/images (thêm, xoá, đổi tên hoặc chụp lại ảnh sau khi "
-                     "pack): chạy lại `python scripts/lab.py pack` và nộp lại file zip lên LMS")
+        except (OSError, EOFError, RuntimeError, ValueError, zipfile.BadZipFile, zlib.error):
+            errs.append(f"work/{bundle.name} bị hỏng: chạy lại `python scripts/lab.py pack`")
+        else:
+            required = REQUIRED_IMAGE_STEMS | {f"t1-{frame}-{view}" for frame in assigned[:2] for view in ("3d", "top")}
+            present = {Path(name).stem for name in zipped
+                       if name.count("/") == 1 and Path(name).suffix.lower() in IMAGE_SUFFIXES}
+            missing = sorted(required - present)
+            if missing:
+                errs.append(f"work/{bundle.name} thiếu ảnh bắt buộc: {', '.join(missing)}. "
+                            "Kiểm tên ảnh theo SUBMISSION.md rồi chạy lại `python scripts/lab.py pack`.")
+            images = [p for p in IMAGE_DIR.glob("*") if p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES]
+            if images and zipped != {f"images/{p.name}": zlib.crc32(p.read_bytes()) for p in images}:
+                errs.append(f"work/{bundle.name} khác ảnh trong report/individual/images. "
+                            "Chạy lại `python scripts/lab.py pack`.")
 
 # 8. repo public: không commit dữ liệu, ảnh; bảng A, phiếu tự kiểm, báo cáo đã commit và push chưa
 listing = git("ls-files", "-z")

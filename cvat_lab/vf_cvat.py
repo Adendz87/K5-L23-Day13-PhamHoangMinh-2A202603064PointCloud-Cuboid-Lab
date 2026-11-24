@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import csv
 import getpass
+import hashlib
 import math
 import os
 import sys
@@ -168,7 +169,17 @@ def cmd_day13(args) -> int:
         client = connect(args.host, args.user, args.org)
         existing = find_tasks(client, name)
         if existing and not args.replace:
-            print(f"Đã có task {name}: {args.host.rstrip('/')}/tasks/{existing[0].id}")
+            task = existing[0]
+            link = f"{args.host.rstrip('/')}/tasks/{task.id}"
+            recovery = "Nếu vừa tải dữ liệu, chờ CVAT xử lý rồi chạy lại. Nếu đã vẽ nhãn, báo coach trước khi tạo lại task."
+            if not task.get_jobs():
+                raise SystemExit(f"Task {name} chưa có job: {link}. {recovery}")
+            expected = [frame["name"] for frame in frames]
+            actual = [Path(frame.name).stem for frame in task.get_meta().frames]
+            if actual != expected:
+                raise SystemExit(f"Task {name} có {len(actual)} frame nhưng không khớp bộ {len(expected)} frame được giao: "
+                                 f"{link}. {recovery}")
+            print(f"Đã có task {name}: {link}")
             print("Mở task cũ. Chỉ dùng --replace khi chưa vẽ gì: --replace xóa task và nhãn cũ.")
             return 0
         for task in existing:
@@ -206,8 +217,10 @@ def _qa_inputs(args):
 
     student = vf.normalize_student(args.student)
     table = Path(args.table or f"nop/{vf.task_name(student)}-bangA.csv")
+    content = table.read_bytes()
     frames = frame_sources(Path(args.data), student)
-    return vf_qa, student, vf_qa.sorted_frames(frames, vf_qa.read_table_a(table, student))
+    pairs = vf_qa.sorted_frames(frames, vf_qa.read_table_a(table, student, content=content))
+    return vf_qa, student, pairs, hashlib.sha256(content).hexdigest()
 
 
 def cmd_preview(args) -> int:
@@ -216,7 +229,7 @@ def cmd_preview(args) -> int:
         import PIL  # noqa: F401
     except ImportError:
         raise SystemExit("Thiếu Pillow. Chạy: pip install -r requirements.txt")
-    vf_qa, student, pairs = _qa_inputs(args)
+    vf_qa, student, pairs, _ = _qa_inputs(args)
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     calibs: dict[int, dict] = {}
@@ -235,14 +248,14 @@ def cmd_preview(args) -> int:
 
 def cmd_check(args) -> int:
     """Self-check each cuboid against its own LiDAR points. No ground truth, no score."""
-    vf_qa, student, pairs = _qa_inputs(args)
+    vf_qa, student, pairs, table_hash = _qa_inputs(args)
     rows = []
     for frame, boxes in pairs:
         if not boxes:
             print(f"{frame['name']}: chưa có cuboid nào.")
             continue
         for row in vf_qa.check_frame(boxes, vf_qa.points_xyz(frame["lidar"])):
-            rows.append({"frame": frame["name"], **row})
+            rows.append({"frame": frame["name"], **row, vf_qa.TABLE_HASH_FIELD: table_hash})
     out = Path(args.out or f"nop/{vf.task_name(student)}-tukiem.csv")
     out.parent.mkdir(parents=True, exist_ok=True)
     with out.open("w", newline="", encoding="utf-8") as handle:

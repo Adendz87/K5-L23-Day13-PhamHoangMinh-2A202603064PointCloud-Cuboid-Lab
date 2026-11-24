@@ -33,6 +33,8 @@ sys.path.insert(0, str(ROOT / "cvat_lab"))
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg"}
 IMAGE_DIR = ROOT / "report" / "individual" / "images"  # ảnh chụp màn hình: không commit, `pack` nén để nộp LMS
 N_IMAGES = 11
+SEQUENCE_IDS = range(1, 6)
+SEQUENCE_NAMES = {f"sequence_{number:02d}" for number in SEQUENCE_IDS}
 FRAMES_PER_SEQUENCE = 60
 MIN_PYTHON = (3, 11)  # cvat-sdk >= 2.80 và Pillow 13 không còn hỗ trợ Python 3.10
 DEFAULTS = {"cvat_host": "http://localhost:8080", "data": "data/data-VF"}
@@ -69,11 +71,22 @@ def data_dir(cfg: dict) -> Path:
 
 
 def check_data(data: Path) -> None:
-    """Dừng nếu data-VF hỏng (giải nén lỗi) hoặc là bản cũ; cảnh báo nếu thiếu file."""
+    """Kiểm bộ LiDAR trước khi chọn frame và cảnh báo nếu thiếu ảnh camera."""
     import vf_common as vf
 
+    folders = {path.name: path for path in data.glob("sequence_*") if path.is_dir()}
+    missing = sorted(SEQUENCE_NAMES - folders.keys())
+    extra = sorted(folders.keys() - SEQUENCE_NAMES)
+    if missing or extra:
+        details = []
+        if missing:
+            details.append(f"thiếu {', '.join(missing)}")
+        if extra:
+            details.append(f"có thư mục thừa {', '.join(extra)}")
+        raise SystemExit(f"data-VF tại {data} {' và '.join(details)}. Kiểm đường dẫn và giải nén đủ Data-VF.zip "
+                         "(docs/COMMON_ERRORS.md mục 2).")
     short = []
-    for seq in sorted(p for p in data.glob("sequence_*") if p.is_dir()):
+    for seq in sorted(folders.values()):
         try:
             calib = json.loads((seq / "calib.json").read_text(encoding="utf-8"))["calib"]
             axis_y = float(calib["cam01"]["cam_to_velo"][1][2])
@@ -84,13 +97,13 @@ def check_data(data: Path) -> None:
             raise SystemExit(f"{seq.name}: data-VF này là bản cũ (hệ trục cũ: cam01 không nhìn theo -y). "
                              "Tải lại bản cập nhật 22/11/2026 theo link GV gửi riêng; xem docs/COMMON_ERRORS.md mục 2.")
         lidar = sorted((seq / "lidar").glob("*.bin"))
-        if lidar:
-            with lidar[0].open("rb") as handle:
-                if not any(handle.read(4096)):
-                    raise SystemExit(f"{seq.name}/lidar/{lidar[0].name} toàn số 0: file giải nén hỏng "
-                                     "(sai mật khẩu zip?). Xoá thư mục dữ liệu và giải nén lại.")
         if len(lidar) != FRAMES_PER_SEQUENCE:
-            short.append(f"{seq.name}/lidar {len(lidar)}/{FRAMES_PER_SEQUENCE}")
+            raise SystemExit(f"{seq.name}/lidar có {len(lidar)}/{FRAMES_PER_SEQUENCE} file .bin. "
+                             "Giải nén lại Data-VF.zip (docs/COMMON_ERRORS.md mục 2).")
+        with lidar[0].open("rb") as handle:
+            if not any(handle.read(4096)):
+                raise SystemExit(f"{seq.name}/lidar/{lidar[0].name} toàn số 0: giải nén lại Data-VF.zip "
+                                 "(docs/COMMON_ERRORS.md mục 2).")
         for cam in vf.CAMERAS:
             count = len(list((seq / "cameras" / cam).glob("*.jpg")))
             if count != len(lidar):
@@ -122,9 +135,9 @@ def run_cvat(vf_cvat, argv: list[str], cfg: dict) -> int:
             names.add(type(current).__name__)
             current = current.__cause__ or current.__context__
         if names & CONNECTION_ERRORS:
-            raise SystemExit(f"Không nối được CVAT ở {cfg['cvat_host']}. Mở địa chỉ đó bằng trình duyệt; CVAT trên máy "
-                             "thì chạy `docker compose up -d` trong thư mục cvat của CVAT, chờ 1 phút rồi chạy lại. "
-                             "Xem docs/COMMON_ERRORS.md mục 3.") from None
+            raise SystemExit(f"Không nối được CVAT ở {cfg['cvat_host']}. Mở địa chỉ đó bằng trình duyệt. "
+                             "Bật lại CVAT theo docs/CVAT_SETUP.md mục 5 hoặc mục 6 nếu dùng cấu hình máy yếu. "
+                             "Chờ CVAT mở được rồi chạy lại lệnh.") from None
         status = getattr(exc, "status", None)
         if status == 401 or (status == 400 and "log in" in str(exc).lower()):
             raise SystemExit("CVAT từ chối đăng nhập: sai `cvat_user` (username, không phải email) hoặc sai mật khẩu. "
@@ -165,7 +178,7 @@ def ensure_writable(paths) -> None:
 def pack(student: str) -> int:
     """Nén ảnh chụp của báo cáo để nộp lên LMS. Ảnh có dữ liệu camera thật nên không đưa lên repo public."""
     folder = IMAGE_DIR
-    images = sorted(p for p in folder.glob("*") if p.suffix.lower() in IMAGE_SUFFIXES)
+    images = sorted(p for p in folder.glob("*") if p.is_file() and p.suffix.lower() in IMAGE_SUFFIXES)
     if not images:
         raise SystemExit(f"Chưa có ảnh nào trong {folder} (đuôi .png hoặc .jpg).")
     out = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
