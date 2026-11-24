@@ -265,8 +265,8 @@ if bad_names:
                    if any(n.lower().endswith(".md.md") for n in bad_names) else ""))
 if foreign:
     errs.append(f"report/individual/ có báo cáo mang mã số khác `student` ({student}): {foreign[:3]}. "
-                f"Báo cáo của bạn thì đổi tên thành {example} (đúng mã số trong configs/lab.ini, không để chữ MSSV "
-                "hay dấu < >); báo cáo của người khác thì xoá")
+                f"Báo cáo của bạn thì đổi tên thành {student}_{REPORT_NAME.fullmatch(foreign[0]).group(2)}.md (giữ họ tên "
+                "của bạn, đúng mã số trong configs/lab.ini, không để chữ MSSV hay dấu < >); báo cáo của người khác thì xoá")
 if len(mine) > 1:
     errs.append(f"report/individual/ có {len(mine)} báo cáo: {[p.name for p in mine]}. Chỉ giữ một file")
 if report and (REPORT_DIR / REPORT_TEMPLATE).exists():
@@ -348,8 +348,10 @@ else:
     if student:
         paths += [f"submission/D13-{student}-bangA.csv", f"submission/D13-{student}-tukiem.csv"]
     dirty = git("status", "--porcelain", "--untracked-files=all", "--", *paths)
-    if dirty and dirty.strip():
-        changed = sorted({line[3:].strip().strip('"') for line in dirty.splitlines() if len(line) > 3})
+    # File không được public (ảnh, phiếu hồ sơ) đã có LỖI riêng ở trên: đừng bảo commit, push chúng.
+    changed = sorted({p for p in (line[3:].strip().strip('"') for line in (dirty or "").splitlines() if len(line) > 3)
+                      if not leaks([p.split(" -> ")[-1].strip('"')])})
+    if changed:
         warns.append(f"chưa commit: {', '.join(changed)}. Coach chấm từ repo: chạy lần lượt `git add -A`, "
                      "`git commit -m \"Day 13: bang A, phieu tu kiem, bao cao\"`, `git push` (SUBMISSION.md bước 6)")
     ahead = git("rev-list", "--count", "@{u}..HEAD")

@@ -23,6 +23,8 @@ python scripts/lab.py task
 python scripts/lab.py task --code HC485087
 ```
 
+Ngồi ghép đôi, người B (dùng CVAT trên máy bạn kia): chưa chạy dòng `task --code`; làm theo [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 6, "Ngồi ghép đôi", bước 6.
+
 - `dry` in 10 frame của bạn, mỗi frame `camera=7`, và kiểm dữ liệu; không nối CVAT.
 - `task` tạo task `D13-<MÃ SỐ>`; lệnh hỏi mật khẩu CVAT, màn hình không hiện ký tự khi gõ.
 - `task --code HC485087` tạo task chung `D13-HC485087` cho vòng hiệu chuẩn (Bước 3) và để xem frame gợi ý ở Bước 4. Mã chung mặc định là `HC485087`; nếu coach phát mã khác thì dùng mã của coach ở mọi lệnh có `--code`. Task chung không phải bài của bạn và không được chấm.

@@ -28,7 +28,7 @@
 - Ảnh chụp màn hình **nộp qua LMS** trong file zip (`python scripts/lab.py pack`). Không gửi vào nhóm chat hay mạng xã hội.
 - Báo cáo nằm trên repo public: mô tả chung (loại vật, màu, trái hay phải, cách khoảng bao nhiêu mét). **Không** chép biển số, chữ trên biển hiệu hay biển chỉ đường, tên đường, địa danh, đặc điểm nhận dạng một người. Nhắc tới bạn khác thì ghi MSSV, không ghi họ tên.
 - Phiếu hồ sơ lỗi coach phát (nếu có) chỉ dành cho bạn: không commit, không chia sẻ, không chép số trong phiếu (bảng theo frame, số vật trong vùng, theo khoảng cách, theo lớp) vào báo cáo hay nơi công khai. Các số đó suy ra từ nhãn chuẩn; muốn rút kinh nghiệm thì viết bằng lời.
-- Hết khóa, xóa `data/data-VF/`, `work/`, ảnh chụp trong `report/individual/images/`, file `Data-VF.zip` trong Downloads, và ảnh chụp còn sót ở Desktop, Pictures.
+- Hết khóa (sau khi có điểm), xóa: các task `D13-…` trong CVAT trên máy bạn (mở task → **Actions** → **Delete**; máy ngồi ghép đôi thì xoá cả task của bạn kia; không dùng CVAT nữa thì `docker compose down -v` trong thư mục `cvat` của CVAT), `data/data-VF/` (hoặc thư mục ở dòng `data =`), `work/`, ảnh chụp trong `report/individual/images/`, file `Data-VF.zip` trong Downloads, ảnh chụp còn sót ở Desktop, Pictures. Rồi dọn thùng rác (Recycle Bin, Trash).
 
 ## Mật khẩu
 - Mật khẩu CVAT chỉ nhập tay khi lệnh hỏi, hoặc đặt biến môi trường `CVAT_PASSWORD` cho cửa sổ terminal đang mở theo đúng lệnh ở [docs/COMMANDS.md](docs/COMMANDS.md) mục 6.
