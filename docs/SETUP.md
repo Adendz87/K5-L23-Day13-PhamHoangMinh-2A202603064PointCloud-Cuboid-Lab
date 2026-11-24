@@ -62,7 +62,7 @@ Lần đầu gõ `git` trên macOS có thể hiện hộp thoại cài Command L
 
 ## 3. Tạo repo của bạn, tải về và cài thư viện
 
-Trên GitHub, mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Student, bấm **Use this template → Create a new repository**, chọn **Public**, đặt tên `K5-L23-DAY13-<MSHV>-PointCloudCuboid` (xem [../SUBMISSION.md](../SUBMISSION.md)). Trong các lệnh dưới, thay `<tài-khoản>` bằng tên tài khoản GitHub và `<MSHV>` bằng mã số của bạn.
+Trên GitHub, mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab, bấm **Use this template → Create a new repository**, chọn **Public**, đặt tên `K5-L23-DAY13-<MSHV>-PointCloudCuboid` (xem [../SUBMISSION.md](../SUBMISSION.md)). Trong các lệnh dưới, thay `<tài-khoản>` bằng tên tài khoản GitHub và `<MSHV>` bằng mã số của bạn.
 
 **Windows (PowerShell)**
 

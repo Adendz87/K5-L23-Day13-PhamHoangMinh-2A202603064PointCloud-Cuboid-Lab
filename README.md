@@ -32,7 +32,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame, không phải track. Tr
 
 ## Bắt đầu nhanh (5 bước, ~4 giờ)
 
-1. Mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Student → **Use this template** → repo **public** của bạn (tên: xem [SUBMISSION.md](SUBMISSION.md)), `git clone`, cài môi trường và tải dữ liệu **trước buổi học** ([docs/SETUP.md](docs/SETUP.md), [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md)). Điền `configs/lab.ini`, rồi `python scripts/lab.py dry` in ra **10 frame, mỗi frame `camera=7`**.
+1. Mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab → **Use this template** → repo **public** của bạn (tên: xem [SUBMISSION.md](SUBMISSION.md)), `git clone`, cài môi trường và tải dữ liệu **trước buổi học** ([docs/SETUP.md](docs/SETUP.md), [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md)). Điền `configs/lab.ini`, rồi `python scripts/lab.py dry` in ra **10 frame, mỗi frame `camera=7`**.
 2. `python scripts/lab.py task` tạo task `D13-<MÃ SỐ>`. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ ([GUIDE.md](GUIDE.md)).
 3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).
 4. **Săn bốn hiện tượng** làm hỏng point cloud: bóng che, thưa ở xa, phản xạ thấp, điểm lạ ([docs/PHENOMENA.md](docs/PHENOMENA.md)).
