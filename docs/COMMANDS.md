@@ -15,7 +15,7 @@ Lệnh của bài lab đọc mã số, địa chỉ CVAT, tên đăng nhập và
 | Vẽ cuboid lên ảnh camera | `python scripts/lab.py preview` | `make preview` |
 | Soát cuboid bằng point cloud | `python scripts/lab.py selfcheck` | `make selfcheck` |
 | Ba lệnh report, preview, selfcheck liền nhau | `python scripts/lab.py sync` | `make sync` |
-| Nén bảng A, phiếu tự kiểm, ảnh để nộp LMS | `python scripts/lab.py pack` | `make pack` |
+| Nén ảnh chụp để nộp LMS | `python scripts/lab.py pack` | `make pack` |
 | Kiểm bài nộp | `python scripts/check_submission.py` | `make check` |
 
 Windows không có `make`: dùng cột giữa. Mã chung mặc định là `HC485087` ([../GUIDE.md](../GUIDE.md) Bước 1), trừ khi coach phát mã khác.
@@ -152,14 +152,14 @@ git add -A
 ```
 
 ```bash
-git commit -m "Day 13: bao cao"
+git commit -m "Day 13: bang A, phieu tu kiem, bao cao"
 ```
 
 ```bash
 git push
 ```
 
-`pack` tạo `work/K5-L23-DAY13-<MÃ SỐ>-nop.zip` gồm bảng A, phiếu tự kiểm và ảnh trong `submission/images/`. Nộp file này cùng link repo lên LMS. `git add -A` chỉ đưa báo cáo và cấu hình lên repo: `.gitignore` chặn bảng A, phiếu tự kiểm, ảnh, file zip.
+`pack` tạo `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` gồm ảnh trong `submission/images/`. Nộp file này cùng link repo lên LMS. `git add -A` đưa lên repo báo cáo, cấu hình, bảng A và phiếu tự kiểm; `.gitignore` chặn ảnh, file zip, dữ liệu.
 
 ## 5. Chụp màn hình
 

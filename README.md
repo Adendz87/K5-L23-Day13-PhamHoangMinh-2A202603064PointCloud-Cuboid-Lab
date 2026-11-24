@@ -37,7 +37,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 2. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ.
 3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).
 4. **Săn bốn hiện tượng** làm hỏng point cloud: bóng che, thưa ở xa, phản xạ thấp, điểm lạ ([docs/PHENOMENA.md](docs/PHENOMENA.md)).
-5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết `submission/REPORT.md`, `python scripts/lab.py pack`, `python scripts/check_submission.py` hết LỖI, push → nộp **link repo** và **file zip** (bảng A, phiếu tự kiểm, ảnh) lên LMS.
+5. `python scripts/lab.py sync` (bảng A + ảnh xem trước + phiếu tự kiểm), sửa cuboid, viết `submission/REPORT.md`, `python scripts/lab.py pack`, `python scripts/check_submission.py` hết LỖI, commit và push (repo có báo cáo, bảng A, phiếu tự kiểm) → nộp **link repo** và **file zip ảnh** lên LMS.
 
 > **Khi nộp:** đổi dòng tiêu đề README thành `# Day 13 Lab — <Họ và tên>: <MSHV> - <Họ và tên>`.
 > `<MÃ SỐ>` và `<MSHV>` trong tài liệu là một: mã số học viên của bạn, đúng như dòng `student` trong `configs/lab.ini`.
@@ -63,9 +63,9 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 | Sản phẩm | Ở đâu |
 |---|---|
 | Task CVAT `D13-<MÃ SỐ>` với 60–70 cuboid đã Save | CVAT trên máy bạn |
-| **Bảng A**: 7 tham số, khoảng cách, đáy cuboid của từng cuboid | `submission/D13-<MÃ SỐ>-bangA.csv` (nộp LMS, không commit) |
-| **Phiếu tự kiểm**: số điểm trong cuboid, khoảng hở với mặt đường, cảnh báo | `submission/D13-<MÃ SỐ>-tukiem.csv` (nộp LMS, không commit) |
-| 11 ảnh chụp màn hình (đọc frame, cuboid mẫu, bốn hiện tượng) | `submission/images/` (nộp LMS, không commit) |
+| **Bảng A**: 7 tham số, khoảng cách, đáy cuboid của từng cuboid | `submission/D13-<MÃ SỐ>-bangA.csv` (commit vào repo) |
+| **Phiếu tự kiểm**: số điểm trong cuboid, khoảng hở với mặt đường, cảnh báo | `submission/D13-<MÃ SỐ>-tukiem.csv` (commit vào repo) |
+| 11 ảnh chụp màn hình (đọc frame, cuboid mẫu, bốn hiện tượng) | `submission/images/` (nén bằng `pack`, nộp LMS, không commit) |
 | **Một báo cáo duy nhất**: đọc frame, cuboid mẫu, bốn hiện tượng, số đo, điều còn chưa chắc | `submission/REPORT.md` (trong repo) |
 
 ## Tài liệu

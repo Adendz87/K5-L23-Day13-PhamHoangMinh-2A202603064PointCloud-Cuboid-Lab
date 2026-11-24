@@ -33,12 +33,14 @@ MIN_TOTAL, MIN_FIRST, MIN_OTHER = 50, 8, 5
 BOM = b"\xef\xbb\xbf"
 INI_KEYS = {"student", "cvat_host", "cvat_user", "cvat_org", "data"}
 SECRET_KEY = re.compile(r"pass|pwd|mat_?khau|mật|token|secret", re.IGNORECASE)
-# File không bao giờ được vào repo public: dữ liệu VF, ảnh, file nén, video, tài liệu xuất, bảng A, phiếu tự kiểm.
+# File không bao giờ được vào repo public: dữ liệu VF, ảnh, file nén, video, tài liệu xuất, bảng điểm.
+# Riêng bảng A và phiếu tự kiểm của bạn (submission/D13-<MÃ SỐ>-bangA.csv, -tukiem.csv) phải được commit.
 LEAK_SUFFIXES = {".bin", ".pcd", ".ply", ".zip", ".7z", ".rar", ".tar", ".gz", ".tgz", ".jpg", ".jpeg", ".png",
                  ".webp", ".heic", ".gif", ".bmp", ".tif", ".tiff", ".mp4", ".mov", ".pdf", ".docx", ".pptx", ".csv"}
 LEAK_PART = re.compile(r"sequence_\d+|data-vf|calib\.json|hoso|.*-hoso\.md", re.IGNORECASE)
 ALLOWED = {"docs/assets/hero.png", "docs/assets/coordinates.png", "docs/assets/workflow.png",
            "docs/3D_Cuboid_Annotation_Guideline.docx"}
+SUBMITTED_CSV = re.compile(r"submission/D13-([^/]+)-(?:bangA|tukiem)\.csv")
 # Định dạng đúng như `report` ghi ra (cvat_lab/vf_cvat.py, table_a_row). Excel lưu lại sẽ làm sai định dạng.
 FORMATS = {key: re.compile(pattern) for key, pattern in {
     "frame": r"s\d{2}f\d{2}", "idx": r"[1-9]\d*", "occluded": r"[01]",
@@ -67,7 +69,7 @@ def leaks(paths) -> list[str]:
     for path in paths:
         low = path.lower()
         parts = low.split("/")
-        if path in ALLOWED or low in ("data/readme.md",):
+        if path in ALLOWED or low in ("data/readme.md",) or SUBMITTED_CSV.fullmatch(path):
             continue
         if (Path(low).suffix in LEAK_SUFFIXES or parts[0] in {"data", "work", "nop", "xem"}
                 or any(LEAK_PART.fullmatch(part) for part in parts)):
@@ -248,29 +250,23 @@ else:
     if assigned and missing:
         warns.append(f"REPORT.md mục 2 chưa nhắc tới hai frame đọc kỹ đầu tiên: {missing}")
 
-# 7. ảnh chụp và file zip nộp LMS (không vào git)
+# 7. ảnh chụp: nằm trên máy, nộp qua LMS trong file zip, không vào git
 images = [p for p in (ROOT / "submission/images").glob("*") if p.suffix.lower() in IMAGE_SUFFIXES]
 if len(images) < N_IMAGES:
     warns.append(f"submission/images có {len(images)}/{N_IMAGES} ảnh chụp (Bước 2: 4, Bước 3: 3, Bước 4: 4)")
-if student:
-    bundle = ROOT / "work" / f"K5-L23-DAY13-{student}-nop.zip"
-    if not bundle.exists():
-        errs.append(f"chưa có work/{bundle.name} (file nộp LMS): chạy `python scripts/lab.py pack`")
-    else:
-        try:
-            with zipfile.ZipFile(bundle) as archive:
-                names = set(archive.namelist())
-                old = [p.name for p in (table, check)
-                       if p is not None and p.exists() and (p.name not in names or archive.read(p.name) != p.read_bytes())]
-                zipped = sum(1 for n in names if n.startswith("images/") and not n.endswith("/"))
-        except zipfile.BadZipFile:
-            old, zipped = ["(file zip hỏng)"], len(images)
-        if old:
-            errs.append(f"work/{bundle.name} chứa bản cũ hoặc thiếu {', '.join(old)}: chạy lại `python scripts/lab.py pack`")
-        elif zipped != len(images):
-            warns.append(f"work/{bundle.name} có {zipped} ảnh, submission/images có {len(images)}: chạy lại `python scripts/lab.py pack`")
+if student and images:
+    bundle = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
+    try:
+        with zipfile.ZipFile(bundle) as archive:
+            zipped = {n for n in archive.namelist() if n.startswith("images/") and not n.endswith("/")}
+    except (OSError, zipfile.BadZipFile):
+        zipped = None
+    if zipped is None:
+        warns.append(f"chưa có work/{bundle.name} (ảnh nộp LMS): chạy `python scripts/lab.py pack`")
+    elif zipped != {f"images/{p.name}" for p in images}:
+        warns.append(f"work/{bundle.name} khác ảnh trong submission/images: chạy lại `python scripts/lab.py pack`")
 
-# 8. repo public: không commit dữ liệu, ảnh, bảng A; đã commit và push báo cáo chưa
+# 8. repo public: không commit dữ liệu, ảnh; bảng A, phiếu tự kiểm, báo cáo đã commit và push chưa
 listing = git("ls-files", "-z")
 if listing is None:
     warns.append("thư mục này không phải git repo (tải ZIP?) hoặc không chạy được git: không kiểm được file sẽ push. "
@@ -279,16 +275,23 @@ else:
     tracked = [f for f in listing.split("\0") if f]
     leaked = leaks(tracked)
     if leaked:
-        errs.append(f"repo đang theo dõi {len(leaked)} file không được đưa lên repo public (dữ liệu, ảnh, file nén, "
-                    f"bảng A, phiếu tự kiểm): {leaked[:5]}. Gỡ: `git rm --cached <file>` (docs/COMMON_ERRORS.md mục 5)")
+        errs.append(f"repo đang theo dõi {len(leaked)} file không được đưa lên repo public (dữ liệu, ảnh, file nén): "
+                    f"{leaked[:5]}. Gỡ: `git rm --cached <file>` (docs/COMMON_ERRORS.md mục 5)")
+    others = sorted(f for f in tracked if (m := SUBMITTED_CSV.fullmatch(f)) and m.group(1).upper() != student)
+    if student and others:
+        errs.append(f"repo có bảng A hoặc phiếu tự kiểm của mã số khác: {others[:4]}. Chỉ commit file của mã {student}")
     history = git("log", "--all", "--format=", "--name-only", "--diff-filter=A", "-z") or ""
     old_leaks = sorted(set(leaks(f for f in history.split("\0") if f.strip())) - set(leaked))
     if old_leaks:
         errs.append(f"lịch sử commit vẫn còn {len(old_leaks)} file không được public: {old_leaks[:5]}. "
                     "Gỡ khỏi git chưa đủ: xem docs/COMMON_ERRORS.md mục 5 trước khi push")
-    dirty = git("status", "--porcelain", "--", "README.md", "submission/REPORT.md", "configs/lab.ini")
+    paths = ["README.md", "submission/REPORT.md", "configs/lab.ini"]
+    if student:
+        paths += [f"submission/D13-{student}-bangA.csv", f"submission/D13-{student}-tukiem.csv"]
+    dirty = git("status", "--porcelain", "--untracked-files=all", "--", *paths)
     if dirty and dirty.strip():
-        warns.append("README.md, REPORT.md hoặc configs/lab.ini còn thay đổi chưa commit: `git add -A`, `git commit`, `git push`")
+        changed = sorted({line[3:].strip().strip('"') for line in dirty.splitlines() if len(line) > 3})
+        warns.append(f"chưa commit: {', '.join(changed)}. Coach chấm từ repo: chạy `git add -A`, `git commit`, `git push`")
     ahead = git("rev-list", "--count", "@{u}..HEAD")
     if ahead and ahead.strip() not in ("", "0"):
         warns.append(f"có {ahead.strip()} commit chưa push: chạy `git push`")

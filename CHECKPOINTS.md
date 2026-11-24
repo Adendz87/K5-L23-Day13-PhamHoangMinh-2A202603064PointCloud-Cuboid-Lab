@@ -10,9 +10,9 @@ Bài cá nhân, buổi thực hành **16:00–20:00**. Mốc giờ là điểm *
 | 17:55 | **CP4** Frame 2–6 | Mỗi frame ≥ 5 cuboid; đã **Save** trước giờ nghỉ |
 | 18:35 | **CP5** Frame 7–10 | Tổng ≥ 50 cuboid (nên 60–70); đã quét cả phía sau và hai bên |
 | 19:00 | **CP6** Bốn hiện tượng | 4 ảnh và 4 dòng trong `REPORT.md` §4; nguyên nhân ghi là giả thuyết |
-| 19:30 | **CP7** Tự kiểm + nộp lần đầu | `python scripts/lab.py sync` đã chạy sau lần Save cuối; đã sửa ≥ 2 cuboid; `REPORT.md` xong, đã đổi kiểm hai con số với bạn bên cạnh; đã `pack`; `python scripts/check_submission.py` hết LỖI; đã push và nộp link repo + file zip lên LMS |
+| 19:30 | **CP7** Tự kiểm + nộp lần đầu | `python scripts/lab.py sync` đã chạy sau lần Save cuối; đã sửa ≥ 2 cuboid; `REPORT.md` xong, đã đổi kiểm hai con số với bạn bên cạnh; đã `pack`; `python scripts/check_submission.py` hết LỖI; đã commit, push (bảng A, phiếu tự kiểm, `REPORT.md` có trên GitHub) và nộp link repo + file zip ảnh lên LMS |
 
-Sau CP7: coach chữa chung hai ca khó (19:30–19:35), exit ticket cuối buổi (19:35–19:40), rồi 20' dự phòng (19:40–20:00) để bắt kịp, vẽ thêm hoặc sửa cuboid kém. Sửa xong thì Save, `python scripts/lab.py sync`, `python scripts/lab.py pack`, `python scripts/check_submission.py`, push và nộp lại file zip: bản cuối trước **20:00** được chấm ([SUBMISSION.md](SUBMISSION.md)).
+Sau CP7: coach chữa chung hai ca khó (19:30–19:35), exit ticket cuối buổi (19:35–19:40), rồi 20' dự phòng (19:40–20:00) để bắt kịp, vẽ thêm hoặc sửa cuboid kém. Sửa xong thì Save, `python scripts/lab.py sync`, `python scripts/check_submission.py`, commit và push lại (đổi ảnh thì `pack` và nộp lại file zip): bản cuối trước **20:00** được chấm ([SUBMISSION.md](SUBMISSION.md)).
 
 ## Cần hiểu ở mỗi mốc
 
@@ -26,4 +26,4 @@ Sau CP7: coach chữa chung hai ca khó (19:30–19:35), exit ticket cuối bu�
 
 **CP6.** Bóng che khác thưa ở xa ở đâu? Vì sao nguyên nhân của điểm lạ chỉ nên ghi là giả thuyết?
 
-**CP7.** Cuboid bị `selfcheck` cờ có chắc là sai không? Cuboid không bị cờ có chắc là đúng không? Vì sao phải chạy lại `sync` sau mỗi lần sửa trên CVAT? Vì sao bảng A nộp qua LMS mà không đưa lên repo public?
+**CP7.** Cuboid bị `selfcheck` cờ có chắc là sai không? Cuboid không bị cờ có chắc là đúng không? Vì sao phải chạy lại `sync` sau mỗi lần sửa trên CVAT? Vì sao bảng A được lên repo public mà ảnh chụp thì không?

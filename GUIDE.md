@@ -9,7 +9,7 @@ Quy tắc: [RULES.md](RULES.md) · Chấm điểm: [RUBRIC.md](RUBRIC.md) · N�
 | 2 | **Đọc frame** năm bước (T1) | — (làm trên CVAT) | `REPORT.md` §2, 4 ảnh | ~25' |
 | 3 | **Vẽ cuboid** (T2, T3) | `python scripts/lab.py report` | 60–70 cuboid, `REPORT.md` §3, 3 ảnh | ~90' |
 | 4 | Săn bốn hiện tượng (T4) | — (làm trên CVAT) | `REPORT.md` §4, 4 ảnh | ~25' |
-| 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/lab.py pack`, `python scripts/check_submission.py` | `REPORT.md`, file zip nộp LMS | ~30' |
+| 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/lab.py pack`, `python scripts/check_submission.py` | bảng A, phiếu tự kiểm, `REPORT.md` trong repo; file zip ảnh nộp LMS | ~30' |
 
 T1–T5 là số nhiệm vụ của đề, dùng trong tên ảnh (`t1-…`, `t2-…`, `t4-…`, xem [SUBMISSION.md](SUBMISSION.md)). Lệnh `python scripts/lab.py ...` giống nhau trên Windows và macOS. macOS có thể gõ tắt `make dry`, `make task`, `make sync`, `make pack`, `make check`. Lệnh riêng từng hệ điều hành: [docs/COMMANDS.md](docs/COMMANDS.md).
 
@@ -146,7 +146,7 @@ python scripts/lab.py pack
 python scripts/check_submission.py
 ```
 
-`pack` nén bảng A, phiếu tự kiểm và 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-nop.zip`. `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit, push, rồi nộp **link repo** và **file zip** lên LMS. Sửa gì sau đó thì chạy lại `sync`, `pack`, `check_submission.py` và nộp lại file zip.
+`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, `REPORT.md` lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS. Sửa cuboid sau đó thì chạy lại `sync`, `check_submission.py`, commit và push lại; thêm hay đổi ảnh thì chạy lại `pack` và nộp lại file zip.
 
 ## Lỗi hay gặp
 

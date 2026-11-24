@@ -24,7 +24,7 @@ selfcheck:       ## soát cuboid bằng point cloud -> submission/D13-<MÃ SỐ>
 sync:            ## report + preview + selfcheck (chạy sau mỗi lần Save lớn)
 	$(PY) scripts/lab.py sync
 
-pack:            ## nén bảng A, phiếu tự kiểm, ảnh chụp -> work/K5-L23-DAY13-<MÃ SỐ>-nop.zip (nộp LMS)
+pack:            ## nén ảnh chụp -> work/K5-L23-DAY13-<MÃ SỐ>-images.zip (nộp LMS, không commit)
 	$(PY) scripts/lab.py pack
 
 check:           ## kiểm tra bài nộp: hết LỖI mới nộp

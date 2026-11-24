@@ -8,7 +8,7 @@
     python scripts/lab.py preview     vẽ cuboid lên ảnh camera -> work/xem/
     python scripts/lab.py selfcheck   soát cuboid bằng point cloud -> submission/D13-<MÃ SỐ>-tukiem.csv
     python scripts/lab.py sync        report + preview + selfcheck
-    python scripts/lab.py pack        nén bảng A, phiếu tự kiểm, ảnh chụp -> work/K5-L23-DAY13-<MÃ SỐ>-nop.zip (nộp LMS)
+    python scripts/lab.py pack        nén ảnh chụp -> work/K5-L23-DAY13-<MÃ SỐ>-images.zip (nộp LMS, không commit)
 
 Vòng hiệu chuẩn, với mã chung coach phát (không đụng tới task và bài nộp của bạn):
     python scripts/lab.py task --code <MÃ CHUNG>      tạo task D13-<MÃ CHUNG>
@@ -145,23 +145,21 @@ def warn_tracks(vf_cvat) -> None:
     vf_cvat.task_boxes = task_boxes
 
 
-def pack(student: str, files: list[Path]) -> int:
-    """Nén bảng A, phiếu tự kiểm và ảnh chụp để nộp lên LMS (không đưa lên repo public)."""
-    missing = [p.name for p in files if not p.exists()]
-    if missing:
-        raise SystemExit(f"Chưa có {', '.join(missing)}: bấm Save trong CVAT rồi chạy `python scripts/lab.py sync` trước.")
-    images = sorted(p for p in (ROOT / "submission" / "images").glob("*") if p.suffix.lower() in IMAGE_SUFFIXES)
-    out = ROOT / "work" / f"K5-L23-DAY13-{student}-nop.zip"
+def pack(student: str) -> int:
+    """Nén ảnh chụp của báo cáo để nộp lên LMS. Ảnh có dữ liệu camera thật nên không đưa lên repo public."""
+    folder = ROOT / "submission" / "images"
+    images = sorted(p for p in folder.glob("*") if p.suffix.lower() in IMAGE_SUFFIXES)
+    if not images:
+        raise SystemExit(f"Chưa có ảnh nào trong {folder}.")
+    out = ROOT / "work" / f"K5-L23-DAY13-{student}-images.zip"
     out.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(out, "w", compression=zipfile.ZIP_DEFLATED) as bundle:
-        for path in files:
-            bundle.write(path, path.name)
         for image in images:
             bundle.write(image, f"images/{image.name}")
-    print(f"Đã nén {', '.join(p.name for p in files)} và {len(images)} ảnh -> {out}")
+    print(f"Đã nén {len(images)} ảnh -> {out}")
     if len(images) < N_IMAGES:
         print(f"CẢNH BÁO: submission/images mới có {len(images)}/{N_IMAGES} ảnh chụp (SUBMISSION.md).")
-    print("Nộp file zip này lên LMS cùng link repo. Không commit file zip, bảng A, phiếu tự kiểm hay ảnh.")
+    print("Nộp file zip này lên LMS cùng link repo. Không commit ảnh.")
     return 0
 
 
@@ -196,7 +194,7 @@ def main(argv=None) -> int:
         check_data(data_dir(cfg))
 
     if args.command == "pack":
-        return pack(student, [table, selfcheck])
+        return pack(student)
     if args.command == "dry":
         return vf_cvat.main(["day13", *base, *data, "--dry-run"])
     if args.command == "bundle":
