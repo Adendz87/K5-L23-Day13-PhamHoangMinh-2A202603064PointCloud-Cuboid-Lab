@@ -8,7 +8,7 @@
   <img alt="cá nhân" src="https://img.shields.io/badge/lab-cá%20nhân-0b1f3a">
   <img alt="thời lượng" src="https://img.shields.io/badge/thời%20lượng-4%20giờ-ff8a3d">
   <img alt="dữ liệu" src="https://img.shields.io/badge/dữ%20liệu-10%20frame%20LiDAR%20%2B%207%20camera-12b3a8">
-  <img alt="python" src="https://img.shields.io/badge/python-3.10+-3776ab">
+  <img alt="python" src="https://img.shields.io/badge/python-3.11+-3776ab">
   <img alt="cvat" src="https://img.shields.io/badge/CVAT%203D-v2.83.0-2fbf71">
   <img alt="hệ điều hành" src="https://img.shields.io/badge/Windows%20·%20macOS-lệnh%20giống%20nhau-7b61ff">
 </p>

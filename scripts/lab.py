@@ -24,6 +24,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "cvat_lab"))
 
 IMAGE_SUFFIXES = {".png", ".jpg", ".jpeg"}
+MIN_PYTHON = (3, 11)  # cvat-sdk >= 2.80 và Pillow 13 không còn hỗ trợ Python 3.10
 
 
 def load_config() -> dict:
@@ -74,6 +75,9 @@ def main(argv=None) -> int:
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, "reconfigure"):
             stream.reconfigure(encoding="utf-8", errors="replace")
+    if sys.version_info < MIN_PYTHON:
+        print(f"CẢNH BÁO: đang chạy Python {sys.version.split()[0]}; bài lab cần Python 3.11 trở lên. "
+              "Tạo lại .venv theo docs/COMMON_ERRORS.md mục 1.", file=sys.stderr)
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("command", choices=["dry", "task", "report", "preview", "selfcheck", "sync", "pack"])
     parser.add_argument("--replace", action="store_true",

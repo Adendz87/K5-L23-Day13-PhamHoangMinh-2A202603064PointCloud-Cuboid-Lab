@@ -16,7 +16,7 @@
 | `pip install` rất chậm hoặc lỗi mạng | Mạng lớp yếu | Thử lại, đổi mạng, hoặc ghép với bạn bên cạnh |
 | `Chưa điền student trong configs/lab.ini` hoặc `Chưa điền cvat_user` | Chưa điền cấu hình | Mở `configs/lab.ini`, điền mã số và tên đăng nhập CVAT, lưu lại |
 | `The '<' operator is reserved for future use` (Windows) hoặc `no such file or directory: MSHV` (macOS) | Chưa thay chỗ `<...>` trong lệnh | Thay `<MSHV>`, `<tài-khoản>` bằng giá trị thật, bỏ dấu `<` `>` |
-| `SyntaxError` ngay khi chạy, có `list[dict]` hoặc `str | None` | Python cũ hơn 3.10 | Cài Python 3.10+ và tạo lại `.venv` |
+| `pip install` báo `Cannot install cvat-sdk>=2.20 and cvat-sdk>=2.80` hoặc `ResolutionImpossible`; hoặc `scripts/lab.py` in `CẢNH BÁO: đang chạy Python 3.…` | `.venv` được tạo bằng Python cũ hơn 3.11 (macOS có sẵn Python 3.9) | Cài Python 3.12 ([SETUP.md](SETUP.md) mục 2). Chạy `deactivate`, xoá thư mục `.venv` (Windows: `Remove-Item -Recurse -Force .venv`; macOS: `rm -rf .venv`), tạo lại bằng `py -3.12 -m venv .venv` (Windows) hoặc `python3.12 -m venv .venv` (macOS), kích hoạt rồi cài lại thư viện. **Đừng** xoá dòng `cvat-sdk>=2.80` trong `requirements.txt` |
 | Chữ tiếng Việt thành ký tự lạ trên PowerShell | Bảng mã của cửa sổ | Chạy `chcp 65001` rồi chạy lại lệnh. Nội dung file kết quả không bị ảnh hưởng |
 
 ## 2. Dữ liệu

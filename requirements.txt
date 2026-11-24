@@ -1,1 +1,4 @@
 -r cvat_lab/requirements.txt
+# cvat-sdk từ 2.80 (bản mới nhất 2.83, khớp CVAT 2.82/2.83 của lớp) chỉ cài được trên Python 3.11 trở lên.
+# Báo lỗi ResolutionImpossible ở dòng này nghĩa là .venv đang dùng Python cũ: xem docs/COMMON_ERRORS.md mục 1.
+cvat-sdk>=2.80
