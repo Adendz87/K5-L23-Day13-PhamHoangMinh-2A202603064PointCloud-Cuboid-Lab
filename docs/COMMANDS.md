@@ -1,0 +1,221 @@
+# Mọi lệnh của buổi lab — Windows và macOS
+
+Mọi lệnh chạy **từ thư mục gốc của repo** (thư mục chứa `README.md`), sau khi đã kích hoạt môi trường `.venv`. Đầu dòng lệnh phải có chữ `(.venv)`.
+
+Lệnh của bài lab đọc mã số, địa chỉ CVAT, tên đăng nhập và thư mục dữ liệu từ `configs/lab.ini`, nên **giống hệt nhau trên Windows và macOS**. Chỉ các việc quanh nó (kích hoạt môi trường, mở file, chụp màn hình) là khác; những chỗ đó có hai khối lệnh.
+
+| Việc | Lệnh (cả hai hệ điều hành) | Lệnh tắt macOS |
+|---|---|---|
+| Xem 10 frame, không nối CVAT | `python scripts/lab.py dry` | `make dry` |
+| Tạo task `D13-<MÃ SỐ>` | `python scripts/lab.py task` | `make task` |
+| Xuất bảng A | `python scripts/lab.py report` | `make report` |
+| Vẽ cuboid lên ảnh camera | `python scripts/lab.py preview` | `make preview` |
+| Soát cuboid bằng point cloud | `python scripts/lab.py selfcheck` | `make selfcheck` |
+| Ba lệnh trên liền nhau | `python scripts/lab.py sync` | `make sync` |
+| Kiểm bài nộp | `python scripts/check_submission.py` | `make check` |
+| Nén ảnh chụp để nộp LMS | `python scripts/lab.py pack` | `make pack` |
+
+Windows không có `make`: dùng cột giữa.
+
+## 0. Mỗi lần mở terminal mới
+
+**Windows (PowerShell)**
+
+```powershell
+cd $HOME\Documents\K5-L23-DAY13-<MSHV>-PointCloudCuboid
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS (Terminal)**
+
+```bash
+cd ~/Documents/K5-L23-DAY13-<MSHV>-PointCloudCuboid
+source .venv/bin/activate
+```
+
+Bật CVAT local nếu đang tắt (chạy trong thư mục `cvat` của CVAT, giống nhau trên hai hệ điều hành):
+
+```bash
+docker compose up -d
+```
+
+## 1. Điền `configs/lab.ini` (một lần)
+
+**Windows (PowerShell)**
+
+```powershell
+notepad configs\lab.ini
+```
+
+**macOS (Terminal)**
+
+```bash
+open -e configs/lab.ini
+```
+
+Điền `student` (mã số của bạn) và `cvat_user` (tên đăng nhập CVAT). Giữ `cvat_host = http://localhost:8080` nếu chạy CVAT trên máy; đổi thành địa chỉ coach phát nếu lớp dùng máy chủ chung, và điền `cvat_org` nếu coach phát slug. **Không ghi mật khẩu.** Lưu file.
+
+## 2. Bước 1 · Xem 10 frame và tạo task
+
+```bash
+python scripts/lab.py dry
+```
+
+```bash
+python scripts/lab.py task
+```
+
+Lệnh `task` hỏi `Mật khẩu CVAT cho <tên>:`. Gõ mật khẩu rồi Enter; màn hình không hiện ký tự nào. Lệnh in đường dẫn task, dạng `http://localhost:8080/tasks/12`. Mở trang task:
+
+**Windows (PowerShell)**
+
+```powershell
+Start-Process "http://localhost:8080/tasks"
+```
+
+**macOS (Terminal)**
+
+```bash
+open "http://localhost:8080/tasks"
+```
+
+Chạy lại `task` khi đã có task chỉ in lại đường dẫn cũ. Lệnh dưới đây **xóa task cùng mọi cuboid** rồi tạo lại; chỉ dùng khi chưa vẽ gì hoặc khi coach bảo:
+
+```bash
+python scripts/lab.py task --replace
+```
+
+## 3. Bước 3 và 5 · Bảng A, xem trước, tự kiểm
+
+Bấm **Save** trong CVAT trước.
+
+```bash
+python scripts/lab.py report
+```
+
+```bash
+python scripts/lab.py preview
+```
+
+```bash
+python scripts/lab.py selfcheck
+```
+
+Hoặc cả ba một lần:
+
+```bash
+python scripts/lab.py sync
+```
+
+Mở bảng A, phiếu tự kiểm và thư mục ảnh xem trước:
+
+**Windows (PowerShell)**
+
+```powershell
+Invoke-Item submission
+Invoke-Item work\xem
+```
+
+**macOS (Terminal)**
+
+```bash
+open submission
+open work/xem
+```
+
+Mở file `.csv` bằng bảng tính **chỉ để đọc**. Đừng lưu đè: Excel đổi định dạng số và `check_submission.py` sẽ báo bảng A bị sửa.
+
+## 4. Bước 5 · Kiểm bài nộp, nén ảnh, đẩy lên GitHub
+
+```bash
+python scripts/check_submission.py
+```
+
+```bash
+python scripts/lab.py pack
+```
+
+```bash
+git add -A
+```
+
+```bash
+git commit -m "Day 13: bang A, phieu tu kiem, bao cao"
+```
+
+```bash
+git push
+```
+
+File zip ảnh nằm ở `work/K5-L23-DAY13-<MÃ SỐ>-images.zip`. Nộp file này cùng link repo lên LMS.
+
+## 5. Chụp màn hình
+
+| | Chụp một vùng | Ảnh lưu ở đâu |
+|---|---|---|
+| Windows | `Win + Shift + S`, kéo chọn vùng | Bấm vào thông báo để lưu, hoặc dán vào Paint rồi lưu PNG |
+| macOS | `Cmd + Shift + 4`, kéo chọn vùng | Desktop |
+
+Chép ảnh vào `submission/images/` và đặt tên theo [../SUBMISSION.md](../SUBMISSION.md).
+
+**Windows (PowerShell)**
+
+```powershell
+Invoke-Item submission\images
+```
+
+**macOS (Terminal)**
+
+```bash
+open submission/images
+```
+
+## 6. Mật khẩu qua biến môi trường (không bắt buộc)
+
+Nếu không muốn gõ mật khẩu mỗi lần, đặt biến `CVAT_PASSWORD` cho **cửa sổ terminal đang mở**. Không ghi mật khẩu vào file nào.
+
+**Windows (PowerShell)**
+
+```powershell
+$env:CVAT_PASSWORD = [Net.NetworkCredential]::new('', (Read-Host "Mat khau CVAT" -AsSecureString)).Password
+```
+
+Xóa khi xong:
+
+```powershell
+Remove-Item Env:CVAT_PASSWORD
+```
+
+**macOS (Terminal)**
+
+```bash
+read -s "CVAT_PASSWORD?Mat khau CVAT: " && export CVAT_PASSWORD
+```
+
+Xóa khi xong:
+
+```bash
+unset CVAT_PASSWORD
+```
+
+## 7. Lệnh gốc (khi cần chạy không qua `scripts/lab.py`)
+
+`scripts/lab.py` chỉ gọi `cvat_lab/vf_cvat.py` với tham số lấy từ `configs/lab.ini`. Lệnh gốc tương ứng, giống nhau trên hai hệ điều hành; thay các chỗ `<...>` và bỏ dấu `<` `>`:
+
+```bash
+python cvat_lab/vf_cvat.py day13 --student <MÃ SỐ> --data data/data-VF --dry-run
+python cvat_lab/vf_cvat.py day13 --student <MÃ SỐ> --data data/data-VF --host <URL-CVAT> --user <tên> [--org <slug>]
+python cvat_lab/vf_cvat.py report d13 --student <MÃ SỐ> --host <URL-CVAT> --user <tên> [--org <slug>] --out submission
+python cvat_lab/vf_cvat.py preview d13 --student <MÃ SỐ> --data data/data-VF --table submission/D13-<MÃ SỐ>-bangA.csv --out work/xem
+python cvat_lab/vf_cvat.py check d13 --student <MÃ SỐ> --data data/data-VF --table submission/D13-<MÃ SỐ>-bangA.csv --out submission/D13-<MÃ SỐ>-tukiem.csv
+```
+
+Trợ giúp của từng lệnh:
+
+```bash
+python scripts/lab.py --help
+```
+
+```bash
+python cvat_lab/vf_cvat.py day13 --help
+```

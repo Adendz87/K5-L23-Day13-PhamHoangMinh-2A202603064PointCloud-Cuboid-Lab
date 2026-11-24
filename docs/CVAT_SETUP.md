@@ -4,7 +4,7 @@ Mục tiêu: máy bạn mở được `http://localhost:8080` và đăng nhập 
 
 Phiên bản lớp dùng: **CVAT v2.83.0**. Nếu máy bạn còn CVAT từ Ngày 12 (v2.82.0) đang chạy tốt, bạn dùng tiếp được, không cần cài lại.
 
-Nếu coach thông báo lớp dùng **máy chủ CVAT chung**, bỏ qua file này. Trong mọi lệnh của buổi lab, thay `http://localhost:8080` bằng địa chỉ coach phát.
+Nếu coach thông báo lớp dùng **máy chủ CVAT chung**, bỏ qua file này. Đổi `cvat_host` trong `configs/lab.ini` thành địa chỉ coach phát.
 
 Nguồn: https://docs.cvat.ai/docs/administration/basics/installation/
 
@@ -29,7 +29,7 @@ Nếu `docker info` báo không kết nối được server, mở Docker Desktop
 
 ## 2. Tải và chạy CVAT
 
-Đặt thư mục `cvat` **cạnh** repo student, không đặt bên trong.
+Đặt thư mục `cvat` của CVAT **cạnh** repo bài lab, không đặt bên trong (repo bài lab có sẵn một thư mục `cvat/` nhỏ chỉ chứa file cấu hình).
 
 **Windows (PowerShell)**
 
@@ -109,19 +109,19 @@ docker compose up -d
    wsl --shutdown
    ```
 
-3. Chép file `cvat-local/docker-compose.lowspec.yml` của repo student vào thư mục `cvat`, rồi khởi động CVAT bằng hai file compose. File này giảm số tiến trình worker và không chạy Grafana (trang Analytics, bài lab không dùng).
+3. Chép file `cvat/docker-compose.lowspec.yml` của repo bài lab vào thư mục `cvat`, rồi khởi động CVAT bằng hai file compose. File này giảm số tiến trình worker và không chạy Grafana (trang Analytics, bài lab không dùng).
 
    **Windows (PowerShell)**, đang đứng trong thư mục `cvat`:
 
    ```powershell
-   Copy-Item ..\K5-L23-Day13-PointCloud-Cuboid-Student\cvat-local\docker-compose.lowspec.yml .
+   Copy-Item ..\K5-L23-DAY13-<MSHV>-PointCloudCuboid\cvat\docker-compose.lowspec.yml .
    docker compose -f docker-compose.yml -f docker-compose.lowspec.yml up -d --remove-orphans
    ```
 
    **macOS (Terminal)**, đang đứng trong thư mục `cvat`:
 
    ```bash
-   cp ../K5-L23-Day13-PointCloud-Cuboid-Student/cvat-local/docker-compose.lowspec.yml .
+   cp ../K5-L23-DAY13-<MSHV>-PointCloudCuboid/cvat/docker-compose.lowspec.yml .
    docker compose -f docker-compose.yml -f docker-compose.lowspec.yml up -d --remove-orphans
    ```
 
@@ -141,7 +141,7 @@ docker compose up -d
 
 ## 8. Mẹo dùng giao diện 3D (đọc trước, đỡ mất thời gian trong lớp)
 
-Vị trí chính xác các nút có thể khác giữa các bản CVAT. Coach demo lại trên bản của lớp ở đầu T2.
+Vị trí chính xác các nút có thể khác giữa các bản CVAT. Coach demo lại trên bản của lớp ở đầu Bước 3.
 
 - Màn hình job 3D có bốn khung: **Perspective** (view 3D) và ba khung chiếu **Top**, **Side**, **Front** của vật đang chọn. Ảnh camera nằm trong khung ảnh liên quan (context image).
 - Vẽ cuboid: chọn công cụ cuboid ở thanh bên trái, chọn label, bấm **Shape** (không chọn Track), rồi bấm vào vật trong view 3D. Sau đó chỉnh vị trí, kích thước và góc xoay ở Top, Side, Front.

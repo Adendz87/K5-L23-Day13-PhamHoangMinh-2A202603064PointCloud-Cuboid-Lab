@@ -1,4 +1,6 @@
-# Dữ liệu VF chỉ ở trên máy bạn (RULES §2): không bao giờ commit dữ liệu hay ảnh
+# Dữ liệu VF chỉ ở trên máy bạn (RULES.md): không bao giờ commit dữ liệu hay ảnh
+data/*
+!data/README.md
 data-VF/
 Data-VF/
 sequence_*/
@@ -8,23 +10,25 @@ sequence_*/
 *.jpg
 *.jpeg
 *.png
+!docs/assets/*.png
 
-# Kết quả sinh ra khi làm bài; nộp qua LMS, không qua Git
+# Ảnh chụp màn hình của báo cáo: nộp qua LMS (python scripts/lab.py pack), không đưa lên repo
+submission/images/*
+!submission/images/.gitkeep
+
+# Thư mục làm việc: ảnh preview, file zip để nộp
+work/
 nop/
 xem/
-K5-L23-DAY13-*/
-*-bangA.csv
-*-tukiem.csv
-*-hoso.md
 
 # Mật khẩu, môi trường
 .env
 .env*
 *.env
 
-# Python, hệ điều hành
 .venv/
 __pycache__/
 *.pyc
+.pytest_cache/
 .DS_Store
 Thumbs.db
