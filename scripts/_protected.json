@@ -1,7 +1,7 @@
 {
  "cvat_lab/vf_common.py": "9cee6e34472b1c7498e443401fa5f767eb452c53",
- "cvat_lab/vf_cvat.py": "8b5802f4f7c2669104a62cc17a3bfac68d664172",
- "cvat_lab/vf_qa.py": "cb717e5c0d992f44b39941dbdb81da1888b14091",
- "scripts/lab.py": "eab9c8dcdf406d2a149f0393088653548cc50d8c",
- "scripts/check_submission.py": "c4ed4e9728fe506a0039d91129d82ff5cabeb0d5"
+ "cvat_lab/vf_cvat.py": "a8a4501ba5acc86c48b5645f83fc5c9c0e80688f",
+ "cvat_lab/vf_qa.py": "72292c507662dea0258636399c83ff2e0abcc2c6",
+ "scripts/lab.py": "8b9842afec7c722fa5693c1860b1f8e7e7f4cf77",
+ "scripts/check_submission.py": "ecaa5e847a686522bb95527fe1a39ff1fef2d416"
 }

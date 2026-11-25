@@ -27,7 +27,7 @@
 | Giải nén báo `Incorrect passphrase` hoặc `Couldn't read passphrase` | Gõ sai mật khẩu zip, hoặc chạy `tar` ở nơi không có ô nhập | Xoá phần đã giải nén, chạy lại `tar -xf` trong PowerShell/Terminal và gõ đúng mật khẩu GV gửi ([SETUP.md](SETUP.md) mục 4) |
 | `unzip` (macOS) báo `need PK compat. v5.1` hoặc `unsupported compression method 99`; `Expand-Archive` (Windows) báo lỗi | Zip mã hoá kiểu AES | Dùng `tar -xf` như [SETUP.md](SETUP.md) mục 4, hoặc 7-Zip (Windows) / Keka (macOS) |
 | `calib.json thiếu hoặc hỏng` hoặc `... toàn số 0` | Giải nén dở hoặc sai mật khẩu, file ra rỗng | Xoá thư mục dữ liệu, giải nén lại |
-| `CẢNH BÁO: data-VF thiếu file` | Zip tải chưa xong, hoặc giải nén dở | Kiểm kích thước zip (khoảng 600 MB), tải lại nếu cần, giải nén lại |
+| `data-VF … thiếu sequence_…`, `lidar có …/60 file .bin` hoặc `CẢNH BÁO: data-VF thiếu file` | Thiếu thư mục, file LiDAR hoặc ảnh camera | Kiểm đường dẫn `data` và giải nén đủ Data-VF.zip. Chạy `dry` lại, kiểm đủ 10 frame và mỗi frame có 7 ảnh |
 | `Không thấy sequence_XX/lidar/*.bin trong ...` | `data` trong `configs/lab.ini` trỏ sai thư mục, hoặc giải nén lồng hai lớp (`data-VF/Data-VF/sequence_01`) | `data` phải trỏ vào thư mục **chứa trực tiếp** `sequence_01 … sequence_05`; không cần ngoặc kép |
 | Frame in ra `camera=0` hoặc nhỏ hơn 7 | Giải nén thiếu thư mục `cameras` | Giải nén lại |
 | `Mã số không hợp lệ` | Mã có dấu cách, dấu tiếng Việt hoặc ký tự lạ | Chỉ dùng chữ không dấu, số, `-`, `_`; dài 2–32 ký tự |
@@ -38,7 +38,8 @@
 
 | Triệu chứng | Nguyên nhân | Cách gỡ |
 |---|---|---|
-| `Không nối được CVAT ở http://localhost:8080` | CVAT chưa chạy hoặc sai địa chỉ | Mở địa chỉ bằng trình duyệt trước. Chạy `docker compose up -d` trong thư mục `cvat` **của CVAT** (cạnh repo, không phải thư mục `cvat/` trong repo), chờ 1 phút |
+| `Không nối được CVAT ở http://localhost:8080` | CVAT chưa chạy hoặc sai địa chỉ | Mở địa chỉ bằng trình duyệt. Bật lại CVAT theo [CVAT_SETUP.md](CVAT_SETUP.md) mục 5. Nếu dùng cấu hình máy yếu, dùng lệnh có hai cờ `-f` ở mục 6 |
+| `Task … chưa có job` hoặc `không khớp bộ … frame được giao` | Task còn xử lý dữ liệu, tải dở hoặc được tạo từ bộ frame khác | Nếu vừa tải, chờ CVAT xử lý rồi chạy lại. Mở task để kiểm tra. Báo coach trước khi tạo lại nếu task đã có nhãn |
 | `CVAT từ chối đăng nhập` | Sai tên đăng nhập hoặc mật khẩu | Thử đăng nhập bằng trình duyệt. Tên đăng nhập là username, không phải email |
 | `cvat_host ... phải có dạng http://localhost:8080` | Dòng `cvat_host` trong `configs/lab.ini` bị sửa sai | Ghi lại `cvat_host = http://localhost:8080` |
 | `Server version … is not compatible with SDK version …` | CVAT trên máy là 2.82 (từ Ngày 12), `cvat-sdk` là 2.83 | Chỉ là cảnh báo: bỏ qua, đừng cài lại `cvat-sdk`. Kiểm bằng `python -m pip show cvat-sdk` nếu cần ([CVAT_SETUP.md](CVAT_SETUP.md) mục 8) |
@@ -80,9 +81,9 @@
 | Excel hiện `-1.7` thành ngày tháng hoặc số sai | Vùng miền dùng dấu phẩy thập phân | Nhập qua From Text/CSV như trên; **không lưu đè** file CSV gốc |
 | `check_submission.py` báo bảng A `đã bị lưu lại bằng bảng tính`, `không giống bản do report sinh ra`, hoặc `cột khác` | Đã lưu đè CSV từ Excel hoặc sửa tay; công cụ chấm của coach không đọc được file như vậy | Chạy lại `python scripts/lab.py sync` để sinh lại, rồi commit lại |
 | `Không ghi hoặc đọc được …: file đang mở trong Excel …` khi chạy `report`, `selfcheck` hoặc `sync` | Windows: Excel đang mở bảng A hoặc phiếu tự kiểm và giữ file, lệnh không ghi được bản mới | Đóng file đó trong Excel, chạy lại lệnh |
-| `check_submission.py` báo `thiếu submission/D13-…-tukiem.csv` hoặc phiếu tự kiểm không khớp bảng A | Sửa cuboid rồi chỉ chạy `report`: bảng A đổi nên `report` xoá phiếu tự kiểm cũ. Hoặc phiếu bị sửa tay | Chạy `python scripts/lab.py sync` |
+| `check_submission.py` báo `thiếu submission/D13-…-tukiem.csv`, phiếu không khớp Bảng A hoặc là phiếu bản cũ | Bảng A và phiếu được xuất ở hai lần khác nhau, hoặc bản phiếu chưa có mã băm | Chạy `python scripts/lab.py selfcheck` để tạo lại phiếu. Nếu vừa sửa cuboid, bấm **Save** rồi chạy `sync` |
 | `check_submission.py` cảnh báo `chưa commit: … submission/D13-…-bangA.csv …` | Chưa commit sau lần `sync` cuối | Chạy lần lượt `git add -A`, `git commit -m "Day 13: bang A, phieu tu kiem, bao cao"`, `git push`. Coach chấm từ bảng A trên GitHub: không có trên GitHub là thiếu bài |
-| `check_submission.py` cảnh báo `chưa có work/...-images.zip`, zip `bị hỏng`, hoặc zip `khác ảnh trong report/individual/images` | Chưa chạy `pack`, hoặc thêm, xoá, đổi tên hay chụp lại ảnh sau khi `pack` | Chạy `python scripts/lab.py pack`, nộp lại file zip mới lên LMS |
+| `check_submission.py` báo lỗi ZIP ảnh thiếu, hỏng, hoặc khác ảnh trong `report/individual/images` | ZIP chưa được tạo, ảnh chưa đủ hoặc ảnh đổi sau lần `pack` | Kiểm đủ 11 ảnh và đúng tên theo [SUBMISSION.md](../SUBMISSION.md), chạy lại `python scripts/lab.py pack` và nộp ZIP mới lên LMS |
 | `check_submission.py` báo `submission/ có bảng A hoặc phiếu tự kiểm của mã số khác` | Chép file của người khác vào `submission/`; chạy lệnh cho bạn ngồi cạnh trong repo của mình; hoặc đã đổi `student` giữa chừng | Đã đổi `student` sau khi tạo task thì **đừng xoá**: file kia có thể là bảng A thật của bạn. Trả `student` về đúng mã đã dùng tạo task (giống dòng `Không thấy task D13-…`), mã đó sai thì hỏi coach. Còn lại: xoá file không phải của mã bạn, hoặc chuyển ra ngoài repo. Đã commit thì `git rm <file>` (**không** thêm `--cached`: file còn trên máy sẽ bị `git add -A` đưa lên lại), rồi commit, push. Ngồi ghép đôi thì mỗi người chạy lệnh trong repo của chính mình ([CVAT_SETUP.md](CVAT_SETUP.md) mục 6). Chép bảng A của người khác là gian lận |
 | `check_submission.py` báo `` `git add -A` sẽ đưa lên repo public … `` | Có file dữ liệu, ảnh, file nén mà `.gitignore` không chặn (thường do đã sửa `.gitignore`) | Trả `.gitignore` về bản gốc; xoá file đó, hoặc chuyển ra ngoài repo hay vào `work/` |
 | `check_submission.py` báo repo đang theo dõi file dữ liệu, ảnh, file nén | Đã `git add -f`, hoặc sửa `.gitignore` | `git rm --cached <file>`, commit lại. Rồi làm theo dòng dưới nếu file đã nằm trong một commit trước |

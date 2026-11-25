@@ -7,8 +7,8 @@ Quy tắc: [RULES.md](RULES.md) · Chấm điểm: [RUBRIC.md](RUBRIC.md) · N�
 |---|---|---|---|---|
 | 1 | Chuẩn bị, tạo task | `python scripts/lab.py dry`, `python scripts/lab.py task`, `python scripts/lab.py task --code <MÃ CHUNG>` | task `D13-<MÃ SỐ>` và task chung | ~15' |
 | 2 | **Đọc frame** năm bước (T1) | — (làm trên CVAT) | báo cáo §2, 4 ảnh | ~25' |
-| 3 | **Vẽ cuboid** (T2, T3) | `python scripts/lab.py report` | 60–70 cuboid, báo cáo §3, 3 ảnh | ~90' |
-| 4 | Săn bốn hiện tượng (T4) | — (làm trên CVAT) | báo cáo §4, 4 ảnh | ~25' |
+| 3 | **Vẽ cuboid** (T2, T3) | `python scripts/lab.py report` | Ít nhất 53 cuboid (khuyến nghị 60–70), báo cáo §3, 3 ảnh | ~90' |
+| 4 | Tìm bốn hiện tượng (T4) | — (làm trên CVAT) | báo cáo §4, 4 ảnh | ~25' |
 | 5 | Đọc số, tự kiểm, báo cáo, nộp (T5) | `python scripts/lab.py sync`, `python scripts/lab.py pack`, `python scripts/check_submission.py` | bảng A, phiếu tự kiểm, báo cáo trong repo; file zip ảnh nộp LMS | ~30' |
 
 T1–T5 là số nhiệm vụ của đề, dùng trong tên ảnh (`t1-…`, `t2-…`, `t4-…`, xem [SUBMISSION.md](SUBMISSION.md)). Lệnh `python scripts/lab.py ...` giống nhau trên Windows và macOS. macOS có thể gõ tắt `make dry`, `make task`, `make sync`, `make pack`, `make check`. Lệnh riêng từng hệ điều hành: [docs/COMMANDS.md](docs/COMMANDS.md).
@@ -30,7 +30,7 @@ Ngồi ghép đôi, người B (dùng CVAT trên máy bạn kia): chưa chạy d
 - `task --code HC485087` tạo task chung `D13-HC485087` cho vòng hiệu chuẩn (Bước 3) và để xem frame gợi ý ở Bước 4. Mã chung mặc định là `HC485087`; nếu coach phát mã khác thì dùng mã của coach ở mọi lệnh có `--code`. Task chung không phải bài của bạn và không được chấm.
 
 Mở `http://localhost:8080/tasks` bằng Chrome hoặc Edge, bấm **Open** ở task `D13-<MÃ SỐ>`, rồi bấm **Job #…** ở mục Jobs. Bạn phải thấy point cloud và ảnh camera.
-Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). Nếu task đã có, chạy lại `task` chỉ in lại đường dẫn cũ, không tạo task mới. Lệnh `task` lỗi mà trình duyệt vẫn mở được CVAT thì tạo task bằng tay ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 7).
+Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). Chạy lại `task` sẽ in link nếu task đã có job và đúng bộ 10 frame. Nếu task chưa có job hoặc sai frame, xem [docs/COMMON_ERRORS.md](docs/COMMON_ERRORS.md) mục 3. Nếu lỗi xảy ra khi tải dữ liệu qua script và CVAT vẫn mở được, xem cách tạo task bằng tay trong [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 7.
 
 > **Không dùng `--replace` nếu đã vẽ gì**: `python scripts/lab.py task --replace` xóa task cùng mọi cuboid rồi tạo lại.
 
@@ -43,7 +43,7 @@ Tên frame `s02f07` nghĩa là sequence 02, frame chỉ số 7 (đếm từ 0). 
 **Cách nhìn cảnh trong CVAT** (chi tiết ở [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 9):
 
 - Khung lớn ở giữa là **khung 3D** (Perspective): kéo chuột trái để xoay, kéo chuột phải để dời, lăn con lăn để phóng to, thu nhỏ. Nháy đúp vào chỗ trống để về góc nhìn mặc định.
-- **Nhìn từ trên xuống**: xoay khung 3D cho tới khi nhìn thẳng từ trên xuống, thu nhỏ để thấy cả vùng 50 m. Bài này gọi đó là **ảnh nhìn từ trên xuống** (Top).
+- **Nhìn toàn cảnh từ trên xuống** bằng cách xoay khung 3D lớn cho tới khi nhìn thẳng xuống. Thu nhỏ để thấy vật ở cả hai bên và phía sau xe thu dữ liệu.
 - Ba khung nhỏ **Top, Side, Front** ở dưới chỉ chiếu **cuboid đang chọn**. Chưa có cuboid thì chúng gần như trống; bạn dùng chúng ở Bước 3.
 - Ảnh camera nằm bên phải. Mặc định chỉ hiện 3 ảnh (cam01, cam03, cam05): rê chuột lên một khung ảnh, bấm biểu tượng bánh răng ở góc khung để chọn camera khác (cam06–cam09).
 
@@ -82,15 +82,17 @@ Checklist cho mỗi cuboid ([docs/GUIDELINE.md](docs/GUIDELINE.md)):
 
 1. Class đúng: bán tải là Truck; xe máy có người là Cyclist; người dắt xe là Pedestrian.
 2. Bao trọn điểm của vật, gồm phần bị che suy ra được; không bao dư. Dùng **Shape**, không dùng Track.
-3. Bật **Cuboid orientation** (mục Appearance, thanh bên phải): **mũi tên đỏ chỉ đầu xe**. Đầu hay đuôi xe: xem ảnh camera (đèn pha, kính chắn gió, gương). Người đi bộ: mũi tên theo hướng đi hoặc hướng mặt.
+3. Bật **Appearance → Cuboid orientation**. Xem ảnh camera để nhận ra đầu xe, rồi kéo chấm xanh trong **Top** để xoay hộp. Căn **vạch đỏ ngắn (`+X` của cuboid)** dọc thân xe và chỉ về đầu chiếc xe đang gán nhãn. Với người đi bộ, căn theo hướng đi hoặc hướng mặt.
 4. Đáy chạm mặt đường: kiểm ở Side và Front.
 5. Kiểm đủ Top, Side, Front (đủ 6 mặt hộp sát điểm của vật), rồi đối chiếu ảnh camera.
 6. So kích thước với bảng 4.3. Vật bị che một phần: bật occluded (nút hình người trên thẻ cuboid ở danh sách bên phải, hoặc phím `Q`).
 7. Vật rất thưa: thấy khoảng 15–20% thể tích thì vẽ; không đủ cơ sở thì bỏ qua và ghi vào báo cáo.
 
-**3b. Frame 2–10 (55').** Mỗi frame khoảng 6 phút: frame 2–6 trước giờ nghỉ, frame 7–10 sau. **Hết giờ của frame thì sang frame sau, không dồn.** Mỗi frame **từ 5 cuboid, nên 6**, theo thứ tự gần → xa. Quét ảnh nhìn từ trên xuống theo vòng tròn quanh xe để không sót vật phía sau và hai bên. Không vẽ xe của chính mình. **Save sau mỗi frame** (`Ctrl+S`, macOS `Cmd+S`); `F` / `D` sang frame sau / trước. Mỗi cuboid soát lại hai lần: lúc vẽ, và khi lướt lại cả frame trước khi sang frame sau.
+**3b. Frame 2–10 (55 phút).** Dành khoảng 6 phút mỗi frame. Làm frame 2–6 trước giờ nghỉ và frame 7–10 sau giờ nghỉ. Vẽ **ít nhất 5 cuboid mỗi frame**, ưu tiên vật gần và rõ. Kiểm cả hai bên và phía sau, bỏ qua xe thu dữ liệu. Sau khi kiểm lại các hộp, bấm **Save** (`Ctrl+S`, macOS `Cmd+S`). Dùng `F` để sang frame sau và `D` để về frame trước.
 
-Sau frame 1, kiểm nhanh bằng số:
+Chọn vật có tâm cách LiDAR tối đa 50 m theo phương ngang. Ưu tiên vật trong 30 m. Với vật sát ranh, bấm **Save**, xuất Bảng A và kiểm cột `dist_m`. Cột này đo khoảng cách ngang từ LiDAR đến tâm hộp. Ví dụ, tâm hộp ở `x = 30 m`, `y = 40 m` có `dist_m = 50 m`.
+
+Sau khi lưu frame 1, chạy lệnh sau để kiểm số hộp và số đo.
 
 ```bash
 python scripts/lab.py report
@@ -98,7 +100,7 @@ python scripts/lab.py report
 
 Lệnh ghi `submission/D13-<MÃ SỐ>-bangA.csv` và in số cuboid từng frame. Xe con phải có `length` khoảng 3,8–5,3 m và lớn hơn `width`; xe cùng chiều phía trước có `yaw_deg` gần 270°; `z_bottom` khoảng −1,7 m (lệch hơn 0,3 m là lơ lửng hoặc chìm). Lệnh báo `CẢNH BÁO … cuboid dạng Track` nghĩa là có cuboid không được chấm: xoá và vẽ lại bằng Shape.
 
-## Bước 4 — Săn bốn hiện tượng (~25')
+## Bước 4 — Tìm bốn hiện tượng ảnh hưởng đến việc gán nhãn (~25')
 
 Mỗi hiện tượng cần **một ảnh chụp từ CVAT** và **một dòng**: nguyên nhân (giả thuyết) → thấy gì trên point cloud → việc gán nhãn bị ảnh hưởng thế nào theo guideline.
 
@@ -133,22 +135,29 @@ Cảnh báo là **gợi ý để xem lại**, không phải lỗi chắc chắn 
 Điền báo cáo mục 5 từ bảng A:
 
 - Ba z đáy (z − h/2). Mặt đường khoảng −1,7 m: lệch hơn 0,3 m nghĩa là cuboid lơ lửng hoặc chìm, sửa trên CVAT.
-- Cuboid gần nhất và xa nhất: `dist_m` (trên mặt đường) và r = √(x² + y² + z²). Khoảng cách tới điểm gần nhất của vật nhỏ hơn `dist_m` khoảng nửa chiều dài vật.
+- Với cuboid gần nhất và xa nhất, ghi `dist_m = √(x² + y²)` và khoảng cách 3D `r = √(x² + y² + z²)`. Cả hai đều đo tới tâm hộp.
 - Kích thước một người (hoặc xe hai bánh) và một xe con so với bảng 4.3; `yaw_deg` của xe cùng chiều và ngược chiều.
 - Mật độ: 4 cuboid ở các `dist_m` khác nhau, số điểm lấy ở cột `points_in` của phiếu tự kiểm. Viết một câu quy luật, so với đường cong ở slide bài giảng (xe con, trung vị: khoảng 1968 điểm ở 0–10 m, 718 ở 10–20 m, 214 ở 20–30 m, 72 ở 30–40 m, 19 ở 60–80 m).
 
-Rồi mục 6.
+Điền mục 6 của báo cáo. Giải thích vì sao nhãn 3D dùng mét và vì sao vật thưa điểm cần quy tắc riêng. Ghi cách bạn dùng AI nếu có, và nêu điều còn chưa chắc.
 
 **Đổi kiểm với bạn bên cạnh (~5').** Đưa báo cáo mục 5 cho bạn ngồi cạnh: bạn ấy chọn 2 con số và đối chiếu với bảng A mở trên máy bạn; bạn làm ngược lại với bài của bạn ấy. Ghi vào báo cáo mục 5 đã đổi kiểm với ai (MSSV) và kết quả. Chỉ xem trên màn hình, không gửi file bảng A cho nhau.
 
-Cuối cùng:
+### Nộp lần đầu
+
+Đổi tên báo cáo và sửa tiêu đề README theo [SUBMISSION.md](SUBMISSION.md). Sau đó chạy hai lệnh sau.
 
 ```bash
 python scripts/lab.py pack
 python scripts/check_submission.py
 ```
 
-`pack` nén 11 ảnh thành `work/K5-L23-DAY13-<MÃ SỐ>-images.zip` (ảnh không lên repo). `check_submission.py` kiểm bài nộp: hết LỖI mới nộp. Sửa hết `LỖI`, đổi dòng tiêu đề README, đối chiếu [SUBMISSION.md](SUBMISSION.md), commit và push (bảng A, phiếu tự kiểm, báo cáo lên repo), rồi nộp **link repo** và **file zip ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**. Sửa cuboid sau đó thì chạy lại `sync`, sửa số trong báo cáo theo bảng A và phiếu tự kiểm mới (§1 tổng số cuboid, frame ít nhất, số bị cờ; §5 cuboid gần nhất, xa nhất; §3, §5 nếu cuboid đã dẫn bị đổi: xoá hay vẽ lại một cuboid làm `idx` các cuboid sau nó trong frame đổi theo), chạy `check_submission.py`, commit và push lại; thêm, đổi hay chụp lại ảnh thì chạy lại `pack` và nộp lại file zip.
+Khi checker hết lỗi, commit và push báo cáo, Bảng A và phiếu tự kiểm. Nộp link repo và ZIP ảnh lên LMS trước **23:59 GMT+7 ngày làm lab**.
+
+### Sửa bài sau khi nộp
+
+- **Nếu sửa cuboid.** Bấm **Save**, chạy lại `sync` và cập nhật số liệu trong báo cáo. Nếu xóa hoặc vẽ lại hộp, kiểm tra lại `idx` của các hộp cùng frame. Chạy checker, commit và push lại trước hạn.
+- **Nếu thêm hoặc thay ảnh.** Chạy lại `pack` và checker, rồi nộp ZIP mới lên LMS trước hạn. Giữ ảnh ngoài Git.
 
 ## Lỗi hay gặp
 

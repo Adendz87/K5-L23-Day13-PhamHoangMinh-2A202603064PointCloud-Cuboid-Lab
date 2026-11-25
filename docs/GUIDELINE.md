@@ -15,7 +15,7 @@ Bản đầy đủ có hình minh họa: [3D_Cuboid_Annotation_Guideline.docx](3
 ## 2. Quy tắc cuboid
 
 1. **Hình dạng:** mỗi vật một cuboid riêng, bao trọn các điểm LiDAR của vật, gồm phần chìa ra (gương, thùng) và phần bị che suy luận được. Không bao dư quá mức. Kiểm đủ 6 mặt hộp sát điểm của vật.
-2. **Hướng:** yaw theo hướng chuyển động, hoặc theo đầu xe nếu đứng yên. **Mũi tên đỏ chỉ đầu xe.** Đầu hay đuôi xe: xem ảnh camera (đèn pha, kính chắn gió, gương; đèn hậu ở đuôi). Người đi bộ: theo hướng đi, đứng yên thì theo hướng mặt.
+2. **Hướng.** Căn vạch đỏ ngắn (`+X` của cuboid) theo hướng xe di chuyển, hoặc về đầu xe nếu xe đứng yên. Đối chiếu ảnh camera để phân biệt đầu và đuôi xe. Với người đi bộ, căn theo hướng đi hoặc theo hướng mặt nếu đứng yên.
 3. **Đáy:** chạm mặt đường, không lơ lửng, không chìm.
 4. **Kiểm:** đối chiếu trên Top, Side, Front, rồi với ảnh camera.
 5. **Sai số cho phép** trên ba view: Car, Bus, Truck **±5%**; Pedestrian, Cyclist **±10%** so với kích thước đúng.

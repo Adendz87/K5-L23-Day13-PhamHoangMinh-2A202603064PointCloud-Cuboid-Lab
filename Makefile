@@ -1,12 +1,14 @@
-# Lệnh tắt. Chạy từ thư mục gốc repo. Windows không có make: chạy trực tiếp các lệnh python bên dưới.
+# Lệnh tắt cho macOS. Chạy từ thư mục gốc repo. Trên Windows, dùng các lệnh Python bên dưới.
 # Chọn python chạy được thật (trên Windows, `python3` có thể chỉ là lối tắt mở Microsoft Store).
 PY ?= $(shell for p in python3 python; do $$p -c "import sys" >/dev/null 2>&1 && { echo $$p; break; }; done)
 export PYTHONUTF8=1
 
+.PHONY: dry task bundle report preview selfcheck sync pack check all
+
 dry:             ## xem 10 frame của bạn, không nối CVAT (kiểm cài đặt và dữ liệu)
 	$(PY) scripts/lab.py dry
 
-task:            ## tạo task D13-<MÃ SỐ> trên CVAT (đã có thì chỉ in lại link, không tạo thêm)
+task:            ## tạo task D13-<MÃ SỐ> hoặc in link task đã có job và đúng frame
 	$(PY) scripts/lab.py task
 
 bundle:          ## đóng gói 10 frame -> work/D13-<MÃ SỐ>.zip để tạo task bằng tay (docs/CVAT_SETUP.md mục 7)

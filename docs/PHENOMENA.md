@@ -1,4 +1,4 @@
-# Bốn hiện tượng làm hỏng point cloud (Bước 4)
+# Bốn hiện tượng ảnh hưởng đến việc gán nhãn (Bước 4)
 
 Mỗi hiện tượng cần **một ảnh chụp từ CVAT** và **một dòng**: nguyên nhân (giả thuyết) → thấy gì trên point cloud → việc gán nhãn bị ảnh hưởng thế nào theo guideline.
 

@@ -221,5 +221,5 @@ Coach demo lại trên CVAT của lớp ở đầu Bước 3.
 - Chọn cuboid rồi chỉnh: ở **Top** dời tâm, kéo cạnh hoặc góc để đổi dài, rộng, kéo nút xoay để xoay yaw (ngược đầu xe thì xoay nửa vòng). Ở **Side**, **Front** chỉ dời hộp lên xuống và kéo cạnh để đáy chạm đường, đặt chiều cao. **Không xoay ở Side, Front**: hộp sẽ nghiêng mà bảng A không ghi độ nghiêng. Lỡ tay thì `Ctrl+Z` (macOS: `Cmd+Z`).
 - Đổi label: ô chọn label trên thẻ cuboid.
 - **Occluded**: nút hình một người trên thẻ cuboid (sau nút ổ khoá); bấm vào thành hình hai người là đã bật. Hoặc chọn cuboid rồi bấm `Q`.
-- Mũi tên hướng: phần **Appearance** ở thanh bên phải, tích **Cuboid orientation** (dưới *Outlined borders*). Mỗi cuboid hiện 3 mũi tên: đỏ là trục dài, xanh lá là trục ngang, xanh dương hướng lên. Chỉ cần **mũi tên đỏ chỉ đầu xe**.
+- Trong **Appearance**, bật **Cuboid orientation** (dưới **Outlined borders**). Ba vạch ngắn gắn với hộp lần lượt là `+X` màu đỏ (chiều dài), `+Y` màu xanh lá (chiều rộng) và `+Z` màu xanh dương (chiều cao). Kéo chấm xanh trong **Top** để căn vạch đỏ ngắn về đầu chiếc xe đang gán nhãn. Ba vạch dài trong cảnh là trục của hệ tọa độ VF. [Hệ tọa độ VF và góc yaw](COORDINATES.md)
 - CVAT của lớp không vẽ cuboid lên ảnh camera. Muốn xem cuboid trên 7 ảnh camera: `python scripts/lab.py preview` ([SELF_CHECK.md](SELF_CHECK.md)).

@@ -8,7 +8,11 @@ Hai lệnh `preview` và `selfcheck` chỉ đọc point cloud, ảnh camera, `ca
 python scripts/lab.py preview
 ```
 
-Mỗi frame ra một ảnh trong thư mục `work/xem/`: 7 ảnh camera và một ảnh nhìn từ trên xuống, có cuboid của bạn vẽ đè kèm số thứ tự, màu theo class. Ảnh nhìn từ trên xuống phủ 35 m quanh xe (vòng 10, 20, 30 m), đầu xe của bạn hướng lên; mỗi cuboid có một vạch từ tâm tới cạnh đầu xe. Vật xa hơn 35 m chỉ thấy trên ảnh camera. Tìm:
+Mỗi frame có một ảnh trong `work/xem/` ghép 7 góc camera và một góc nhìn từ trên xuống. Ảnh có cuboid, số thứ tự và màu theo class.
+
+Góc nhìn từ trên xuống phủ 35 m quanh xe, có các vòng 10, 20 và 30 m. Đầu xe thu dữ liệu hướng lên, vạch trên từng cuboid chỉ từ tâm hộp về đầu xe được gán nhãn. Vật xa hơn 35 m có thể vẫn xuất hiện trong góc camera. Dùng `dist_m` trong Bảng A để kiểm ranh giới 50 m.
+
+Dùng ảnh để tìm các lỗi dưới đây.
 
 - Hộp lệch khỏi vật trên ảnh, hoặc đặt vào chỗ không có vật.
 - Hộp ngược đầu, hoặc dài và rộng đổi chỗ.
@@ -23,11 +27,12 @@ Lệnh cũng báo số hộp không camera nào thấy. Điều này bình thư�
 python scripts/lab.py selfcheck
 ```
 
-Kết quả ghi vào `submission/D13-<MÃ SỐ>-tukiem.csv` với các cột `frame, idx, label, dist_m, points_in, ground_gap_m, flags`:
+Kết quả ghi vào `submission/D13-<MÃ SỐ>-tukiem.csv` với các cột `frame, idx, label, dist_m, points_in, ground_gap_m, flags, bang_a_sha256`.
 
 - `points_in`: số điểm LiDAR nằm trong cuboid. Dùng cho câu mật độ ở báo cáo mục 5.
 - `ground_gap_m`: đáy cuboid trừ độ cao mặt đường ước từ các điểm quanh hộp (trong vòng khoảng 4 m). Dương là đáy cao hơn mặt đường, âm là đáy thấp hơn. Trống nếu quanh hộp quá ít điểm mặt đường.
 - `flags`: các cảnh báo dưới đây, cách nhau bằng dấu `;`.
+- `bang_a_sha256` là mã băm của Bảng A dùng để tạo phiếu. Nếu checker báo phiếu bản cũ hoặc không khớp Bảng A, chạy lại `selfcheck`. Sau khi sửa cuboid trong CVAT, bấm **Save** rồi chạy `sync` để cập nhật cả hai file.
 
 | Cảnh báo | Nghĩa là | Việc cần làm |
 |---|---|---|
