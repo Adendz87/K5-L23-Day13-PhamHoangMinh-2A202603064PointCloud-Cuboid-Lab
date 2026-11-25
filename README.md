@@ -13,11 +13,9 @@
   <img alt="hệ điều hành" src="https://img.shields.io/badge/Windows%20·%20macOS-lệnh%20giống%20nhau-7b61ff">
 </p>
 
-Xác định vật trên point cloud và ảnh camera. Sau khi vẽ cuboid, kiểm tra hộp ở ba khung Top, Side và Front. Cuối buổi, dùng Bảng A để kiểm tra hướng, độ cao đáy và kích thước hộp.
+Bạn sẽ đọc **10 frame LiDAR** của bộ VF, vẽ cuboid trong CVAT và dùng Bảng A để kiểm tra hướng, kích thước và độ cao đáy hộp.
 
-Bạn tạo một task CVAT riêng trên CVAT của máy mình, gồm **10 frame LiDAR thật** của dữ liệu VF (1 LiDAR 40 tia + 7 camera), chọn cố định theo mã số của bạn.
-Trong vùng 360° quanh xe, xa ≤ 50 m, mỗi frame có khoảng 18 vật: xe con, xe tải, xe buýt, xe hai bánh, người đi bộ. **Không ai vẽ hết**, nên bạn vẽ vật gần và rõ trước.
-Đọc từng frame, vẽ theo guideline 3D Cuboid và tìm bốn hiện tượng ảnh hưởng đến việc gán nhãn. Ghi số đo từ Bảng A và những trường hợp còn chưa chắc vào báo cáo.
+Trong vùng 360° quanh xe thu dữ liệu, chọn các vật cách LiDAR tối đa 50 m. Ưu tiên xe và người ở gần, có cụm điểm rõ. Ghi lại bốn hiện tượng ảnh hưởng đến việc gán nhãn và các trường hợp bạn còn chưa chắc.
 
 Công cụ đã **viết sẵn** (`cvat_lab/`, `scripts/`): tạo task, xuất bảng A, chiếu cuboid lên ảnh camera, soát cuboid bằng point cloud. Bạn không viết code; bạn tập trung vào **đọc point cloud và vẽ cho đúng**.
 Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải track. Track và nội suy là nội dung Ngày 24–26.
@@ -28,25 +26,27 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 
 ## Bộ dữ liệu
 
-**Dữ liệu VF**: dữ liệu lái xe thực tế của dự án, 5 sequence × 60 frame, cách nhau 1 giây. Mỗi frame có một point cloud (khoảng 63–68 nghìn điểm) và 7 ảnh camera 1920×1020. Mã số của bạn chọn ra **10 frame** (2 frame mỗi sequence, cách nhau ít nhất 15 giây), nên mỗi người một bộ frame. Dữ liệu được cấp theo cam kết bảo mật, **không nằm trong repo**: GV gửi riêng link và mật khẩu, bạn tải và giữ trên máy. Chi tiết: [data/README.md](data/README.md).
+Dữ liệu VF gồm 5 đoạn ghi liên tục (sequence). Mỗi đoạn có 60 frame, cách nhau 1 giây. Mỗi frame gồm một point cloud từ LiDAR 40 tia và 7 ảnh camera chụp cùng thời điểm.
+
+Script chọn **10 frame cố định theo mã số**, hai frame mỗi sequence, cách nhau ít nhất 15 giây. Hai học viên có thể trùng một số frame. Giảng viên gửi riêng link tải và mật khẩu giải nén. Tải và giữ dữ liệu trên máy của bạn. [Cấu trúc dữ liệu VF](data/README.md)
 
 ## Bắt đầu nhanh (5 bước, ~4 giờ)
 
-0. **Trước buổi học**: mở https://github.com/VinUni-AI20k/K5-L23-Day13-PointCloud-Cuboid-Lab → **Use this template** → repo **public** của bạn (tên: xem [SUBMISSION.md](SUBMISSION.md)), `git clone`, cài môi trường, cài CVAT và tải dữ liệu ([docs/SETUP.md](docs/SETUP.md), [docs/CVAT_SETUP.md](docs/CVAT_SETUP.md)). Điền `configs/lab.ini`, rồi `python scripts/lab.py dry` in ra **10 frame, mỗi frame `camera=7`**. Push thử lên GitHub ([docs/SETUP.md](docs/SETUP.md) mục 7).
+0. **Trước buổi học**, chọn **Use this template** trên GitHub để tạo repo **public** theo [quy định đặt tên repo học viên](SUBMISSION.md#tên-repo). Clone repo của bạn, cài môi trường và CVAT, rồi tải dữ liệu. Điền `configs/lab.ini` và chạy `python scripts/lab.py dry`. Kết quả cần có **10 frame, mỗi frame `camera=7`**. [Hướng dẫn cài đặt và push thử](docs/SETUP.md) · [Cài CVAT](docs/CVAT_SETUP.md)
 1. **Chuẩn bị**: `python scripts/lab.py task` tạo task `D13-<MÃ SỐ>`; `python scripts/lab.py task --code <MÃ CHUNG>` tạo task chung cho vòng hiệu chuẩn ([GUIDE.md](GUIDE.md)).
 2. **Đọc frame** theo năm bước trên 2 frame đầu, chưa vẽ.
-3. **Vẽ cuboid**: frame 1 có hướng dẫn (từ 8, nên 10), chín frame sau mỗi frame từ 5 (nên 6). Tra [docs/GUIDELINE.md](docs/GUIDELINE.md).
-4. **Săn bốn hiện tượng** làm hỏng point cloud: bóng che, thưa ở xa, phản xạ thấp, điểm lạ ([docs/PHENOMENA.md](docs/PHENOMENA.md)).
-5. Bấm **Save** trong CVAT và chạy `python scripts/lab.py sync` để kiểm hộp. Sau khi sửa, bấm **Save** và chạy lại `sync`. Viết báo cáo từ số liệu mới, chạy `pack` và `python scripts/check_submission.py` theo [SUBMISSION.md](SUBMISSION.md). Commit, push rồi nộp **link repo** và **ZIP ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**.
+3. **Vẽ ít nhất 53 cuboid**. Vẽ ít nhất 8 ở frame đầu và 5 ở mỗi frame sau. Mục tiêu khuyến nghị là 60–70 hộp. [Quy tắc vẽ cuboid](docs/GUIDELINE.md)
+4. **Tìm bốn hiện tượng ảnh hưởng đến việc gán nhãn** gồm bóng che, điểm thưa ở xa, phản xạ thấp hoặc ít điểm bất thường, và điểm lạ. [Cách tìm và ghi lại hiện tượng](docs/PHENOMENA.md)
+5. Bấm **Save** trong CVAT rồi chạy `python scripts/lab.py sync` để kiểm hộp. Sau khi sửa hộp, bấm **Save** và chạy lại `sync`. Dùng số liệu mới để hoàn thành báo cáo, đóng gói ảnh và kiểm bài nộp. Commit, push rồi nộp **link repo** và **ZIP ảnh** lên LMS trước **23:59 GMT+7 ngày làm lab**. [Các bước nộp bài](SUBMISSION.md#trước-khi-nộp)
 
-> **Khi nộp:** đổi dòng tiêu đề README thành `# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>`, và đổi tên báo cáo `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (ví dụ `2A202600123_NguyenVanAn.md`).
+> **Khi nộp**, đổi tiêu đề README thành `# Day 13 Lab — <MSSV> - <Họ và tên>`. Đổi tên báo cáo `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (ví dụ `2A202600123_NguyenVanAn.md`).
 > `<MÃ SỐ>` và `<MSSV>` trong tài liệu là một: mã số của bạn, đúng như dòng `student` trong `configs/lab.ini`.
 > Mọi lệnh `python scripts/lab.py ...` chạy **giống nhau trên Windows và macOS**. macOS có thêm lệnh tắt `make` ([Makefile](Makefile)). Lệnh riêng từng hệ điều hành (cài đặt, kích hoạt môi trường, mở file): [docs/COMMANDS.md](docs/COMMANDS.md).
 
 <details>
 <summary><b>Vì sao tối thiểu 8/5 mà lại khuyên vẽ 10/6?</b></summary>
 
-Độ phủ chấm trên vật trong 30 m, khoảng 9 vật mỗi frame. Một cuboid chỉ được tính khi khớp với vật đủ mức BEV-IoU ≥ 0,5: hai hộp cùng cỡ phải chồng nhau khoảng 2/3, tức xe con chỉ được lệch dọc thân khoảng 1,5 m, người đi bộ chỉ khoảng 0,2 m. Vẽ đúng mức tối thiểu 8/5 thì độ phủ chỉ vừa sát mốc đạt 0,4. Vẽ 10/6 cho bạn khoảng dư để vài cuboid lệch không làm trượt. Xem [RUBRIC.md](RUBRIC.md).
+Độ phủ tính theo số vật trong 30 m được ghép với cuboid bạn vẽ. Hãy ưu tiên các vật gần và căn hộp sát cụm điểm. Vẽ khoảng 10 hộp ở frame đầu và 6 hộp ở mỗi frame sau để có thêm cơ hội bao phủ các vật rõ. [Cách tính độ phủ](RUBRIC.md)
 </details>
 
 <details>
@@ -82,7 +82,7 @@ Cuboid hôm nay là hình đơn lẻ trên từng frame (Shape), không phải t
 | **Mọi lệnh của buổi lab**, Windows và macOS | [docs/COMMANDS.md](docs/COMMANDS.md) |
 | Hệ tọa độ VF, 7 tham số, hướng 7 camera | [docs/COORDINATES.md](docs/COORDINATES.md) |
 | Tóm tắt guideline: 5 class, quy tắc cuboid, bảng 4.3 | [docs/GUIDELINE.md](docs/GUIDELINE.md), [bản đầy đủ (.docx)](docs/3D_Cuboid_Annotation_Guideline.docx) |
-| Bốn hiện tượng làm hỏng point cloud, frame gợi ý | [docs/PHENOMENA.md](docs/PHENOMENA.md) |
+| Bốn hiện tượng ảnh hưởng đến việc gán nhãn và frame gợi ý | [docs/PHENOMENA.md](docs/PHENOMENA.md) |
 | Đọc `preview`, cờ của `selfcheck`, cột của bảng A | [docs/SELF_CHECK.md](docs/SELF_CHECK.md) |
 | Lỗi hay gặp và cách tự gỡ | [docs/COMMON_ERRORS.md](docs/COMMON_ERRORS.md) |
 | 5 nhãn cuboid để tạo task bằng tay | [cvat/labels.json](cvat/labels.json) ([docs/CVAT_SETUP.md](docs/CVAT_SETUP.md) mục 7) |

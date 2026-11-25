@@ -8,7 +8,7 @@ Bài cá nhân, buổi thực hành **16:00–20:00**. Mốc giờ là điểm *
 | 16:50 | **CP2** Đọc frame | Trên ảnh nhìn từ trên xuống của frame đầu, chỉ đúng phía trước (−y) và +x; đã kể được một vật phía sau hoặc hai bên; báo cáo §2 có 2 frame đọc kỹ |
 | 17:25 | **CP3** Frame 1 | `python scripts/lab.py report`: frame 1 có ≥ 8 cuboid; xe con có `length` > `width`; xe cùng chiều `yaw_deg` gần 270°; `z_bottom` quanh −1,7 m (lệch không quá 0,3 m) |
 | 17:55 | **CP4** Frame 2–6 | Mỗi frame ≥ 5 cuboid; đã **Save** trước giờ nghỉ |
-| 18:35 | **CP5** Frame 7–10 | Tổng ≥ 50 cuboid (nên 60–70); đã quét cả phía sau và hai bên |
+| 18:35 | **CP5** Frame 7–10 | Ít nhất 53 cuboid. Frame đầu có ít nhất 8 hộp và mỗi frame sau có ít nhất 5. Đã kiểm cả phía sau và hai bên. |
 | 19:00 | **CP6** Bốn hiện tượng | 4 ảnh và 4 dòng trong báo cáo §4; nguyên nhân ghi là giả thuyết |
 | 19:30 | **CP7** Tự kiểm + nộp lần đầu | `python scripts/lab.py sync` đã chạy sau lần Save cuối; đã sửa ≥ 2 cuboid; báo cáo xong, đã đổi kiểm hai con số với bạn bên cạnh; đã `pack`; `python scripts/check_submission.py` hết LỖI; đã commit, push (bảng A, phiếu tự kiểm, báo cáo có trên GitHub) và nộp link repo + file zip ảnh lên LMS |
 

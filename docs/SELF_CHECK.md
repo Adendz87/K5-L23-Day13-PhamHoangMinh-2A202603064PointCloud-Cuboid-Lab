@@ -8,7 +8,11 @@ Hai lệnh `preview` và `selfcheck` chỉ đọc point cloud, ảnh camera, `ca
 python scripts/lab.py preview
 ```
 
-Mỗi frame ra một ảnh trong thư mục `work/xem/`: 7 ảnh camera và một ảnh nhìn từ trên xuống, có cuboid của bạn vẽ đè kèm số thứ tự, màu theo class. Ảnh nhìn từ trên xuống phủ 35 m quanh xe (vòng 10, 20, 30 m), đầu xe của bạn hướng lên; mỗi cuboid có một vạch từ tâm tới cạnh đầu xe. Vật xa hơn 35 m chỉ thấy trên ảnh camera. Tìm:
+Mỗi frame có một ảnh trong `work/xem/` ghép 7 góc camera và một góc nhìn từ trên xuống. Ảnh có cuboid, số thứ tự và màu theo class.
+
+Góc nhìn từ trên xuống phủ 35 m quanh xe, có các vòng 10, 20 và 30 m. Đầu xe thu dữ liệu hướng lên, vạch trên từng cuboid chỉ từ tâm hộp về đầu xe được gán nhãn. Vật xa hơn 35 m có thể vẫn xuất hiện trong góc camera. Dùng `dist_m` trong Bảng A để kiểm ranh giới 50 m.
+
+Dùng ảnh để tìm các lỗi dưới đây.
 
 - Hộp lệch khỏi vật trên ảnh, hoặc đặt vào chỗ không có vật.
 - Hộp ngược đầu, hoặc dài và rộng đổi chỗ.

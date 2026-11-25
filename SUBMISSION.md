@@ -36,7 +36,7 @@ Ví dụ: `K5-L2-DAY13-NguyenVanAn-2A202600123-PointCloudCuboid`.
 
 ## Trước khi nộp
 1. Bấm **Save** trong CVAT, rồi `python scripts/lab.py sync` để bảng A và phiếu tự kiểm khớp task.
-2. Đổi dòng tiêu đề `# Day 13 Lab ...` của `README.md` thành `# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>` (thay cả dấu `<` `>`; MSSV phải trùng `student` trong `configs/lab.ini`).
+2. Đổi tiêu đề trong `README.md` thành `# Day 13 Lab — <MSSV> - <Họ và tên>`. Thay cả dấu `<` và `>`. MSSV phải trùng `student` trong `configs/lab.ini`. Ví dụ `# Day 13 Lab — 2A202600123 - Nguyễn Văn An`.
 3. Báo cáo: đổi tên `report/individual/MSSV_HoTen.md` thành `<MSSV>_<HoTen>.md` (họ tên không dấu, viết liền, ví dụ `2A202600123_NguyenVanAn.md`) nếu chưa đổi, rồi điền đủ (xoá mọi dấu TODO). Đổi tên, đừng chép thành file thứ hai. Windows: bật File Explorer → **View → Show → File name extensions** trước khi đổi tên, để tên không thành `….md.md`.
 4. `python scripts/lab.py pack` (macOS: `make pack`): nén ảnh trong `report/individual/images/` thành `work/K5-L23-DAY13-<MSSV>-images.zip`.
 5. Chạy `python scripts/check_submission.py` (macOS: `make check`) và sửa hết **LỖI**. Nếu lỗi ở ZIP, kiểm đủ 11 ảnh theo tên bên dưới rồi chạy lại `pack`. Cảnh báo `chưa commit` sẽ hết sau bước 6.
@@ -56,7 +56,7 @@ Sửa cuboid sau khi nộp (trước deadline):
 
 ## Cấu trúc
 ```text
-README.md                        # dòng tiêu đề có Họ và tên: MSSV - Họ và tên               -> repo
+README.md                        # tiêu đề có MSSV và họ tên                                  -> repo
 configs/lab.ini                  # đã điền student, cvat_user (KHÔNG có mật khẩu)              -> repo
 submission/
 ├── D13-<MSSV>-bangA.csv         # sinh bởi `python scripts/lab.py report`, không sửa tay       -> repo

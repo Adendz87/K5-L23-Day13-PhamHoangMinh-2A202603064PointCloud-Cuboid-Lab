@@ -20,6 +20,8 @@ Hệ này khác KITTI và ROS (x tiến, y trái). Nếu bạn đã quen hệ kh
 
 `(cx, cy, cz, l, w, h, yaw)`: tâm cuboid; dài (dọc theo hướng yaw), rộng, cao; yaw quanh trục z, đo từ +x (trái), ngược chiều kim đồng hồ nhìn từ trên.
 
+Vạch đỏ ngắn trong CVAT là `+X` của cuboid và xoay theo hộp. Với xe hướng thẳng cùng chiều xe thu dữ liệu, vạch này chỉ theo `−Y` của hệ VF, tức ngược chiều vạch xanh lá dài trong cảnh.
+
 - Xe cùng chiều phía trước: yaw ≈ **270°**.
 - Xe đi ngược chiều: yaw ≈ **90°**.
 

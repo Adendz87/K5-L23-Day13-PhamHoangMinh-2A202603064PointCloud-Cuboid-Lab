@@ -145,12 +145,13 @@ for section in ini.sections():
 
 # 2. README
 first = next((l for l in (ROOT / "README.md").read_text(encoding="utf-8").splitlines() if l.startswith("# ")), "")
-title = re.match(r"# Day 13 Lab\s*[—–-]\s*(.+?):\s*(\S+)\s+-\s+(.+)$", first)
+# Chấp nhận cả mẫu cũ có họ tên trước MSSV.
+title = re.fullmatch(r"# Day 13 Lab\s*[—–-]\s*(?:.+?:\s*)?(?P<student>\S+)\s+-\s+\S.*", first)
 if not title or "<" in first or ">" in first:
     errs.append("dòng tiêu đề (dòng `# ...` đầu tiên) của README.md phải là: "
-                "'# Day 13 Lab — <Họ và tên>: <MSSV> - <Họ và tên>', thay cả dấu < > (xem SUBMISSION.md)")
-elif student and title.group(2).strip().upper() != student:
-    errs.append(f"README.md: MSSV ở dòng tiêu đề ({title.group(2)}) khác `student` trong configs/lab.ini ({student})")
+                "'# Day 13 Lab — <MSSV> - <Họ và tên>', thay cả dấu < > (xem SUBMISSION.md)")
+elif student and title["student"].upper() != student:
+    errs.append(f"README.md: MSSV ở dòng tiêu đề ({title['student']}) khác `student` trong configs/lab.ini ({student})")
 
 # 3. file đã viết sẵn không được đổi
 pin = ROOT / "scripts/_protected.json"
